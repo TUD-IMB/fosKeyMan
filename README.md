@@ -1,6 +1,6 @@
 # fosKeyMan – Fiber Optic Sensor Key Manager for Luna ODiSI
 
-[Latest automatically generated documentation](https://fosKeyMan-tud-imb-fos-cffd7ddd34f22a2e0a4090c418b304ff9b0759ab25.gp.hrz.tu-chemnitz.de)
+[Latest automatically generated documentation](https://tud-imb.github.io/fosKeyMan/)
 
 ## Motivation
 Each distributed fiber optic sensor (DFOS) has a unique backscattering behavior.

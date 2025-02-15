@@ -1110,7 +1110,7 @@ class MainWindow(QMainWindow):
 	
 	def open_documentation(self):
 		r"""Open the Doxygen generated documentation web page."""
-		documentation_url = "https://lokeyman-tud-imb-fos-cffd7ddd34f22a2e0a4090c418b304ff9b0759ab25.gp.hrz.tu-chemnitz.de/"
+		documentation_url = "https://tud-imb.github.io/fosKeyMan/"
 		webbrowser.open(documentation_url)
 	
 	def populate_search_combobox(self):
