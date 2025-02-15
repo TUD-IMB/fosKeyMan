@@ -23,3 +23,5 @@ src/resources/fosKeyMan.desktop
 # Exemptions
 !__init__.py
 !.gitignore
+!.gitlab-ci.yaml
+!.github
