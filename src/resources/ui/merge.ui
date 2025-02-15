@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Merge</class>
+ <widget class="QWidget" name="Merge">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>769</width>
+    <height>420</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Merge Conflict</string>
+  </property>
+  <property name="toolTip">
+   <string/>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_4">
+   <item>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="5" column="2">
+      <widget class="QLineEdit" name="currentSpecimenLineEdit">
+       <property name="toolTip">
+        <string>Specimen details in current database</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="4">
+      <widget class="QLineEdit" name="mergedOperatorLineEdit">
+       <property name="toolTip">
+        <string>Enter operator name after merge</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="2">
+      <widget class="QLineEdit" name="currentProjectLineEdit">
+       <property name="toolTip">
+        <string>Project name in current database</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="4">
+      <widget class="QLabel" name="label_6">
+       <property name="toolTip">
+        <string>Metadata after merge</string>
+       </property>
+       <property name="text">
+        <string>Merged entry</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QLineEdit" name="currentSerialLineEdit">
+       <property name="toolTip">
+        <string>Serial number in current database</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="toolTip">
+        <string>Project</string>
+       </property>
+       <property name="text">
+        <string>Project</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="3">
+      <widget class="QLineEdit" name="importedOperatorLineEdit">
+       <property name="toolTip">
+        <string>Operator name in imported database</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="4">
+      <widget class="QLineEdit" name="mergedSpecimenLineEdit">
+       <property name="toolTip">
+        <string>Enter specimen details after merge</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0">
+      <widget class="QLabel" name="label_10">
+       <property name="toolTip">
+        <string>DFOS Type</string>
+       </property>
+       <property name="text">
+        <string>DFOS_Type</string>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="0">
+      <widget class="QLabel" name="label_8">
+       <property name="toolTip">
+        <string>Note</string>
+       </property>
+       <property name="text">
+        <string>Note</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="3">
+      <widget class="QLineEdit" name="importedInstallLineEdit">
+       <property name="toolTip">
+        <string>Installation details in imported database</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="2">
+      <widget class="QLineEdit" name="currentOperatorLineEdit">
+       <property name="toolTip">
+        <string>Operator name in current database</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="4">
+      <widget class="QLineEdit" name="mergedNameLineEdit">
+       <property name="toolTip">
+        <string>Enter sensor name after merge</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="4">
+      <widget class="QLineEdit" name="mergedTypeLineEdit">
+       <property name="toolTip">
+        <string>Enter DFOS type after merge</string>
+       </property>
+      </widget>
+     </item>
+     <item row="14" column="3">
+      <widget class="QLabel" name="importedKeyfileStatusLabel">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="2">
+      <widget class="QLineEdit" name="currentInstallLineEdit">
+       <property name="toolTip">
+        <string>Installation details in current database</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2">
+      <widget class="QLineEdit" name="currentNameLineEdit">
+       <property name="toolTip">
+        <string>Sensor name in current database</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="3">
+      <widget class="QLineEdit" name="importedSpecimenLineEdit">
+       <property name="toolTip">
+        <string>Specimen details in imported database</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3">
+      <widget class="QLabel" name="label_5">
+       <property name="toolTip">
+        <string>Metadata in imported database</string>
+       </property>
+       <property name="text">
+        <string>Imported entry</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="3">
+      <widget class="QLineEdit" name="importedSerialLineEdit">
+       <property name="toolTip">
+        <string>Serial number in imported database</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="4">
+      <widget class="QLineEdit" name="mergedProjectLineEdit">
+       <property name="toolTip">
+        <string>Enter project name after merge</string>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="2">
+      <widget class="QLineEdit" name="currentNotelineEdit">
+       <property name="toolTip">
+        <string>Note in current database</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="2">
+      <widget class="QLineEdit" name="currentTypeLineEdit">
+       <property name="toolTip">
+        <string>DFOS type in current database</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="4">
+      <widget class="QLineEdit" name="mergedInstallLineEdit">
+       <property name="toolTip">
+        <string>Enter installation details after merge</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="4">
+      <widget class="QLineEdit" name="mergedSerialLineEdit">
+       <property name="toolTip">
+        <string>Enter serial number after merge</string>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="3">
+      <widget class="QLineEdit" name="importedNoteLineEdit">
+       <property name="toolTip">
+        <string>Note in imported database</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="3">
+      <widget class="QLineEdit" name="importedProjectLineEdit">
+       <property name="toolTip">
+        <string>Project name in imported database</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="0">
+      <widget class="QLabel" name="label_11">
+       <property name="toolTip">
+        <string>Installation</string>
+       </property>
+       <property name="text">
+        <string>Installation</string>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="4">
+      <widget class="QLineEdit" name="mergedNoteLineEdit">
+       <property name="toolTip">
+        <string>Enter note after merge</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label">
+       <property name="toolTip">
+        <string>Sensor Name</string>
+       </property>
+       <property name="text">
+        <string>Sensor Name</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_7">
+       <property name="toolTip">
+        <string>Operator</string>
+       </property>
+       <property name="text">
+        <string>Operator</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="toolTip">
+        <string>Serial Number</string>
+       </property>
+       <property name="text">
+        <string>Serial Number</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="3">
+      <widget class="QLineEdit" name="importedTypeLineEdit">
+       <property name="toolTip">
+        <string>DFOS type in imported database</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="label_9">
+       <property name="toolTip">
+        <string>Specimen</string>
+       </property>
+       <property name="text">
+        <string>Specimen</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QLabel" name="label_4">
+       <property name="toolTip">
+        <string>Metadata in current database</string>
+       </property>
+       <property name="text">
+        <string>Current entry</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="3">
+      <widget class="QLineEdit" name="importedNameLineEdit">
+       <property name="toolTip">
+        <string>Sensor name in imported database</string>
+       </property>
+      </widget>
+     </item>
+     <item row="13" column="2">
+      <widget class="QRadioButton" name="currentRadioButton">
+       <property name="toolTip">
+        <string>Keyfile in current database</string>
+       </property>
+       <property name="text">
+        <string>Current Keyfile Version</string>
+       </property>
+      </widget>
+     </item>
+     <item row="13" column="0">
+      <widget class="QLabel" name="label_12">
+       <property name="toolTip">
+        <string>Keyfile</string>
+       </property>
+       <property name="text">
+        <string>Keyfile</string>
+       </property>
+      </widget>
+     </item>
+     <item row="13" column="3">
+      <widget class="QRadioButton" name="importedRadioButton">
+       <property name="toolTip">
+        <string>Keyfile in  imported database</string>
+       </property>
+       <property name="text">
+        <string>Imported Keyfile Version</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QPushButton" name="currentButton">
+       <property name="toolTip">
+        <string>Keep current entry for merged version</string>
+       </property>
+       <property name="text">
+        <string>Keep current version</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="importButton">
+       <property name="toolTip">
+        <string>Keep imported entry for merged version</string>
+       </property>
+       <property name="text">
+        <string>Keep import version</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="compareKeyfileButton">
+       <property name="toolTip">
+        <string>Compare keyfiles between current and imported database</string>
+       </property>
+       <property name="text">
+        <string>Compare Keyfile</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="proceedButton">
+       <property name="toolTip">
+        <string>Save and Next</string>
+       </property>
+       <property name="text">
+        <string>Proceed</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="skipButton">
+       <property name="toolTip">
+        <string>Skip entry</string>
+       </property>
+       <property name="text">
+        <string>Skip</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="finishButton">
+       <property name="toolTip">
+        <string>Finish merge</string>
+       </property>
+       <property name="text">
+        <string>Finish</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

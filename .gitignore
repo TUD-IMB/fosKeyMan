@@ -1,0 +1,25 @@
+# Ignore list for git
+
+# Hidden files
+_*
+.*
+
+# File extensions
+*.bak
+*.egg-info
+*.orig
+*.tmp
+
+# Data or generated content
+data
+dist
+Documentation
+test*
+Test*
+src/fosKeyManConfig.json
+src/fosKeyManOperation.log
+src/resources/fosKeyMan.desktop
+
+# Exemptions
+!__init__.py
+!.gitignore

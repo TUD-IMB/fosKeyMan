@@ -1,0 +1,83 @@
+stages:
+  - docs
+  - build
+  - package
+
+build_pyfile:
+  stage: build
+  image: python:3.9
+  tags:
+      - build
+  before_script:
+      - pip install --upgrade pip
+      - pip install pyside6
+  script:
+      - python src/convertpyfile.py
+  artifacts:
+      paths:
+          - src/frontend/ui/.
+  only:
+      - master
+
+ubuntu_20_04:
+  stage: package
+  image: ubuntu:20.04
+  tags:
+      - package
+  dependencies:
+      - build_pyfile
+  before_script:
+      - DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt update && apt install -y --no-install-recommends python-dev python3-dev python3-pip
+      - pip install pyinstaller pyside6
+      - apt install -y --no-install-recommends libgl1 ffmpeg libsm6 libxext6 libglib2.0-0 binutils
+      - export QT_QPA_PLATFORM=xcb
+      - apt install -y --no-install-recommends libxcb-* libxkbcommon-x11-0
+  script:
+      - pyinstaller src/fosKeyMan.spec
+      - cp src/resources/foskeyman_logo_short.svg dist/foskeyman_logo_short.svg
+      - cp src/resources/createlinuxlauncher.py dist/createlinuxlauncher.py
+  artifacts:
+      paths:
+          - dist/
+  only:
+      - master
+
+windows_10:
+  stage: package
+  image: ubuntu:22.04
+  tags:
+      - package
+  dependencies:
+      - build_pyfile
+  before_script:
+      - dpkg --add-architecture i386
+      - apt update && apt install -y wine wget xvfb winetricks
+      - Xvfb :99 -screen 0 1024x768x16 &
+      - export DISPLAY=:99
+      - winecfg -v win10
+      - wget https://www.python.org/ftp/python/3.9.13/python-3.9.13-amd64.exe
+      - wine python-3.9.13-amd64.exe /quiet InstallAllUsers=1 PrependPath=1
+      - export PYTHON_PATH=$(find "$HOME/.wine/drive_c" -name "python.exe" | head -n 1)
+      - wine "$PYTHON_PATH" -m pip install pyside6 pyinstaller
+  script:
+      - wine "$PYTHON_PATH" -m PyInstaller src/fosKeyMan.spec
+  artifacts:
+      paths:
+          - dist/
+  only:
+      - master
+
+pages:
+  stage: docs
+  image: alpine
+  before_script:
+      - apk update
+      - apk add doxygen graphviz ttf-freefont
+  script:
+      - doxygen Doxyfile
+      - mv Documentation/html/ public/
+  artifacts:
+      paths:
+          - public
+  only:
+      - master
