@@ -88,6 +88,37 @@ class Ui_Open(object):
 
         self.verticalLayout_2.addLayout(self.horizontalLayout)
 
+        self.horizontalLayout_5 = QHBoxLayout()
+        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
+        self.horizontalLayout_5.setContentsMargins(-1, -1, -1, 50)
+        self.label_4 = QLabel(Open)
+        self.label_4.setObjectName(u"label_4")
+
+        self.horizontalLayout_5.addWidget(self.label_4)
+
+        self.createOneButton = QPushButton(Open)
+        self.createOneButton.setObjectName(u"createOneButton")
+        self.createOneButton.setStyleSheet(u"QPushButton {\n"
+"    color: blue;\n"
+"    border: none;\n"
+"    background: none;\n"
+"    text-decoration: underline;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    color: darkblue;\n"
+"}\n"
+"")
+
+        self.horizontalLayout_5.addWidget(self.createOneButton)
+
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_5.addItem(self.horizontalSpacer)
+
+
+        self.verticalLayout_2.addLayout(self.horizontalLayout_5)
+
         self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_2.addItem(self.verticalSpacer)
@@ -149,6 +180,8 @@ class Ui_Open(object):
         self.dbBrowseButton.setToolTip(QCoreApplication.translate("Open", u"Browse for database file", None))
 #endif // QT_CONFIG(tooltip)
         self.dbBrowseButton.setText(QCoreApplication.translate("Open", u"Browse", None))
+        self.label_4.setText(QCoreApplication.translate("Open", u"No database?", None))
+        self.createOneButton.setText(QCoreApplication.translate("Open", u"Create One!", None))
 #if QT_CONFIG(tooltip)
         self.cancelButton.setToolTip(QCoreApplication.translate("Open", u"Cancel and Close", None))
 #endif // QT_CONFIG(tooltip)

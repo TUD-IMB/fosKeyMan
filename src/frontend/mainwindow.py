@@ -325,7 +325,7 @@ class MainWindow(QMainWindow):
 				self.tr("Failed to connect to the database: {error}").format(error=e)
 			)
 	
-	def new_database_dialog(self):
+	def new_database_dialog(self, open_ui=None):
 		r"""
 		Open a dialog for selecting directory and creating a new database.
 		"""
@@ -345,6 +345,8 @@ class MainWindow(QMainWindow):
 				self.config_manager.save_db_path(file_path)
 				self.setup_table()
 				self.db_path = file_path
+				if open_ui:
+					open_ui.dbLineEdit.setText(file_path)
 			except sqlite3.DatabaseError as e:
 				QMessageBox.warning(
 					self,
@@ -362,11 +364,12 @@ class MainWindow(QMainWindow):
 		dialog = QDialog(self)
 		open_ui = Ui_Open()
 		open_ui.setupUi(dialog)
-		dialog.resize(800, 300)
+		# dialog.resize(800, 300)
 		self.config_manager.open_ui = open_ui
 		open_ui.acBrowseButton.clicked.connect(lambda: self.config_manager.select_directory1(dialog, open_ui))
 		open_ui.deacBrowseButton.clicked.connect(lambda: self.config_manager.select_directory2(dialog, open_ui))
 		open_ui.dbBrowseButton.clicked.connect(lambda: self.config_manager.select_db_path(dialog, open_ui))
+		open_ui.createOneButton.clicked.connect(lambda: self.new_database_dialog(open_ui))
 		dialog.setWindowFlags(dialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
 		dialog.setWindowTitle(self.tr("Database & Directory Settings"))
 		# Pre-fill the input fields if the directories have already been selected previously
