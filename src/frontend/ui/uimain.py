@@ -28,7 +28,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1015, 757)
+        MainWindow.resize(1015, 782)
         self.actionNew = QAction(MainWindow)
         self.actionNew.setObjectName(u"actionNew")
         icon = QIcon()
@@ -137,7 +137,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.tableWidget = QTableWidget(self.centralwidget)
         self.tableWidget.setObjectName(u"tableWidget")
-        self.tableWidget.setSizeAdjustPolicy(QAbstractScrollArea.AdjustIgnored)
+        self.tableWidget.setSizeAdjustPolicy(QAbstractScrollArea.SizeAdjustPolicy.AdjustIgnored)
 
         self.verticalLayout_2.addWidget(self.tableWidget)
 
@@ -150,7 +150,7 @@ class Ui_MainWindow(object):
         MainWindow.addToolBar(Qt.ToolBarArea.TopToolBarArea, self.toolBar)
         self.infoDockWidget = QDockWidget(MainWindow)
         self.infoDockWidget.setObjectName(u"infoDockWidget")
-        self.infoDockWidget.setMinimumSize(QSize(400, 200))
+        self.infoDockWidget.setMinimumSize(QSize(0, 100))
         self.infoDockWidget.setMaximumSize(QSize(524287, 524287))
         self.dockWidgetContents = QWidget()
         self.dockWidgetContents.setObjectName(u"dockWidgetContents")
@@ -165,7 +165,7 @@ class Ui_MainWindow(object):
         MainWindow.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.infoDockWidget)
         self.filterDockWidget = QDockWidget(MainWindow)
         self.filterDockWidget.setObjectName(u"filterDockWidget")
-        self.filterDockWidget.setMinimumSize(QSize(400, 273))
+        self.filterDockWidget.setMinimumSize(QSize(0, 0))
         self.filterDockWidget.setMaximumSize(QSize(524287, 524287))
         self.dockWidgetContents_2 = QWidget()
         self.dockWidgetContents_2.setObjectName(u"dockWidgetContents_2")
@@ -279,7 +279,7 @@ class Ui_MainWindow(object):
         MainWindow.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.filterDockWidget)
         self.menuBar = QMenuBar(MainWindow)
         self.menuBar.setObjectName(u"menuBar")
-        self.menuBar.setGeometry(QRect(0, 0, 1015, 22))
+        self.menuBar.setGeometry(QRect(0, 0, 1015, 33))
         self.menuFile = QMenu(self.menuBar)
         self.menuFile.setObjectName(u"menuFile")
         self.menuHelp = QMenu(self.menuBar)
@@ -295,7 +295,7 @@ class Ui_MainWindow(object):
         MainWindow.setMenuBar(self.menuBar)
         self.searchDockWidget = QDockWidget(MainWindow)
         self.searchDockWidget.setObjectName(u"searchDockWidget")
-        self.searchDockWidget.setMinimumSize(QSize(219, 200))
+        self.searchDockWidget.setMinimumSize(QSize(0, 0))
         self.dockWidgetContents_3 = QWidget()
         self.dockWidgetContents_3.setObjectName(u"dockWidgetContents_3")
         self.verticalLayout_4 = QVBoxLayout(self.dockWidgetContents_3)

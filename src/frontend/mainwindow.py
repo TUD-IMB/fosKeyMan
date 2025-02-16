@@ -82,11 +82,23 @@ class MainWindow(QMainWindow):
 		# 								self.ui.actionSaveChange,
 		# 								self.ui.actionImport, self.ui.actionAttach, self.ui.actionReplace,
 		# 								self.ui.actionCopy)
-		#self.resize(2000, 1500)
 		self.ui.tableWidget.cellClicked.connect(self.table_cell_info)
 		self.ui.searchPushButton.clicked.connect(self.execute_search)
 		self.setWindowIcon(QIcon(resource_path('resources/foskeyman_logo_short.svg')))
-	
+		self.adjust_window_size()
+
+	def adjust_window_size(self):
+		r"""
+		Dynamically adapts window size to available screen space.
+		"""
+		screen = self.screen()
+		screen_size = screen.availableGeometry()
+
+		width = int(screen_size.width() * 0.7)
+		height = int(screen_size.height() * 0.6)
+
+		self.resize(width, height)
+
 	def show_and_check_config(self):
 		r"""
 		Show the main window and check the configuration. Switch the language based on the saved configuration.
@@ -1007,7 +1019,7 @@ class MainWindow(QMainWindow):
 		}
 		translated_status = status_translation_map[status]
 		button = QPushButton(translated_status)
-		button.setFixedSize(QSize(150, 30))
+		button.setFixedSize(QSize(120, 20))
 		button.setEnabled(False)
 		# green
 		if status == 'Activated':
@@ -1128,6 +1140,7 @@ class MainWindow(QMainWindow):
 					keyfiles.add(keyfile)
 		for key in sorted(keyfiles):
 			self.ui.searchComboBox.addItem(key)
+
 	def execute_search(self):
 		r"""
 		Perform search based on the selected key item in the comboBox and display the results in TextBrowser.
@@ -1294,7 +1307,7 @@ def create_keyfile_cell_widget(icons, text):
 	layout.setContentsMargins(0, 0, 0, 0)
 	for icon in icons:
 		label = QLabel()
-		label.setPixmap(icon.pixmap(36, 36))
+		label.setPixmap(icon.pixmap(20, 20))
 		layout.addWidget(label)
 	text_label = QLabel(text)
 	layout.addWidget(text_label)

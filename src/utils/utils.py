@@ -7,7 +7,6 @@ def format_json_to_html(json_data):
 	html_content = f"""
 	<pre style="
 		font-family: monospace;
-		font-size: 24px;
 		color: #333;
 		background-color: #f9f9f9;
 		padding: 10px;
