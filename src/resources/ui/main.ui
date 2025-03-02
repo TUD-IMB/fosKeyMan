@@ -54,6 +54,7 @@
    <addaction name="actionAttach"/>
    <addaction name="actionReplace"/>
    <addaction name="actionCopy"/>
+   <addaction name="actionRemove"/>
    <addaction name="separator"/>
    <addaction name="actionFilter"/>
    <addaction name="actionInformation"/>
@@ -63,7 +64,7 @@
   <widget class="QDockWidget" name="infoDockWidget">
    <property name="minimumSize">
     <size>
-     <width>0</width>
+     <width>79</width>
      <height>100</height>
     </size>
    </property>
@@ -97,8 +98,8 @@
   <widget class="QDockWidget" name="filterDockWidget">
    <property name="minimumSize">
     <size>
-     <width>0</width>
-     <height>0</height>
+     <width>189</width>
+     <height>287</height>
     </size>
    </property>
    <property name="maximumSize">
@@ -414,8 +415,8 @@
   <widget class="QDockWidget" name="searchDockWidget">
    <property name="minimumSize">
     <size>
-     <width>0</width>
-     <height>0</height>
+     <width>146</width>
+     <height>159</height>
     </size>
    </property>
    <property name="toolTip">
@@ -740,6 +741,18 @@
    </property>
    <property name="toolTip">
     <string>Load Key Files from USB</string>
+   </property>
+  </action>
+  <action name="actionRemove">
+   <property name="icon">
+    <iconset resource="../toolicons.qrc">
+     <normaloff>:/icons/icons/remove.svg</normaloff>:/icons/icons/remove.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Remove</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
  </widget>

@@ -205,7 +205,17 @@ class DatabaseHandler:
 			print(f"An error occurred: {e}")
 			self.rollback()
 			return None
-	
+
+	def remove_blob_data(self, serial_number):
+		r"""
+		Set the BLOB data (keyfile) to NULL for a given serial_number
+		\param serial_number (str): The serial number whose keyfile should be removed.
+		"""
+		try:
+			self.cursor.execute("UPDATE keytable SET keyfile = NULL WHERE serial_number = ?", (serial_number,))
+		except Exception as e:
+			self.rollback()
+
 	def fetch_blob_and_save_as_folder(self, serial_number, output_folder_path):
 		r"""
 		Fetch the BLOB data from the database and save it as a folder.

@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="icons">
+    <file>icons/remove.svg</file>
     <file>icons/deactive.svg</file>
     <file>icons/filter.svg</file>
     <file>icons/replace.svg</file>

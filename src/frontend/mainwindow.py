@@ -171,6 +171,7 @@ class MainWindow(QMainWindow):
 		# actions for keyfile operations (import, attach, replace, copy)
 		self.ui.actionImport.triggered.connect(self.import_keyfile_to_db)
 		self.ui.actionAttach.triggered.connect(self.attach_keyfile_to_db)
+		self.ui.actionRemove.triggered.connect(self.remove_keyfile_in_db)
 		self.ui.actionReplace.triggered.connect(self.replace_keyfile_db_disk)
 		self.ui.actionCopy.triggered.connect(self.copy_keyfile_to_disk)
 		self.ui.actionQuickImport.triggered.connect(self.quick_import_keyfile)
@@ -626,7 +627,36 @@ class MainWindow(QMainWindow):
 				self.tr(f"An error occurred while attaching keyfiles: {e}")
 			)
 			logging.error(f"Error occurred while attaching keyfiles: {e}")
-	
+
+	def remove_keyfile_in_db(self):
+		r"""
+		Remove the attached keyfile (blob data) from the database for selected serial numbers.
+		If no keyfile is attached, the entry is skipped.
+		"""
+		try:
+			checked_serial_numbers = self.get_checked_serial_numbers()
+
+			if not checked_serial_numbers:
+				logging.info("No attached keyfiles found for removal.")
+				return
+
+			for serial_number in checked_serial_numbers:
+				self.db_handler.remove_blob_data(serial_number)
+				logging.info(f"Keyfile for serial number '{serial_number}' successfully removed in database.")
+
+			self.db_handler.commit()
+			self.reset_all_checkboxes()
+			self.update_table_row(checked_serial_numbers)
+
+		except Exception as e:
+			self.db_handler.rollback()
+			logging.error(f"Error occurred while removing keyfiles: {e}")
+			QMessageBox.warning(
+				self,
+				self.tr("Error"),
+				self.tr(f"An error occurred while removing keyfiles: {e}")
+			)
+
 	def replace_keyfile_db_disk(self):
 		r"""Replace the keyfile between the database and disk when there is a mismatch."""
 		try:
