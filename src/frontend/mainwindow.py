@@ -875,7 +875,7 @@ class MainWindow(QMainWindow):
 		Sets certain columns (Status, Serial Number, and Keyfile) as read-only to prevent unintended modification.
 		Populate table with data in database, and connect a cell click event to display additional information.
 		"""
-		self.ui.tableWidget.setColumnCount(12)
+		self.ui.tableWidget.setColumnCount(13)
 		self.ui.tableWidget.setHorizontalHeaderLabels([
 			' ',
 			self.tr('Status'),
@@ -888,7 +888,8 @@ class MainWindow(QMainWindow):
 			self.tr('Installation'),
 			self.tr('Note'),
 			self.tr('Keyfile'),
-			self.tr('Last Edit Date')
+			self.tr('Last Edit Date'),
+			self.tr('Sensor Length (m)')
 		])
 		self.ui.tableWidget.setStyleSheet("""
 			QHeaderView::section {
@@ -917,8 +918,8 @@ class MainWindow(QMainWindow):
 			return
 		self.ui.tableWidget.setRowCount(0)
 		self.populate_table()
-		self.set_columns_read_only([1, 2, 3, 10, 11])
-		self.set_columns_background_color([2, 3, 10, 11])
+		self.set_columns_read_only([1, 2, 3, 10, 11, 12])
+		self.set_columns_background_color([2, 3, 10, 11, 12])
 		self.populate_search_combobox()
 	
 	def set_columns_read_only(self, columns):
@@ -991,7 +992,7 @@ class MainWindow(QMainWindow):
 		keys_with_status += [(key, 'Database Only', False) for key in db_only_keys]
 		self.ui.tableWidget.setRowCount(len(keys_with_status))
 		for index, (key, status, mismatch) in enumerate(keys_with_status):
-			for col in range(12):
+			for col in range(13):
 				if self.ui.tableWidget.item(index, col) is None:
 					self.ui.tableWidget.setItem(index, col, QTableWidgetItem())
 			mismatch_keyfile_icon = self.style().standardIcon(QStyle.SP_MessageBoxWarning)
@@ -1066,10 +1067,13 @@ class MainWindow(QMainWindow):
 			edit_date = self.folder_content.get_last_edit_date(key)
 			edit_date_str = edit_date.strftime("%Y-%m-%d") if edit_date else ""
 			self.ui.tableWidget.item(index, 11).setText(edit_date_str)
+			sensor_length = self.folder_content.read_sensor_length_for_key(key)
+			sensor_length_str = str(sensor_length) if sensor_length is not None else ""
+			self.ui.tableWidget.item(index, 12).setText(sensor_length_str)
+
 		self.ui.tableWidget.setSortingEnabled(True)
-		# end_time = time.time()
-		# print(f"Time taken to populate table: {end_time - start_time:.2f} seconds")
-	
+
+
 	def get_folder_hashes(self, folder_path):
 		r"""
 		Get hash values of all files in the folder.
@@ -1287,7 +1291,7 @@ class MainWindow(QMainWindow):
 					except Exception as e:
 						print(f"An error occurred during comparison: {e}")
 						mismatch = True
-			for col in range(12):
+			for col in range(13):
 				if self.ui.tableWidget.item(row_index, col) is None:
 					self.ui.tableWidget.setItem(row_index, col, QTableWidgetItem())
 			if status == 'Activated':
@@ -1346,6 +1350,9 @@ class MainWindow(QMainWindow):
 			edit_date = self.folder_content.get_last_edit_date(serial_number)
 			edit_date_str = edit_date.strftime("%Y-%m-%d") if edit_date else ""
 			self.ui.tableWidget.item(row_index, 11).setText(edit_date_str)
+			sensor_length = self.folder_content.read_sensor_length_for_key(serial_number)
+			sensor_length_str = str(sensor_length) if sensor_length is not None else ""
+			self.ui.tableWidget.item(row_index, 12).setText(sensor_length_str)
 
 
 def file_path(relative_path):

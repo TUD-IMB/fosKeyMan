@@ -224,3 +224,15 @@ class FolderContent:
 			return True
 		except (json.JSONDecodeError, IOError) as e:
 			return False
+
+	def read_sensor_length_for_key(self, key):
+		r"""
+		Read the "sensorLength (m)" value from the .od6ref file in the specified key's folder.
+		\param key (str): The name of the key to locate its corresponding folder.
+		\return (float or None): The value of "sensorLength (m)" if it exists, or None otherwise.
+		"""
+		od6ref_data = self.read_od6ref_file(key)
+		if od6ref_data:
+			return od6ref_data.get("sensorDataProcParams", {}).get("sensorLength (m)", None)
+		else:
+			return None
