@@ -181,6 +181,7 @@ class MainWindow(QMainWindow):
 		self.ui.actionExit.triggered.connect(self.exit_application)
 		self.ui.actionDocumentation.triggered.connect(self.open_documentation)
 		self.ui.actionUSBLoad.triggered.connect(self.keyfile_transfer)
+		self.ui.actionExportKeyfiles.triggered.connect(self.keyfile_export)
 		self.ui.actionAbout.triggered.connect(self.show_about_dialog)
 	
 	def show_about_dialog(self):
@@ -259,6 +260,55 @@ class MainWindow(QMainWindow):
 			except Exception as e:
 				QMessageBox.critical(self, "Error", f"An error occurred: {e}")
 		self.setup_table()
+
+	def keyfile_export(self):
+		r"""
+		Export selected keyfiles from activated or deactivated directories to an external directory.
+		Handle conflicts by allowing overwriting or skipping.
+		"""
+		checked_serial_numbers = self.get_checked_serial_numbers()
+		if not checked_serial_numbers:
+			QMessageBox.warning(self, self.tr("Error"), self.tr("No keyfile selected for export."))
+			return
+
+		export_path = QFileDialog.getExistingDirectory(self, self.tr("Select Export Directory"))
+		if not export_path:
+			return
+
+		for serial_number in checked_serial_numbers:
+			source_folder = None
+
+			if self.check_activation_status(serial_number) == ActivationStatus.ACTIVATED:
+				source_folder = os.path.join(self.directory1, serial_number)
+			elif self.check_activation_status(serial_number) == ActivationStatus.DEACTIVATED:
+				source_folder = os.path.join(self.directory2, serial_number)
+
+			if source_folder and os.path.exists(source_folder):
+				destination_folder = os.path.join(export_path, serial_number)
+
+				if os.path.exists(destination_folder):
+					user_choice = QMessageBox.question(
+						self,
+						self.tr("Conflict Detected"),
+						self.tr(f"The folder '{serial_number}' already exists in the destination. Overwrite?"),
+						QMessageBox.Yes | QMessageBox.No
+					)
+					if user_choice == QMessageBox.Yes:
+						shutil.rmtree(destination_folder)
+					else:
+						continue
+
+				try:
+					shutil.copytree(source_folder, destination_folder, dirs_exist_ok=True)
+					logging.info(f"Keyfile {serial_number} exported to {destination_folder}.")
+				except Exception as e:
+					QMessageBox.warning(self, self.tr("Error"),
+										self.tr(f"Failed to export keyfile {serial_number}: {e}"))
+			else:
+				QMessageBox.warning(self, self.tr("Error"),
+									self.tr(f"Source folder for keyfile {serial_number} does not exist."))
+
+		QMessageBox.information(self, self.tr("Success"), self.tr("Selected keyfiles exported successfully."))
 	
 	def merge_database(self):
 		r"""

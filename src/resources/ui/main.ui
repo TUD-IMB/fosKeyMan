@@ -402,6 +402,8 @@
      <string>Sensors </string>
     </property>
     <addaction name="actionUSBLoad"/>
+    <addaction name="actionExportKeyfiles"/>
+    <addaction name="separator"/>
     <addaction name="actionQuickImport"/>
     <addaction name="actionRenameSensor"/>
     <addaction name="actionUpdateDBKeyfile"/>
@@ -753,6 +755,11 @@
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionExportKeyfiles">
+   <property name="text">
+    <string>Export Keyfiles</string>
    </property>
   </action>
  </widget>
