@@ -403,6 +403,7 @@
     </property>
     <addaction name="actionUSBLoad"/>
     <addaction name="actionExportKeyfiles"/>
+    <addaction name="actionSaveAsJson"/>
     <addaction name="separator"/>
     <addaction name="actionQuickImport"/>
     <addaction name="actionRenameSensor"/>
@@ -760,6 +761,11 @@
   <action name="actionExportKeyfiles">
    <property name="text">
     <string>Export Keyfiles</string>
+   </property>
+  </action>
+  <action name="actionSaveAsJson">
+   <property name="text">
+    <string>Save as json</string>
    </property>
   </action>
  </widget>
