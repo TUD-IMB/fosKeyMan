@@ -70,7 +70,7 @@ class TableOperator:
 		\param operator_line_edit (QLineEdit): Input field for filtering by operator.
 		\param specimen_line_edit (QLineEdit): Input field for filtering by specimen.
 		\param dfos_type_line_edit (QLineEdit): Input field for filtering by DFOS type.
-		\param state_combobox (QComboBox): Dropdown for filtering by status ('Activated', 'Deactivated', 'Unknown').
+		\param state_combobox (QComboBox): Dropdown for filtering by status ('Activated', 'Deactivated').
 		"""
 
 		serial_number = serial_number_line_edit.text()
@@ -108,8 +108,6 @@ class TableOperator:
 				if state == 'Activated' and state_item.data(Qt.ItemDataRole.UserRole + 1) != ActivationStatus.ACTIVATED:
 					match = False
 				elif state == 'Deactivated' and state_item.data(Qt.ItemDataRole.UserRole + 1) != ActivationStatus.DEACTIVATED:
-					match = False
-				elif state == 'Unknown' and state_item.data(Qt.ItemDataRole.UserRole + 1) != ActivationStatus.UNKNOWN:
 					match = False
 
 			# hide rows that do not match the filter criteria

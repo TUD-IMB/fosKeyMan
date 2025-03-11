@@ -97,17 +97,13 @@ class HoverInfo(QDialog):
 		else:
 			cell_value = item.text()
 
-		activation_item = self.table_widget.item(row, 1)
-		if activation_item:
-			activation_status = activation_item.data(Qt.ItemDataRole.UserRole + 1)
-			if activation_status == ActivationStatus.ACTIVATED:
-				activate_status = self.tr("Keyfile is Activated")
-			elif activation_status == ActivationStatus.DEACTIVATED:
-				activate_status = self.tr("Keyfile is Deactivated")
-			else:
-				activate_status = self.tr("Unknown")
+		activation_status = self.table_widget.item(row, 1).data(Qt.ItemDataRole.UserRole + 1)
+		if activation_status == ActivationStatus.ACTIVATED:
+			activate_status = self.tr("Keyfile is Activated")
+		elif activation_status == ActivationStatus.DEACTIVATED:
+			activate_status = self.tr("Keyfile is Deactivated")
 		else:
-			activate_status = self.tr("Unknown")
+			activate_status = self.tr("")
 
 		self.cell_label.setText(f"{column_name}: {cell_value}")
 		self.activate_label.setText(

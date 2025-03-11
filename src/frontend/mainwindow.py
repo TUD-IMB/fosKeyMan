@@ -111,7 +111,7 @@ class MainWindow(QMainWindow):
 		self.ui.actionInformation.triggered.connect(self.open_info_widget)
 		self.ui.filterDockWidget.visibilityChanged.connect(self.ui.actionFilter.setChecked)
 		self.ui.infoDockWidget.visibilityChanged.connect(self.ui.actionInformation.setChecked)
-		self.ui.stateComboBox.addItems([self.tr("All"),self.tr("Activated"),self.tr("Deactivated")])
+		self.ui.stateComboBox.addItems([self.tr("All"), self.tr("Activated"), self.tr("Deactivated")])
 		self.ui.stateComboBox.setCurrentText("All")
 		self.ui.filterButton.clicked.connect(
 			lambda: self.table_operator.filter_table(
@@ -136,19 +136,16 @@ class MainWindow(QMainWindow):
 		)
 		self.ui.actionSearch.triggered.connect(self.open_search_widget)
 		self.ui.searchDockWidget.visibilityChanged.connect(self.ui.actionSearch.setChecked)
-
 		self.ui.actionRefresh.triggered.connect(self.setup_table)
 		self.ui.actionNew.triggered.connect(self.table_operator.add_new_row)
 		self.ui.actionDelete.triggered.connect(self.table_operator.delete_row)
-		self.ui.actionSaveChange.triggered.connect(self.save_as_json)
-		# actions for keyfile operations (import, attach, replace, copy)
 		self.ui.actionRenameSensor.triggered.connect(self.rename_sensor_name)
 		self.ui.actionExit.triggered.connect(self.exit_application)
 		self.ui.actionDocumentation.triggered.connect(self.open_documentation)
 		self.ui.actionUSBLoad.triggered.connect(self.keyfile_transfer)
 		self.ui.actionExportKeyfiles.triggered.connect(self.keyfile_export)
 		self.ui.actionAbout.triggered.connect(self.show_about_dialog)
-
+		self.ui.actionSaveChange.triggered.connect(self.save_as_json)
 		self.ui.actionSaveAsJson.triggered.connect(self.save_as_json)
 
 	def save_as_json(self):
@@ -162,7 +159,7 @@ class MainWindow(QMainWindow):
 		# 	return
 
 		table = self.ui.tableWidget
-		read_only_columns = [0, 1, 2, 3, 10, 11, 12]
+		read_only_columns = [0, 1, 2, 3, 10, 11]
 
 		column_translation = {
 			"Projekt": "Project",
@@ -513,7 +510,6 @@ class MainWindow(QMainWindow):
 			self.tr('DFOS_Type'),
 			self.tr('Installation'),
 			self.tr('Note'),
-			# self.tr('Keyfile'),
 			self.tr('Last Edit Date'),
 			self.tr('Sensor Length (m)')
 		])
@@ -544,8 +540,8 @@ class MainWindow(QMainWindow):
 			return
 		self.ui.tableWidget.setRowCount(0)
 		self.populate_table()
-		self.set_columns_read_only([1, 2, 3, 10, 11, 12])
-		self.set_columns_background_color([2, 3, 10, 11, 12])
+		self.set_columns_read_only([1, 2, 3, 10, 11])
+		self.set_columns_background_color([2, 3, 10, 11])
 		self.populate_search_combobox()
 	
 	def set_columns_read_only(self, columns):
@@ -596,7 +592,7 @@ class MainWindow(QMainWindow):
 				activation_status = ActivationStatus.DEACTIVATED
 				self.ui.tableWidget.setCellWidget(index, 1, self.create_status_button('Deactivated'))
 			else:
-				activation_status = ActivationStatus.UNKNOWN
+				continue
 
 			activation_item = self.ui.tableWidget.item(index, 1)
 			activation_item.setData(Qt.ItemDataRole.DisplayRole, activation_status.value)
@@ -634,15 +630,14 @@ class MainWindow(QMainWindow):
 	def create_status_button(self, status):
 		r"""
 		Creates a colored QPushButton based on its activation status.
-		The button will be colored differently depending on whether the status is 'Activated',
-		'Deactivated', or 'Unknown'. The button is not clickable and will display the status text.
-		\param status (str): The activation status ('Activated', 'Deactivated', 'Unknown').
+		The button will be colored differently depending on whether the status is 'Activated' or
+		'Deactivated'. The button is not clickable and will display the status text.
+		\param status (str): The activation status ('Activated', 'Deactivated').
 		\return (QWidget): A QWidget containing the styled QPushButton for status display.
 		"""
 		status_translation_map = {
 			'Activated': self.tr("Activated"),
 			'Deactivated': self.tr("Deactivated"),
-			'Unknown': self.tr("Unknown")
 		}
 		translated_status = status_translation_map[status]
 		button = QPushButton(translated_status)
@@ -660,14 +655,6 @@ class MainWindow(QMainWindow):
 		elif status == 'Deactivated':
 			button.setStyleSheet("""
 				background-color: #D3D3D3;
-				color: black;
-				border-radius: 10px;
-				font-weight: bold;
-			""")
-		# yellow
-		else:
-			button.setStyleSheet("""
-				background-color: #FFD700;
 				color: black;
 				border-radius: 10px;
 				font-weight: bold;
@@ -803,7 +790,7 @@ class MainWindow(QMainWindow):
 				activation_status = ActivationStatus.DEACTIVATED
 				self.ui.tableWidget.setCellWidget(row_index, 1, self.create_status_button('Deactivated'))
 			else:
-				activation_status = ActivationStatus.UNKNOWN
+				continue
 
 			activation_item = self.ui.tableWidget.item(row_index, 1)
 			activation_item.setData(Qt.ItemDataRole.UserRole + 1, activation_status)
