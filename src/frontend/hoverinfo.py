@@ -21,7 +21,7 @@ class HoverInfo(QDialog):
 
 		super(HoverInfo, self).__init__(parent)
 
-		self.setWindowFlags(Qt.ToolTip)
+		self.setWindowFlags(Qt.WindowType.ToolTip)
 		layout = QVBoxLayout()
 
 		self.cell_label = QLabel(self.tr("Cell: "))
@@ -52,7 +52,7 @@ class HoverInfo(QDialog):
 		\param event (QEvent): The event being processed (mouse movement).
 		\return (bool): Returns True if the event is handled, otherwise False to pass the event to the base class.
 		"""
-		if event.type() == QEvent.MouseMove:
+		if event.type() == QEvent.Type.MouseMove:
 			if source == self.table_widget.viewport():
 				pos = event.pos()
 				item = self.table_widget.itemAt(pos)
@@ -72,7 +72,7 @@ class HoverInfo(QDialog):
 							self.hide()
 						self.timer.stop()
 
-		elif event.type() == QEvent.Leave:
+		elif event.type() == QEvent.Type.Leave:
 			if self.isVisible():
 				self.hide()
 			self.timer.stop()
@@ -93,13 +93,13 @@ class HoverInfo(QDialog):
 
 		column_name = self.table_widget.horizontalHeaderItem(col).text()
 		if col == 10:
-			cell_value = item.data(Qt.UserRole + 2)
+			cell_value = item.data(Qt.ItemDataRole.UserRole + 2)
 		else:
 			cell_value = item.text()
 
 		activation_item = self.table_widget.item(row, 1)
 		if activation_item:
-			activation_status = activation_item.data(Qt.UserRole + 1)
+			activation_status = activation_item.data(Qt.ItemDataRole.UserRole + 1)
 			if activation_status == ActivationStatus.ACTIVATED:
 				activate_status = self.tr("Keyfile is Activated")
 			elif activation_status == ActivationStatus.DEACTIVATED:
@@ -114,6 +114,6 @@ class HoverInfo(QDialog):
 			self.tr("Activation Status: {activate_status}").format(activate_status=activate_status))
 
 		table_pos = self.table_widget.mapToGlobal(pos)
-		self.move(table_pos + QPoint(20, 80))
+		self.move(table_pos + QPoint(20, 50))
 		self.show()
 

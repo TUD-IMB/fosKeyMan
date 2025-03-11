@@ -31,7 +31,7 @@ class RenameSensor(QDialog):
 
 		self.new_name = None
 
-		self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+		self.setWindowFlags(self.windowFlags() & ~Qt.WindowType.WindowContextHelpButtonHint)
 
 	def rename(self):
 		r"""Get the new name from the QLineEdit and accept the dialog."""

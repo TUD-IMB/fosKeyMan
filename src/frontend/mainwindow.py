@@ -15,7 +15,7 @@ import webbrowser
 
 from PySide6.QtGui import QIcon, QColor, QBrush
 from PySide6.QtSvgWidgets import QSvgWidget
-from PySide6.QtWidgets import QApplication, QMainWindow, QStyle, QMessageBox, QTableWidgetItem, QHeaderView, QDialog, \
+from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidgetItem, QHeaderView, QDialog, \
 	QFileDialog, QPushButton, QWidget, QHBoxLayout, QLabel, QVBoxLayout
 from PySide6.QtCore import QTranslator, Qt, QCoreApplication, QSize
 
@@ -178,7 +178,7 @@ class MainWindow(QMainWindow):
 		for row in range(table.rowCount()):
 			key_item = table.item(row, 10)
 			if key_item:
-				serial_number = key_item.data(Qt.UserRole + 2)
+				serial_number = key_item.data(Qt.ItemDataRole.UserRole + 2)
 
 				# if serial_number in checked_serial_numbers:
 				if self.check_activation_status(serial_number) == ActivationStatus.ACTIVATED:
@@ -248,23 +248,23 @@ class MainWindow(QMainWindow):
 		release_date = info.get("release_date", default_info["release_date"])
 		dialog = QDialog(self)
 		dialog.setWindowTitle("About")
-		dialog.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+		dialog.setWindowFlags(self.windowFlags() & ~Qt.WindowType.WindowContextHelpButtonHint)
 		layout = QVBoxLayout(dialog)
 		svg_logo = QSvgWidget(resource_path('resources/foskeyman_logo_long.svg'))
-		layout.addWidget(svg_logo, alignment=Qt.AlignCenter)
+		layout.addWidget(svg_logo, alignment=Qt.AlignmentFlag.AlignCenter)
 		info_label = QLabel(f"Version: {version}\nRelease Date: {release_date}")
-		info_label.setAlignment(Qt.AlignCenter)
+		info_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 		layout.addWidget(info_label)
 		author_label = QLabel(f"Authors:\nBertram Richter\nXiaoli Song")
-		author_label.setAlignment(Qt.AlignCenter)
+		author_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 		layout.addWidget(author_label)
 		copyright_label = QLabel(f"Copyright:\nInstitut für Massivbau\nTechnische Universität Dresden")
-		copyright_label.setAlignment(Qt.AlignCenter)
+		copyright_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 		layout.addWidget(copyright_label)
 		license_label = QLabel(
 			"License:\nThis software is licensed under the GNU General Public License (GPL) Version 3, 29  June  2007."
 			)
-		license_label.setAlignment(Qt.AlignCenter)
+		license_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 		license_label.setWordWrap(True)
 		layout.addWidget(license_label)
 		dialog.setLayout(layout)
@@ -295,11 +295,11 @@ class MainWindow(QMainWindow):
 								self,
 								"Conflict Detected",
 								f"The folder '{item_name}' already exists. Overwrite?",
-								QMessageBox.Yes | QMessageBox.No
+								QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
 								)
-							if user_choice == QMessageBox.Yes:
+							if user_choice == QMessageBox.StandardButton.Yes:
 								shutil.rmtree(conflict_path)
-							elif user_choice == QMessageBox.No:
+							elif user_choice == QMessageBox.StandardButton.No:
 								continue
 						shutil.copytree(source_path, final_target_path, dirs_exist_ok=True)
 				QMessageBox.information(self, "Success",
@@ -338,9 +338,9 @@ class MainWindow(QMainWindow):
 						self,
 						self.tr("Conflict Detected"),
 						self.tr(f"The folder '{serial_number}' already exists in the destination. Overwrite?"),
-						QMessageBox.Yes | QMessageBox.No
+						QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
 					)
-					if user_choice == QMessageBox.Yes:
+					if user_choice == QMessageBox.StandardButton.Yes:
 						shutil.rmtree(destination_folder)
 					else:
 						continue
@@ -370,7 +370,7 @@ class MainWindow(QMainWindow):
 		open_ui.acBrowseButton.clicked.connect(lambda: self.config_manager.select_directory1(dialog, open_ui))
 		open_ui.deacBrowseButton.clicked.connect(lambda: self.config_manager.select_directory2(dialog, open_ui))
 
-		dialog.setWindowFlags(dialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+		dialog.setWindowFlags(dialog.windowFlags() & ~Qt.WindowType.WindowContextHelpButtonHint)
 		dialog.setWindowTitle(self.tr("Directory Settings"))
 		# Pre-fill the input fields if the directories have already been selected previously
 		if self.directory1 and self.directory2:
@@ -414,7 +414,7 @@ class MainWindow(QMainWindow):
 		sensor_name = self.ui.tableWidget.item(row, 3).text()
 		if sensor_name:
 			dialog = RenameSensor(serial_number, sensor_name, parent=self)
-			if dialog.exec_() == QDialog.Accepted:
+			if dialog.exec_() == QDialog.DialogCode.Accepted:
 				new_name = dialog.get_new_sensor_name()
 				self.folder_content.edit_sensor_name_for_key(serial_number, new_name)
 				logging.info(f"Sensor name updated for Serial Number {serial_number}: {sensor_name} -> {new_name}")
@@ -429,9 +429,9 @@ class MainWindow(QMainWindow):
 		"""
 		for row in range(self.ui.tableWidget.rowCount()):
 			key_item = self.ui.tableWidget.item(row, 10)
-			if key_item and key_item.data(Qt.UserRole + 2) == serial_number:
+			if key_item and key_item.data(Qt.ItemDataRole.UserRole + 2) == serial_number:
 				activation_item = self.ui.tableWidget.item(row, 1)
-				activation_status = activation_item.data(Qt.UserRole + 1)
+				activation_status = activation_item.data(Qt.ItemDataRole.UserRole + 1)
 				return activation_status
 		return None
 	
@@ -440,9 +440,9 @@ class MainWindow(QMainWindow):
 		serial_numbers = []
 		for row in range(self.ui.tableWidget.rowCount()):
 			checkbox_item = self.ui.tableWidget.item(row, 0)
-			if checkbox_item and checkbox_item.checkState() == Qt.Checked:
+			if checkbox_item and checkbox_item.checkState() == Qt.CheckState.Checked:
 				key_item = self.ui.tableWidget.item(row, 10)
-				keyfile = key_item.data(Qt.UserRole + 2)
+				keyfile = key_item.data(Qt.ItemDataRole.UserRole + 2)
 				serial_numbers.append(keyfile)
 		return serial_numbers
 	
@@ -450,8 +450,8 @@ class MainWindow(QMainWindow):
 		r"""Reset all checkboxes in the table to an unchecked state."""
 		for row in range(self.ui.tableWidget.rowCount()):
 			checkbox_item = self.ui.tableWidget.item(row, 0)
-			if checkbox_item and checkbox_item.flags() & Qt.ItemIsUserCheckable:
-				checkbox_item.setCheckState(Qt.Unchecked)
+			if checkbox_item and checkbox_item.flags() & Qt.ItemFlag.ItemIsUserCheckable:
+				checkbox_item.setCheckState(Qt.CheckState.Unchecked)
 	
 	def open_filter_widget(self):
 		r"""Control visibility of filter widget"""
@@ -474,9 +474,9 @@ class MainWindow(QMainWindow):
 		if column == 0 or column == 1:
 			return
 		key_item = self.ui.tableWidget.item(row, 10)
-		if key_item is None or key_item.data(Qt.UserRole + 2) is None:
+		if key_item is None or key_item.data(Qt.ItemDataRole.UserRole + 2) is None:
 			return
-		key = key_item.data(Qt.UserRole + 2)
+		key = key_item.data(Qt.ItemDataRole.UserRole + 2)
 		user_properties = self.folder_content.read_user_properties(key)
 		gage_segment = self.folder_content.read_gage_segment(key)
 		od6ref_file = self.folder_content.read_od6ref_file(key)
@@ -545,7 +545,7 @@ class MainWindow(QMainWindow):
 		header = self.ui.tableWidget.horizontalHeader()
 		header.setSectionsMovable(True)
 		header.setDragEnabled(True)
-		header.setDragDropMode(QHeaderView.DragDrop)
+		header.setDragDropMode(QHeaderView.DragDropMode.DragDrop)
 		header.moveSection(header.visualIndex(2), 9)
 		if self.key_handler is None:
 			return
@@ -566,7 +566,7 @@ class MainWindow(QMainWindow):
 			for column in columns:
 				item = self.ui.tableWidget.item(row, column)
 				if item:
-					item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+					item.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
 	
 	def set_columns_background_color(self, columns):
 		r"""
@@ -602,19 +602,21 @@ class MainWindow(QMainWindow):
 			elif status == 'Deactivated':
 				activation_status = ActivationStatus.DEACTIVATED
 				self.ui.tableWidget.setCellWidget(index, 1, self.create_status_button('Deactivated'))
+			else:
+				activation_status = ActivationStatus.UNKNOWN
 
 			activation_item = self.ui.tableWidget.item(index, 1)
-			activation_item.setData(Qt.DisplayRole, activation_status.value)
-			activation_item.setForeground(Qt.transparent)
-			activation_item.setData(Qt.UserRole + 1, activation_status)
+			activation_item.setData(Qt.ItemDataRole.DisplayRole, activation_status.value)
+			activation_item.setForeground(Qt.GlobalColor.transparent)
+			activation_item.setData(Qt.ItemDataRole.UserRole + 1, activation_status)
 			check_item = self.ui.tableWidget.item(index, 0)
-			check_item.setCheckState(Qt.Unchecked)
+			check_item.setCheckState(Qt.CheckState.Unchecked)
 
 			metadata = self.folder_content.read_metadata(key)
 
 			# keyfile - readonly
 			self.ui.tableWidget.item(index, 10).setText(key)
-			self.ui.tableWidget.item(index, 10).setData(Qt.UserRole + 2, key)
+			self.ui.tableWidget.item(index, 10).setData(Qt.ItemDataRole.UserRole + 2, key)
 			# serial number - readonly
 			self.ui.tableWidget.item(index, 2).setText(key)
 			# last edit date - read only
@@ -683,7 +685,7 @@ class MainWindow(QMainWindow):
 		container = QWidget()
 		layout = QHBoxLayout()
 		layout.addWidget(button)
-		layout.setAlignment(Qt.AlignCenter)
+		layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 		layout.setContentsMargins(0, 0, 0, 0)
 		container.setLayout(layout)
 		return container
@@ -697,13 +699,13 @@ class MainWindow(QMainWindow):
 		for i in range(self.ui.tableWidget.rowCount()):
 			check_item = self.ui.tableWidget.item(i, 0)
 			activation_item = self.ui.tableWidget.item(i, 1)
-			key_file = self.ui.tableWidget.item(i, 10).data(Qt.UserRole + 2)
-			if check_item.checkState() == Qt.Checked:
+			key_file = self.ui.tableWidget.item(i, 10).data(Qt.ItemDataRole.UserRole + 2)
+			if check_item.checkState() == Qt.CheckState.Checked:
 				success = self.key_handler.activate_key(key_file)
 				if success:
-					activation_item.setData(Qt.UserRole + 1, ActivationStatus.ACTIVATED)
+					activation_item.setData(Qt.ItemDataRole.UserRole + 1, ActivationStatus.ACTIVATED)
 					self.ui.tableWidget.setCellWidget(i, 1, self.create_status_button('Activated'))
-				check_item.setCheckState(Qt.Unchecked)
+				check_item.setCheckState(Qt.CheckState.Unchecked)
 	
 	def toggle_deactivation(self):
 		r"""
@@ -714,13 +716,13 @@ class MainWindow(QMainWindow):
 		for i in range(self.ui.tableWidget.rowCount()):
 			check_item = self.ui.tableWidget.item(i, 0)
 			activation_item = self.ui.tableWidget.item(i, 1)
-			key_file = self.ui.tableWidget.item(i, 10).data(Qt.UserRole + 2)
-			if check_item.checkState() == Qt.Checked:
+			key_file = self.ui.tableWidget.item(i, 10).data(Qt.ItemDataRole.UserRole + 2)
+			if check_item.checkState() == Qt.CheckState.Checked:
 				success = self.key_handler.deactivate_key(key_file)
 				if success:
-					activation_item.setData(Qt.UserRole + 1, ActivationStatus.DEACTIVATED)
+					activation_item.setData(Qt.ItemDataRole.UserRole + 1, ActivationStatus.DEACTIVATED)
 					self.ui.tableWidget.setCellWidget(i, 1, self.create_status_button('Deactivated'))
-				check_item.setCheckState(Qt.Unchecked)
+				check_item.setCheckState(Qt.CheckState.Unchecked)
 	
 	def switch_language(self, language):
 		r"""
@@ -759,7 +761,7 @@ class MainWindow(QMainWindow):
 		for row in range(self.ui.tableWidget.rowCount()):
 			item = self.ui.tableWidget.item(row, 10)
 			if item:
-				keyfile = item.data(Qt.UserRole + 2)
+				keyfile = item.data(Qt.ItemDataRole.UserRole + 2)
 				if keyfile:
 					keyfiles.add(keyfile)
 		for key in sorted(keyfiles):
@@ -799,7 +801,7 @@ class MainWindow(QMainWindow):
 
 			for row in range(self.ui.tableWidget.rowCount()):
 				key_item = self.ui.tableWidget.item(row, 10)
-				if key_item and key_item.data(Qt.UserRole + 2) == serial_number:
+				if key_item and key_item.data(Qt.ItemDataRole.UserRole + 2) == serial_number:
 					row_index = row
 					break
 
@@ -812,18 +814,20 @@ class MainWindow(QMainWindow):
 			elif serial_number in self.key_handler.read_keys('deactivated'):
 				activation_status = ActivationStatus.DEACTIVATED
 				self.ui.tableWidget.setCellWidget(row_index, 1, self.create_status_button('Deactivated'))
+			else:
+				activation_status = ActivationStatus.UNKNOWN
 
 			activation_item = self.ui.tableWidget.item(row_index, 1)
-			activation_item.setData(Qt.UserRole + 1, activation_status)
+			activation_item.setData(Qt.ItemDataRole.UserRole + 1, activation_status)
 
 			check_item = self.ui.tableWidget.item(row_index, 0)
-			check_item.setCheckState(Qt.Unchecked)
+			check_item.setCheckState(Qt.CheckState.Unchecked)
 
 			metadata = self.folder_content.read_metadata(serial_number)
 
 			key_item = self.ui.tableWidget.item(row_index, 10)
 			key_item.setText(serial_number)
-			key_item.setData(Qt.UserRole + 2, serial_number)
+			key_item.setData(Qt.ItemDataRole.UserRole + 2, serial_number)
 
 			self.ui.tableWidget.item(row_index, 2).setText(serial_number)
 

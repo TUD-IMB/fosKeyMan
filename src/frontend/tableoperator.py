@@ -43,14 +43,14 @@ class TableOperator:
 		all_checked = True
 
 		for row in range(self.table_widget.rowCount()):
-			if not self.table_widget.isRowHidden(row):  # Only for visible rows (filter)
+			if not self.table_widget.isRowHidden(row):
 				checkbox = self.table_widget.item(row, 0)
 				if checkbox is not None:
-					if checkbox.checkState() != Qt.Checked:
+					if checkbox.checkState() != Qt.CheckState.Checked:
 						all_checked = False
 						break
 
-		new_state = Qt.Unchecked if all_checked else Qt.Checked
+		new_state = Qt.CheckState.Unchecked if all_checked else Qt.CheckState.Checked
 
 		for row in range(self.table_widget.rowCount()):
 			if not self.table_widget.isRowHidden(row):
@@ -107,14 +107,14 @@ class TableOperator:
 				match = False
 			if dfos_type and dfos_type not in dfos_type_item.text():
 				match = False
-			if keyfile and keyfile not in keyfile_item.data(Qt.UserRole + 2):
+			if keyfile and keyfile not in keyfile_item.data(Qt.ItemDataRole.UserRole + 2):
 				match = False
 			if state and state != "All":
-				if state == 'Activated' and state_item.data(Qt.UserRole + 1) != ActivationStatus.ACTIVATED:
+				if state == 'Activated' and state_item.data(Qt.ItemDataRole.UserRole + 1) != ActivationStatus.ACTIVATED:
 					match = False
-				elif state == 'Deactivated' and state_item.data(Qt.UserRole + 1) != ActivationStatus.DEACTIVATED:
+				elif state == 'Deactivated' and state_item.data(Qt.ItemDataRole.UserRole + 1) != ActivationStatus.DEACTIVATED:
 					match = False
-				elif state == 'Unknown' and state_item.data(Qt.UserRole + 1) != ActivationStatus.UNKNOWN:
+				elif state == 'Unknown' and state_item.data(Qt.ItemDataRole.UserRole + 1) != ActivationStatus.UNKNOWN:
 					match = False
 
 			# hide rows that do not match the filter criteria
