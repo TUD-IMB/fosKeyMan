@@ -59,7 +59,7 @@ class TableOperator:
 					checkbox.setCheckState(new_state)
 
 	def filter_table(self, serial_number_line_edit, name_line_edit, project_line_edit, operator_line_edit,
-					 specimen_line_edit, dfos_type_line_edit, keyfile_line_edit, state_combobox):
+					 specimen_line_edit, dfos_type_line_edit, state_combobox):
 		r"""
 		Filter the table rows based on user input from various filter fields (serial number, name, project, etc.).
 		Rows that do not match the criteria will be hidden.
@@ -70,7 +70,6 @@ class TableOperator:
 		\param operator_line_edit (QLineEdit): Input field for filtering by operator.
 		\param specimen_line_edit (QLineEdit): Input field for filtering by specimen.
 		\param dfos_type_line_edit (QLineEdit): Input field for filtering by DFOS type.
-		\param keyfile_line_edit (QLineEdit): Input field for filtering by keyfile.
 		\param state_combobox (QComboBox): Dropdown for filtering by status ('Activated', 'Deactivated', 'Unknown').
 		"""
 
@@ -80,7 +79,6 @@ class TableOperator:
 		operator = operator_line_edit.text()
 		specimen = specimen_line_edit.text()
 		dfos_type = dfos_type_line_edit.text()
-		keyfile = keyfile_line_edit.text()
 		state = state_combobox.currentText()
 
 		for row in range(self.table_widget.rowCount()):
@@ -92,7 +90,6 @@ class TableOperator:
 			operator_item = self.table_widget.item(row, 5)
 			specimen_item = self.table_widget.item(row, 6)
 			dfos_type_item = self.table_widget.item(row, 7)
-			keyfile_item = self.table_widget.item(row, 10)
 			state_item = self.table_widget.item(row, 1)
 
 			if serial_number and serial_number not in serial_item.text():
@@ -107,8 +104,6 @@ class TableOperator:
 				match = False
 			if dfos_type and dfos_type not in dfos_type_item.text():
 				match = False
-			if keyfile and keyfile not in keyfile_item.data(Qt.ItemDataRole.UserRole + 2):
-				match = False
 			if state and state != "All":
 				if state == 'Activated' and state_item.data(Qt.ItemDataRole.UserRole + 1) != ActivationStatus.ACTIVATED:
 					match = False
@@ -121,17 +116,16 @@ class TableOperator:
 			self.table_widget.setRowHidden(row, not match)
 
 	def reset_filter(self, serial_number_line_edit, name_line_edit, project_line_edit, operator_line_edit,
-					 specimen_line_edit, dfos_type_line_edit, keyfile_line_edit):
+					 specimen_line_edit, dfos_type_line_edit):
 		r"""
 		Reset the filters by clearing all input fields and showing all rows in the table.
 
 		\param serial_number_line_edit (QLineEdit): Input field for filtering by serial number.
-		\param name_line_edit (QLineEdit): Input field for filtering by name.
+		\param name_line_edit (QLineEdit): Input field for filtering by name.git
 		\param project_line_edit (QLineEdit): Input field for filtering by project.
 		\param operator_line_edit (QLineEdit): Input field for filtering by operator.
 		\param specimen_line_edit (QLineEdit): Input field for filtering by specimen.
 		\param dfos_type_line_edit (QLineEdit): Input field for filtering by DFOS type.
-		\param keyfile_line_edit (QLineEdit): Input field for filtering by keyfile.
 		"""
 
 		serial_number_line_edit.clear()
@@ -140,7 +134,6 @@ class TableOperator:
 		operator_line_edit.clear()
 		specimen_line_edit.clear()
 		dfos_type_line_edit.clear()
-		keyfile_line_edit.clear()
 
 		for row in range(self.table_widget.rowCount()):
 			self.table_widget.setRowHidden(row, False)

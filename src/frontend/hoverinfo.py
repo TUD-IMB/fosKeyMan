@@ -92,7 +92,7 @@ class HoverInfo(QDialog):
 		col = item.column()
 
 		column_name = self.table_widget.horizontalHeaderItem(col).text()
-		if col == 10:
+		if col == 2:
 			cell_value = item.data(Qt.ItemDataRole.UserRole + 2)
 		else:
 			cell_value = item.text()

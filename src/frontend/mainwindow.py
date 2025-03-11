@@ -121,7 +121,6 @@ class MainWindow(QMainWindow):
 				self.ui.operatorLineEdit,
 				self.ui.specimenLineEdit,
 				self.ui.dFOS_TypeLineEdit,
-				self.ui.keyfileLineEdit,
 				self.ui.stateComboBox
 			)
 		)
@@ -132,8 +131,7 @@ class MainWindow(QMainWindow):
 				self.ui.projectLineEdit,
 				self.ui.operatorLineEdit,
 				self.ui.specimenLineEdit,
-				self.ui.dFOS_TypeLineEdit,
-				self.ui.keyfileLineEdit
+				self.ui.dFOS_TypeLineEdit
 			)
 		)
 		self.ui.actionSearch.triggered.connect(self.open_search_widget)
@@ -176,60 +174,58 @@ class MainWindow(QMainWindow):
 		}
 
 		for row in range(table.rowCount()):
-			key_item = table.item(row, 10)
-			if key_item:
-				serial_number = key_item.data(Qt.ItemDataRole.UserRole + 2)
+			serial_number = table.item(row, 2).data(Qt.ItemDataRole.UserRole + 2)
 
-				# if serial_number in checked_serial_numbers:
-				if self.check_activation_status(serial_number) == ActivationStatus.ACTIVATED:
-					keyfile_path = os.path.join(self.directory1, serial_number)
-				elif self.check_activation_status(serial_number) == ActivationStatus.DEACTIVATED:
-					keyfile_path = os.path.join(self.directory2, serial_number)
-				else:
+			# if serial_number in checked_serial_numbers:
+			if self.check_activation_status(serial_number) == ActivationStatus.ACTIVATED:
+				keyfile_path = os.path.join(self.directory1, serial_number)
+			elif self.check_activation_status(serial_number) == ActivationStatus.DEACTIVATED:
+				keyfile_path = os.path.join(self.directory2, serial_number)
+			else:
+				continue
+
+			if not os.path.isdir(keyfile_path):
+				continue
+
+			meta_json_path = os.path.join(keyfile_path, "metadata.json")
+			meta_data = {}
+
+			if os.path.exists(meta_json_path):
+				with open(meta_json_path, "r", encoding="utf-8") as f:
+					try:
+						existing_data = json.load(f)
+					except json.JSONDecodeError:
+						existing_data = {}
+			else:
+				existing_data = {}
+
+			for col in range(table.columnCount()):
+				if col in read_only_columns:
 					continue
 
-				if not os.path.isdir(keyfile_path):
-					continue
+				item = table.item(row, col)
+				column_name = table.horizontalHeaderItem(col).text()
 
-				meta_json_path = os.path.join(keyfile_path, "metadata.json")
-				meta_data = {}
-
-				if os.path.exists(meta_json_path):
-					with open(meta_json_path, "r", encoding="utf-8") as f:
-						try:
-							existing_data = json.load(f)
-						except json.JSONDecodeError:
-							existing_data = {}
+				if self.language == "german":
+					english_column_name = column_translation.get(column_name, column_name)
 				else:
-					existing_data = {}
+					english_column_name = column_name
 
-				for col in range(table.columnCount()):
-					if col in read_only_columns:
-						continue
+				if item and item.text().strip():
+					meta_data[english_column_name] = item.text().strip()
+				elif english_column_name in existing_data:
+					del existing_data[english_column_name]
 
-					item = table.item(row, col)
-					column_name = table.horizontalHeaderItem(col).text()
+			existing_data.update(meta_data)
 
-					if self.language == "german":
-						english_column_name = column_translation.get(column_name, column_name)
-					else:
-						english_column_name = column_name
+			with open(meta_json_path, "w", encoding="utf-8") as f:
+				json.dump(existing_data, f, indent=4, ensure_ascii=False)
 
-					if item and item.text().strip():
-						meta_data[english_column_name] = item.text().strip()
-					elif english_column_name in existing_data:
-						del existing_data[english_column_name]
-
-				existing_data.update(meta_data)
-
-				with open(meta_json_path, "w", encoding="utf-8") as f:
-					json.dump(existing_data, f, indent=4, ensure_ascii=False)
-
-					# if existing_data:
-					# 	with open(meta_json_path, "w", encoding="utf-8") as f:
-					# 		json.dump(existing_data, f, indent=4, ensure_ascii=False)
-					# elif os.path.exists(meta_json_path):
-					# 	os.remove(meta_json_path)
+				# if existing_data:
+				# 	with open(meta_json_path, "w", encoding="utf-8") as f:
+				# 		json.dump(existing_data, f, indent=4, ensure_ascii=False)
+				# elif os.path.exists(meta_json_path):
+				# 	os.remove(meta_json_path)
 
 	def show_about_dialog(self):
 		r"""
@@ -428,8 +424,7 @@ class MainWindow(QMainWindow):
 		\return (ActivationStatus): The activation status of the given serial number, or None if not found.
 		"""
 		for row in range(self.ui.tableWidget.rowCount()):
-			key_item = self.ui.tableWidget.item(row, 10)
-			if key_item and key_item.data(Qt.ItemDataRole.UserRole + 2) == serial_number:
+			if self.ui.tableWidget.item(row, 2).data(Qt.ItemDataRole.UserRole + 2) == serial_number:
 				activation_item = self.ui.tableWidget.item(row, 1)
 				activation_status = activation_item.data(Qt.ItemDataRole.UserRole + 1)
 				return activation_status
@@ -441,9 +436,8 @@ class MainWindow(QMainWindow):
 		for row in range(self.ui.tableWidget.rowCount()):
 			checkbox_item = self.ui.tableWidget.item(row, 0)
 			if checkbox_item and checkbox_item.checkState() == Qt.CheckState.Checked:
-				key_item = self.ui.tableWidget.item(row, 10)
-				keyfile = key_item.data(Qt.ItemDataRole.UserRole + 2)
-				serial_numbers.append(keyfile)
+				serial_number = self.ui.tableWidget.item(row, 2).data(Qt.ItemDataRole.UserRole + 2)
+				serial_numbers.append(serial_number)
 		return serial_numbers
 	
 	def reset_all_checkboxes(self):
@@ -473,13 +467,12 @@ class MainWindow(QMainWindow):
 		"""
 		if column == 0 or column == 1:
 			return
-		key_item = self.ui.tableWidget.item(row, 10)
-		if key_item is None or key_item.data(Qt.ItemDataRole.UserRole + 2) is None:
+		if self.ui.tableWidget.item(row, 2).data(Qt.ItemDataRole.UserRole + 2) is None:
 			return
-		key = key_item.data(Qt.ItemDataRole.UserRole + 2)
-		user_properties = self.folder_content.read_user_properties(key)
-		gage_segment = self.folder_content.read_gage_segment(key)
-		od6ref_file = self.folder_content.read_od6ref_file(key)
+		serial_number = self.ui.tableWidget.item(row, 2).data(Qt.ItemDataRole.UserRole + 2)
+		user_properties = self.folder_content.read_user_properties(serial_number)
+		gage_segment = self.folder_content.read_gage_segment(serial_number)
+		od6ref_file = self.folder_content.read_od6ref_file(serial_number)
 		output = ""
 		if user_properties is not None:
 			output += "<h3>user_properties.json</h3>"
@@ -508,7 +501,7 @@ class MainWindow(QMainWindow):
 		Sets certain columns (Status, Serial Number, and Keyfile) as read-only to prevent unintended modification.
 		Populate table with data in metadata.json, and connect a cell click event to display additional information.
 		"""
-		self.ui.tableWidget.setColumnCount(13)
+		self.ui.tableWidget.setColumnCount(12)
 		self.ui.tableWidget.setHorizontalHeaderLabels([
 			' ',
 			self.tr('Status'),
@@ -520,7 +513,7 @@ class MainWindow(QMainWindow):
 			self.tr('DFOS_Type'),
 			self.tr('Installation'),
 			self.tr('Note'),
-			self.tr('Keyfile'),
+			# self.tr('Keyfile'),
 			self.tr('Last Edit Date'),
 			self.tr('Sensor Length (m)')
 		])
@@ -593,7 +586,7 @@ class MainWindow(QMainWindow):
 
 		self.ui.tableWidget.setRowCount(len(keys_with_status))
 		for index, (key, status) in enumerate(keys_with_status):
-			for col in range(13):
+			for col in range(12):
 				if self.ui.tableWidget.item(index, col) is None:
 					self.ui.tableWidget.setItem(index, col, QTableWidgetItem())
 			if status == 'Activated':
@@ -614,19 +607,17 @@ class MainWindow(QMainWindow):
 
 			metadata = self.folder_content.read_metadata(key)
 
-			# keyfile - readonly
-			self.ui.tableWidget.item(index, 10).setText(key)
-			self.ui.tableWidget.item(index, 10).setData(Qt.ItemDataRole.UserRole + 2, key)
 			# serial number - readonly
 			self.ui.tableWidget.item(index, 2).setText(key)
+			self.ui.tableWidget.item(index, 2).setData(Qt.ItemDataRole.UserRole + 2, key)
 			# last edit date - read only
 			edit_date = self.folder_content.get_last_edit_date(key)
 			edit_date_str = edit_date.strftime("%Y-%m-%d") if edit_date else ""
-			self.ui.tableWidget.item(index, 11).setText(edit_date_str)
+			self.ui.tableWidget.item(index, 10).setText(edit_date_str)
 			#  sensor length - read only
 			sensor_length = self.folder_content.read_sensor_length_for_key(key)
 			sensor_length_str = str(sensor_length) if sensor_length is not None else ""
-			self.ui.tableWidget.item(index, 12).setText(sensor_length_str)
+			self.ui.tableWidget.item(index, 11).setText(sensor_length_str)
 			# sensor name -read only
 			self.ui.tableWidget.item(index, 3).setText(self.folder_content.read_sensor_name_for_key(key))
 
@@ -699,9 +690,9 @@ class MainWindow(QMainWindow):
 		for i in range(self.ui.tableWidget.rowCount()):
 			check_item = self.ui.tableWidget.item(i, 0)
 			activation_item = self.ui.tableWidget.item(i, 1)
-			key_file = self.ui.tableWidget.item(i, 10).data(Qt.ItemDataRole.UserRole + 2)
+			serial_number = self.ui.tableWidget.item(i, 2).data(Qt.ItemDataRole.UserRole + 2)
 			if check_item.checkState() == Qt.CheckState.Checked:
-				success = self.key_handler.activate_key(key_file)
+				success = self.key_handler.activate_key(serial_number)
 				if success:
 					activation_item.setData(Qt.ItemDataRole.UserRole + 1, ActivationStatus.ACTIVATED)
 					self.ui.tableWidget.setCellWidget(i, 1, self.create_status_button('Activated'))
@@ -716,9 +707,9 @@ class MainWindow(QMainWindow):
 		for i in range(self.ui.tableWidget.rowCount()):
 			check_item = self.ui.tableWidget.item(i, 0)
 			activation_item = self.ui.tableWidget.item(i, 1)
-			key_file = self.ui.tableWidget.item(i, 10).data(Qt.ItemDataRole.UserRole + 2)
+			serial_number = self.ui.tableWidget.item(i, 2).data(Qt.ItemDataRole.UserRole + 2)
 			if check_item.checkState() == Qt.CheckState.Checked:
-				success = self.key_handler.deactivate_key(key_file)
+				success = self.key_handler.deactivate_key(serial_number)
 				if success:
 					activation_item.setData(Qt.ItemDataRole.UserRole + 1, ActivationStatus.DEACTIVATED)
 					self.ui.tableWidget.setCellWidget(i, 1, self.create_status_button('Deactivated'))
@@ -759,11 +750,9 @@ class MainWindow(QMainWindow):
 		self.ui.searchComboBox.addItem(self.tr("Search Selected"))
 		keyfiles = set()
 		for row in range(self.ui.tableWidget.rowCount()):
-			item = self.ui.tableWidget.item(row, 10)
-			if item:
-				keyfile = item.data(Qt.ItemDataRole.UserRole + 2)
-				if keyfile:
-					keyfiles.add(keyfile)
+			serial_number = self.ui.tableWidget.item(row, 2).data(Qt.ItemDataRole.UserRole + 2)
+			if serial_number:
+				keyfiles.add(serial_number)
 		for key in sorted(keyfiles):
 			self.ui.searchComboBox.addItem(key)
 
@@ -800,8 +789,7 @@ class MainWindow(QMainWindow):
 			row_index = None
 
 			for row in range(self.ui.tableWidget.rowCount()):
-				key_item = self.ui.tableWidget.item(row, 10)
-				if key_item and key_item.data(Qt.ItemDataRole.UserRole + 2) == serial_number:
+				if self.ui.tableWidget.item(row, 2).data(Qt.ItemDataRole.UserRole + 2) == serial_number:
 					row_index = row
 					break
 
@@ -825,21 +813,18 @@ class MainWindow(QMainWindow):
 
 			metadata = self.folder_content.read_metadata(serial_number)
 
-			key_item = self.ui.tableWidget.item(row_index, 10)
-			key_item.setText(serial_number)
-			key_item.setData(Qt.ItemDataRole.UserRole + 2, serial_number)
-
 			self.ui.tableWidget.item(row_index, 2).setText(serial_number)
+			self.ui.tableWidget.item(row_index, 2).setData(Qt.ItemDataRole.UserRole + 2, serial_number)
 
 			self.ui.tableWidget.item(row_index, 3).setText(self.folder_content.read_sensor_name_for_key(serial_number))
 
 			edit_date = self.folder_content.get_last_edit_date(serial_number)
 			edit_date_str = edit_date.strftime("%Y-%m-%d") if edit_date else ""
-			self.ui.tableWidget.item(row_index, 11).setText(edit_date_str)
+			self.ui.tableWidget.item(row_index, 10).setText(edit_date_str)
 
 			sensor_length = self.folder_content.read_sensor_length_for_key(serial_number)
 			sensor_length_str = str(sensor_length) if sensor_length is not None else ""
-			self.ui.tableWidget.item(row_index, 12).setText(sensor_length_str)
+			self.ui.tableWidget.item(row_index, 11).setText(sensor_length_str)
 
 			if metadata:
 				self.ui.tableWidget.item(row_index, 4).setText(metadata.get("Project", ""))

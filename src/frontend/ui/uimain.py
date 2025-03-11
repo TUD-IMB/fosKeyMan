@@ -207,25 +207,15 @@ class Ui_MainWindow(object):
 
         self.formLayout.setWidget(5, QFormLayout.FieldRole, self.dFOS_TypeLineEdit)
 
-        self.keyfileLabel = QLabel(self.dockWidgetContents_2)
-        self.keyfileLabel.setObjectName(u"keyfileLabel")
-
-        self.formLayout.setWidget(6, QFormLayout.LabelRole, self.keyfileLabel)
-
-        self.keyfileLineEdit = QLineEdit(self.dockWidgetContents_2)
-        self.keyfileLineEdit.setObjectName(u"keyfileLineEdit")
-
-        self.formLayout.setWidget(6, QFormLayout.FieldRole, self.keyfileLineEdit)
-
         self.stateLabel = QLabel(self.dockWidgetContents_2)
         self.stateLabel.setObjectName(u"stateLabel")
 
-        self.formLayout.setWidget(7, QFormLayout.LabelRole, self.stateLabel)
+        self.formLayout.setWidget(6, QFormLayout.LabelRole, self.stateLabel)
 
         self.stateComboBox = QComboBox(self.dockWidgetContents_2)
         self.stateComboBox.setObjectName(u"stateComboBox")
 
-        self.formLayout.setWidget(7, QFormLayout.FieldRole, self.stateComboBox)
+        self.formLayout.setWidget(6, QFormLayout.FieldRole, self.stateComboBox)
 
 
         self.verticalLayout.addLayout(self.formLayout)
@@ -501,19 +491,6 @@ class Ui_MainWindow(object):
         self.dfosTypeLabel.setText(QCoreApplication.translate("MainWindow", u"DFOS_Type", None))
 #if QT_CONFIG(tooltip)
         self.dFOS_TypeLineEdit.setToolTip(QCoreApplication.translate("MainWindow", u"Enter DFOS type to filter", None))
-#endif // QT_CONFIG(tooltip)
-#if QT_CONFIG(tooltip)
-        self.keyfileLabel.setToolTip(QCoreApplication.translate("MainWindow", u"Keyfile", None))
-#endif // QT_CONFIG(tooltip)
-#if QT_CONFIG(accessibility)
-        self.keyfileLabel.setAccessibleName("")
-#endif // QT_CONFIG(accessibility)
-#if QT_CONFIG(accessibility)
-        self.keyfileLabel.setAccessibleDescription("")
-#endif // QT_CONFIG(accessibility)
-        self.keyfileLabel.setText(QCoreApplication.translate("MainWindow", u"Keyfile", None))
-#if QT_CONFIG(tooltip)
-        self.keyfileLineEdit.setToolTip(QCoreApplication.translate("MainWindow", u"Enter keyfile name to filter", None))
 #endif // QT_CONFIG(tooltip)
 #if QT_CONFIG(tooltip)
         self.stateLabel.setToolTip(QCoreApplication.translate("MainWindow", u"Status", None))
