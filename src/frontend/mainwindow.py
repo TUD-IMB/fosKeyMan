@@ -6,18 +6,12 @@ Defines the main Graphical User Interface.
 \date 2025
 """
 
-import hashlib
-import io
 import logging
 import shutil
-import sqlite3
 import sys
 import os
 import json
-import tempfile
-import time
 import webbrowser
-import zipfile
 
 from PySide6.QtGui import QIcon, QColor, QBrush
 from PySide6.QtSvgWidgets import QSvgWidget
@@ -28,15 +22,12 @@ from PySide6.QtCore import QTranslator, Qt, QCoreApplication, QSize
 from frontend.renamesensor import RenameSensor
 from frontend.ui.uimain import Ui_MainWindow
 from backend.keyhandler import KeyHandler
-from backend.databasehandler import DatabaseHandler
 from backend.foldercontent import FolderContent
 from frontend.configmanager import ConfigManager
 from frontend.hoverinfo import HoverInfo
 from frontend.tableoperator import TableOperator
-from frontend.keyfilereplace import KeyfileReplace
-from frontend.keystatus import DBStatus, ActivationStatus
+from frontend.keystatus import ActivationStatus
 from frontend.ui.uiopen import Ui_Open
-from frontend.databasemerger import DatabaseMerger
 from utils.utils import format_json_to_html
 
 logging.basicConfig(
@@ -56,32 +47,19 @@ class MainWindow(QMainWindow):
 	"""
 	def __init__(self):
 		super().__init__()
-		
-		# ui_file_path = os.path.join(os.path.dirname(__file__), '../resources/ui', 'main.ui')
-		# ui_file = QFile(ui_file_path)
-		# ui_file.open(QFile.ReadOnly)
-		# self.ui = QUiLoader().load(ui_file)
-		# ui_file.close()
+
 		self.ui = Ui_MainWindow()
 		self.ui.setupUi(self)
 		self.directory1 = None
 		self.directory2 = None
-		self.db_path = None
 		self.key_handler = None
 		self.folder_content = None
-		self.db_handler = None
 		self.config_manager = ConfigManager(file_path('fosKeyManConfig.json'))
-		self.directory1, self.directory2, self.db_path, self.language = self.config_manager.check_and_load_previous_config()
+		self.directory1, self.directory2, self.language = self.config_manager.check_and_load_previous_config()
 		self.translator = QTranslator(self)
 		self.table_operator = TableOperator(self.ui.tableWidget)
 		self.connect_actions()
-		# hover explanation to keyfile. db status and possible operations
 		self.hover_info = HoverInfo(self.ui.tableWidget, self)
-		# tool action enable or disable
-		# self.tool_manager = ToolManager(self.ui.tableWidget, self.ui.actionNew, self.ui.actionDelete,
-		# 								self.ui.actionSaveChange,
-		# 								self.ui.actionImport, self.ui.actionAttach, self.ui.actionReplace,
-		# 								self.ui.actionCopy)
 		self.ui.tableWidget.cellClicked.connect(self.table_cell_info)
 		self.ui.searchPushButton.clicked.connect(self.execute_search)
 		self.setWindowIcon(QIcon(resource_path('resources/foskeyman_logo_short.svg')))
@@ -103,13 +81,13 @@ class MainWindow(QMainWindow):
 		r"""
 		Show the main window and check the configuration. Switch the language based on the saved configuration.
 		
-		If all required paths (directory1, directory2, db_path) are valid, it will set up the table.
+		If all required paths (directory1, directory2) are valid, it will set up the table.
 		If any of the paths are missing, it will open the setting dialog for the user to initialize the configuration.
 		"""
 		# self.ui.show()
 		self.show()
 		self.switch_language(self.language)
-		if self.directory1 and self.directory2 and self.db_path:
+		if self.directory1 and self.directory2:
 			self.initialize_handlers()
 			self.setup_table()
 		else:
@@ -122,11 +100,8 @@ class MainWindow(QMainWindow):
 		# actions for switch language
 		self.ui.actionEnglish.triggered.connect(lambda: self.switch_language('english'))
 		self.ui.actionGerman.triggered.connect(lambda: self.switch_language('german'))
-		# actions for table setup (open directory, new database, connect database)
+		# actions for table setup (connect directory)
 		self.ui.actionOpen.triggered.connect(self.open_setting_dialog)
-		self.ui.actionNewDatabase.triggered.connect(self.new_database_dialog)
-		self.ui.actionConnectDatabase.triggered.connect(self.connect_database)
-		self.ui.actionImportDatabase.triggered.connect(self.merge_database)
 		# activate, deactivate, select all actions
 		self.ui.actionActive.triggered.connect(self.toggle_activation)
 		self.ui.actionDeactive.triggered.connect(self.toggle_deactivation)
@@ -136,7 +111,7 @@ class MainWindow(QMainWindow):
 		self.ui.actionInformation.triggered.connect(self.open_info_widget)
 		self.ui.filterDockWidget.visibilityChanged.connect(self.ui.actionFilter.setChecked)
 		self.ui.infoDockWidget.visibilityChanged.connect(self.ui.actionInformation.setChecked)
-		self.ui.stateComboBox.addItems([self.tr("All"),self.tr("Activated"),self.tr("Deactivated"),self.tr("Unknown")])
+		self.ui.stateComboBox.addItems([self.tr("All"),self.tr("Activated"),self.tr("Deactivated")])
 		self.ui.stateComboBox.setCurrentText("All")
 		self.ui.filterButton.clicked.connect(
 			lambda: self.table_operator.filter_table(
@@ -163,21 +138,13 @@ class MainWindow(QMainWindow):
 		)
 		self.ui.actionSearch.triggered.connect(self.open_search_widget)
 		self.ui.searchDockWidget.visibilityChanged.connect(self.ui.actionSearch.setChecked)
-		# actions for database operations (refresh, add row, delete row, save change)
+
 		self.ui.actionRefresh.triggered.connect(self.setup_table)
 		self.ui.actionNew.triggered.connect(self.table_operator.add_new_row)
 		self.ui.actionDelete.triggered.connect(self.table_operator.delete_row)
-		self.ui.actionSaveChange.triggered.connect(self.upload_changes_db)
+		self.ui.actionSaveChange.triggered.connect(self.save_as_json)
 		# actions for keyfile operations (import, attach, replace, copy)
-		self.ui.actionImport.triggered.connect(self.import_keyfile_to_db)
-		self.ui.actionAttach.triggered.connect(self.attach_keyfile_to_db)
-		self.ui.actionRemove.triggered.connect(self.remove_keyfile_in_db)
-		self.ui.actionReplace.triggered.connect(self.replace_keyfile_db_disk)
-		self.ui.actionCopy.triggered.connect(self.copy_keyfile_to_disk)
-		self.ui.actionQuickImport.triggered.connect(self.quick_import_keyfile)
 		self.ui.actionRenameSensor.triggered.connect(self.rename_sensor_name)
-		self.ui.actionUpdateDBKeyfile.triggered.connect(self.update_db_attached_keyfile)
-		# actions for application exit
 		self.ui.actionExit.triggered.connect(self.exit_application)
 		self.ui.actionDocumentation.triggered.connect(self.open_documentation)
 		self.ui.actionUSBLoad.triggered.connect(self.keyfile_transfer)
@@ -191,10 +158,10 @@ class MainWindow(QMainWindow):
 		Export non-empty, non-read-only table values from selected rows
 		to a 'metadata.json' file inside the corresponding Keyfile directory.
 		"""
-		checked_serial_numbers = self.get_checked_serial_numbers()
-		if not checked_serial_numbers:
-			QMessageBox.warning(self, self.tr("Error"), self.tr("No keyfile selected for export."))
-			return
+		# checked_serial_numbers = self.get_checked_serial_numbers()
+		# if not checked_serial_numbers:
+		# 	QMessageBox.warning(self, self.tr("Error"), self.tr("No keyfile selected for export."))
+		# 	return
 
 		table = self.ui.tableWidget
 		read_only_columns = [0, 1, 2, 3, 10, 11, 12]
@@ -213,50 +180,50 @@ class MainWindow(QMainWindow):
 			if key_item:
 				serial_number = key_item.data(Qt.UserRole + 2)
 
-				if serial_number in checked_serial_numbers:
-					if self.check_activation_status(serial_number) == ActivationStatus.ACTIVATED:
-						keyfile_path = os.path.join(self.directory1, serial_number)
-					elif self.check_activation_status(serial_number) == ActivationStatus.DEACTIVATED:
-						keyfile_path = os.path.join(self.directory2, serial_number)
-					else:
+				# if serial_number in checked_serial_numbers:
+				if self.check_activation_status(serial_number) == ActivationStatus.ACTIVATED:
+					keyfile_path = os.path.join(self.directory1, serial_number)
+				elif self.check_activation_status(serial_number) == ActivationStatus.DEACTIVATED:
+					keyfile_path = os.path.join(self.directory2, serial_number)
+				else:
+					continue
+
+				if not os.path.isdir(keyfile_path):
+					continue
+
+				meta_json_path = os.path.join(keyfile_path, "metadata.json")
+				meta_data = {}
+
+				if os.path.exists(meta_json_path):
+					with open(meta_json_path, "r", encoding="utf-8") as f:
+						try:
+							existing_data = json.load(f)
+						except json.JSONDecodeError:
+							existing_data = {}
+				else:
+					existing_data = {}
+
+				for col in range(table.columnCount()):
+					if col in read_only_columns:
 						continue
 
-					if not os.path.isdir(keyfile_path):
-						continue
+					item = table.item(row, col)
+					column_name = table.horizontalHeaderItem(col).text()
 
-					meta_json_path = os.path.join(keyfile_path, "metadata.json")
-					meta_data = {}
-
-					if os.path.exists(meta_json_path):
-						with open(meta_json_path, "r", encoding="utf-8") as f:
-							try:
-								existing_data = json.load(f)
-							except json.JSONDecodeError:
-								existing_data = {}
+					if self.language == "german":
+						english_column_name = column_translation.get(column_name, column_name)
 					else:
-						existing_data = {}
+						english_column_name = column_name
 
-					for col in range(table.columnCount()):
-						if col in read_only_columns:
-							continue
+					if item and item.text().strip():
+						meta_data[english_column_name] = item.text().strip()
+					elif english_column_name in existing_data:
+						del existing_data[english_column_name]
 
-						item = table.item(row, col)
-						column_name = table.horizontalHeaderItem(col).text()
+				existing_data.update(meta_data)
 
-						if self.language == "german":
-							english_column_name = column_translation.get(column_name, column_name)
-						else:
-							english_column_name = column_name
-
-						if item and item.text().strip():
-							meta_data[english_column_name] = item.text().strip()
-						elif english_column_name in existing_data:
-							del existing_data[english_column_name]
-
-					existing_data.update(meta_data)
-
-					with open(meta_json_path, "w", encoding="utf-8") as f:
-						json.dump(existing_data, f, indent=4, ensure_ascii=False)
+				with open(meta_json_path, "w", encoding="utf-8") as f:
+					json.dump(existing_data, f, indent=4, ensure_ascii=False)
 
 					# if existing_data:
 					# 	with open(meta_json_path, "w", encoding="utf-8") as f:
@@ -390,107 +357,10 @@ class MainWindow(QMainWindow):
 
 		QMessageBox.information(self, self.tr("Success"), self.tr("Selected keyfiles exported successfully."))
 	
-	def merge_database(self):
-		r"""
-		Import an external database. If conflicts occur, open a dialog and wait for manual resolution.
-		"""
-		merge_db, _ = QFileDialog.getOpenFileName(self,
-								self.tr("Select Database to Import"),
-								"",
-								"Database Files (*.sqlite *.db)")
-		if not merge_db:
-			return
-		db_handler_current = self.db_handler
-		existing_data = db_handler_current.get_all_data_dict()
-		db_handler_merge = DatabaseHandler(merge_db)
-		try:
-			db_handler_merge.connect()
-			new_data = db_handler_merge.get_all_data_dict()
-			db_handler_merge.close()
-		except Exception as e:
-			QMessageBox.warning(
-				self,
-				self.tr("Error"),
-				self.tr("Failed to load databases: {error}").format(error=e)
-			)
-			return
-		new_records = []
-		conflict_records = []
-		identical_records = []
-		for serial_number, new_record in new_data.items():
-			if serial_number in existing_data:
-				existing_record = existing_data[serial_number]
-				if existing_record == new_record:
-					identical_records.append(new_record)
-				else:
-					# keyfile_conflict = existing_record[-1] != new_record[-1]
-					conflict_records.append((existing_record, new_record))
-			else:
-				new_records.append(new_record)
-		for record in new_records:
-			self.db_handler.insert_data(record)
-		if conflict_records:
-			dialog = DatabaseMerger(self.db_handler, conflict_records, self)
-			dialog.exec_()
-		self.db_handler.connection.commit()
-		self.setup_table()
-	
-	def connect_database(self):
-		r"""
-		Open a file dialog to select a database file, connect to the
-		selected database, and save the database path to the config.json file.
-		"""
-		self.db_path, _ = QFileDialog.getOpenFileName(self, self.tr("Select Database File"), "",
-													  "Database Files (*.sqlite *.db)")
-		if not self.db_path:
-			return
-		try:
-			self.db_handler = DatabaseHandler(self.db_path)
-			self.db_handler.connect()
-			self.config_manager.save_db_path(self.db_path)
-			self.setup_table()
-		except Exception as e:
-			QMessageBox.warning(
-				self,
-				self.tr("Database Connection Failed"),
-				self.tr("Failed to connect to the database: {error}").format(error=e)
-			)
-	
-	def new_database_dialog(self, open_ui=None):
-		r"""
-		Open a dialog for selecting directory and creating a new database.
-		"""
-		file_path, _ = QFileDialog.getSaveFileName(self,
-												self.tr("Select Directory and Enter Database Name"),
-												"",
-												"SQLite Database files (*.db *.sqlite *.sqlite3)")
-		if file_path:
-			if not file_path.lower().endswith(('.db', '.sqlite', '.sqlite3', '.db3')):
-				file_path += '.db'
-			try:
-				self.db_handler = DatabaseHandler(file_path)
-				self.db_handler.connect()
-				self.db_handler.create_table()
-				self.db_handler.connection.commit()
-				self.config_manager.db_path = file_path
-				self.config_manager.save_db_path(file_path)
-				self.setup_table()
-				self.db_path = file_path
-				if open_ui:
-					open_ui.dbLineEdit.setText(file_path)
-			except sqlite3.DatabaseError as e:
-				QMessageBox.warning(
-					self,
-					self.tr("Database Creation Failed"),
-					self.tr("Failed to create a new database: {error}").format(error=e)
-				)
-		else:
-			pass
-	
 	def open_setting_dialog(self):
 		r"""
-		Open a dialog for selecting two directories and database file.
-		If valid, initialize KeyHandler, FolderContent, and DatabaseHandler, and save the paths to the config.json file.
+		Open a dialog for selecting two directories.
+		If valid, initialize KeyHandler and FolderContent, and save the paths to the config.json file.
 		"""
 		dialog = QDialog(self)
 		open_ui = Ui_Open()
@@ -499,28 +369,26 @@ class MainWindow(QMainWindow):
 		self.config_manager.open_ui = open_ui
 		open_ui.acBrowseButton.clicked.connect(lambda: self.config_manager.select_directory1(dialog, open_ui))
 		open_ui.deacBrowseButton.clicked.connect(lambda: self.config_manager.select_directory2(dialog, open_ui))
-		open_ui.dbBrowseButton.clicked.connect(lambda: self.config_manager.select_db_path(dialog, open_ui))
-		open_ui.createOneButton.clicked.connect(lambda: self.new_database_dialog(open_ui))
+
 		dialog.setWindowFlags(dialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
-		dialog.setWindowTitle(self.tr("Database & Directory Settings"))
+		dialog.setWindowTitle(self.tr("Directory Settings"))
 		# Pre-fill the input fields if the directories have already been selected previously
-		if self.directory1 and self.directory2 and self.db_path:
+		if self.directory1 and self.directory2:
 			open_ui.acLineEdit.setText(self.directory1)
 			open_ui.deacLineEdit.setText(self.directory2)
-			open_ui.dbLineEdit.setText(self.db_path)
+
 		open_ui.confirmButton.clicked.connect(lambda: self.config_manager.confirm_directory_selection(dialog, open_ui))
 		open_ui.cancelButton.clicked.connect(dialog.reject)
 		if dialog.exec_():
 			if self.config_manager.directory1 and self.config_manager.directory2:
 				self.directory1 = self.config_manager.directory1
 				self.directory2 = self.config_manager.directory2
-				self.db_path = self.config_manager.db_path
 				self.config_manager.save_config()
 				self.initialize_handlers()
 	
 	def initialize_handlers(self):
 		r"""
-		Initialize KeyHandler, FolderContent and DatabaseHandler based on the selected directory paths and database file.
+		Initialize KeyHandler and FolderContent based on the selected directory paths.
 		If success, set up the table for further operations.
 		"""
 		self.key_handler = KeyHandler(self.directory1, self.directory2)
@@ -528,54 +396,13 @@ class MainWindow(QMainWindow):
 			QMessageBox.warning(self, "Error", self.tr("Directory validation failure"))
 			return
 		self.folder_content = FolderContent(self.directory1, self.directory2)
-		self.db_handler = DatabaseHandler(self.db_path)
-		self.db_handler.connect()
 		self.setup_table()
-	
-	def quick_import_keyfile(self):
-		r"""
-		Quickly import new keyfiles into the database.
-		This method identifies keyfiles which "not exists" in the database, retrieves their corresponding
-		sensor names and serial numbers, and inserts them into the database with minimal information.
-		"""
-		serial_numbers = []
-		for row in range(self.ui.tableWidget.rowCount()):
-			key_item = self.ui.tableWidget.item(row, 10)
-			db_status = key_item.data(Qt.UserRole)
-			if db_status == DBStatus.NOT_EXISTS:
-				serial_number = key_item.data(Qt.UserRole + 2)
-				serial_numbers.append(serial_number)
-		if not serial_numbers:
-			QMessageBox.information(
-				self,
-				self.tr("Import"),
-				self.tr("No new keyfiles found to import.")
-			)
-			return
-		sensor_names = [self.folder_content.read_sensor_name_for_key(sn) for sn in serial_numbers]
-		for serial_number, sensor_name in zip(serial_numbers, sensor_names):
-			if sensor_name:
-				row_data = [
-					serial_number,
-					sensor_name,
-					None,
-					None,
-					None,
-					None,
-					None,
-					None,
-					None
-				]
-				self.db_handler.insert_data(row_data)
-		self.db_handler.commit()
-		self.update_table_row(serial_numbers)
-	
+
 	def rename_sensor_name(self):
 		r"""
-		Rename the sensor name both in the database and keyfile. Only work for the first selected entry.
+		Rename the sensor name. Only work for the first selected entry.
 		"""
-		checked_serial_numbers = self.get_checked_serial_numbers()
-		serial_numbers = [sn for sn in checked_serial_numbers if self.check_db_status(sn) != DBStatus.NOT_EXISTS]
+		serial_numbers = self.get_checked_serial_numbers()
 		if not serial_numbers:
 			return
 		serial_number = serial_numbers[0]
@@ -589,25 +416,10 @@ class MainWindow(QMainWindow):
 			dialog = RenameSensor(serial_number, sensor_name, parent=self)
 			if dialog.exec_() == QDialog.Accepted:
 				new_name = dialog.get_new_sensor_name()
-				self.db_handler.update_name(serial_number, new_name)
 				self.folder_content.edit_sensor_name_for_key(serial_number, new_name)
 				logging.info(f"Sensor name updated for Serial Number {serial_number}: {sensor_name} -> {new_name}")
 				self.update_table_row([serial_number])
 		self.reset_all_checkboxes()
-		self.db_handler.commit()
-	
-	def check_db_status(self, serial_number):
-		r"""
-		Check the database status for a given serial number.
-		\param serial_number (str): The serial number to check.
-		\return (DBStatus): The database status of the given serial number, or None if not found.
-		"""
-		for row in range(self.ui.tableWidget.rowCount()):
-			key_item = self.ui.tableWidget.item(row, 10)
-			if key_item and key_item.data(Qt.UserRole + 2) == serial_number:
-				db_status = key_item.data(Qt.UserRole)
-				return db_status
-		return None
 	
 	def check_activation_status(self, serial_number):
 		r"""
@@ -640,265 +452,6 @@ class MainWindow(QMainWindow):
 			checkbox_item = self.ui.tableWidget.item(row, 0)
 			if checkbox_item and checkbox_item.flags() & Qt.ItemIsUserCheckable:
 				checkbox_item.setCheckState(Qt.Unchecked)
-	
-	def import_keyfile_to_db(self):
-		r"""Import selected keyfiles to database with minimum content (serial number and sensor name only). """
-		checked_serial_numbers = self.get_checked_serial_numbers()
-		serial_numbers = [sn for sn in checked_serial_numbers if self.check_db_status(sn) == DBStatus.NOT_EXISTS]
-		if not serial_numbers:
-			return
-		sensor_names = [self.folder_content.read_sensor_name_for_key(sn) for sn in serial_numbers]
-		for serial_number, sensor_name in zip(serial_numbers, sensor_names):
-			if sensor_name:
-				row_data = [
-					serial_number,
-					sensor_name,
-					None,
-					None,
-					None,
-					None,
-					None,
-					None,
-					None
-				]
-				self.db_handler.insert_data(row_data)
-		self.db_handler.commit()
-		self.reset_all_checkboxes()
-		self.update_table_row(serial_numbers)
-	
-	def upload_changes_db(self):
-		r"""
-		Save all changes in the table (add, modify, delete rows) to the database.
-		Logs each action (insertion, deletion, update) with log file.
-		"""
-		if self.db_handler is None:
-			return
-		try:
-			db_data = self.db_handler.get_all_data_dict()
-			table_data = {}
-			row_count = self.ui.tableWidget.rowCount()
-			column_count = self.ui.tableWidget.columnCount()
-			for row in range(row_count):
-				row_data = []
-				for col in range(2, column_count - 2):
-					item = self.ui.tableWidget.item(row, col)
-					if item is not None:
-						text = item.text()
-						row_data.append(text if text != '' else None)
-					else:
-						row_data.append(None)
-				serial_number = row_data[0]
-				if serial_number is not None:
-					table_data[serial_number] = row_data
-				else:
-					for col in range(2, column_count - 2):
-						self.ui.tableWidget.setItem(row, col, QTableWidgetItem(""))
-			db_serial_numbers = set(db_data.keys())
-			table_serial_numbers = set(table_data.keys())
-			serials_to_add = table_serial_numbers - db_serial_numbers
-			serials_to_delete = db_serial_numbers - table_serial_numbers
-			serials_possible_update = db_serial_numbers & table_serial_numbers
-			updated_serials = []
-			for serial in serials_to_delete:
-				self.db_handler.delete_data(serial)
-				logging.info(f"Deleted data for serial number: {serial}")
-			for serial in serials_to_add:
-				row_data = table_data[serial]
-				row_data.append(None)
-				self.db_handler.insert_data(row_data)
-				logging.info(f"Inserted new data for serial number: {serial}, data: {row_data}")
-				updated_serials.append(serial)
-			for serial in serials_possible_update:
-				db_row = db_data[serial]
-				table_row = table_data[serial]
-				if db_row[:-1] != tuple(table_row):
-					self.db_handler.update_data(table_row)
-					logging.info(
-						f"Updated data for serial number: {serial}, old data: {db_row[:-1]}, new data: {table_row}")
-					updated_serials.append(serial)
-			self.db_handler.connection.commit()
-			# Refresh only updated rows
-			self.update_table_row(updated_serials)
-		except Exception as e:
-			QMessageBox.warning(
-				self,
-				self.tr("Error"),
-				self.tr("Error saving changes: {error}").format(error=e)
-			)
-	
-	def attach_keyfile_to_db(self):
-		r"""
-		Zip the folder and attach a keyfile to an existing database record that is missing a keyfile.
-		After attaching, the table is refreshed, and the operation is logged.
-		"""
-		try:
-			checked_serial_numbers = self.get_checked_serial_numbers()
-			serial_numbers = [
-				sn for sn in checked_serial_numbers
-				if self.check_db_status(sn) == DBStatus.MISSING_KEYFILE and self.check_activation_status(sn) != ActivationStatus.UNKNOWN
-			]
-			if not serial_numbers:
-				return
-			for serial_number in serial_numbers:
-				activation_status = self.check_activation_status(serial_number)
-				status = "activated" if activation_status == ActivationStatus.ACTIVATED else "deactivated"
-				folder_path = self.key_handler.key_folder_path(serial_number, status)
-				zip_buffer = self.db_handler.create_zip_from_folder(folder_path)
-				self.db_handler.update_blob_data(zip_buffer.getvalue(), serial_number)
-				logging.info(f"Keyfile for serial number '{serial_number}' successfully attached.")
-			self.db_handler.commit()
-			self.reset_all_checkboxes()
-			self.update_table_row(serial_numbers)
-		except Exception as e:
-			self.db_handler.rollback()
-			QMessageBox.warning(
-				self,
-				self.tr("Error"),
-				self.tr(f"An error occurred while attaching keyfiles: {e}")
-			)
-			logging.error(f"Error occurred while attaching keyfiles: {e}")
-
-	def remove_keyfile_in_db(self):
-		r"""
-		Remove the attached keyfile (blob data) from the database for selected serial numbers.
-		If no keyfile is attached, the entry is skipped.
-		"""
-		try:
-			checked_serial_numbers = self.get_checked_serial_numbers()
-
-			if not checked_serial_numbers:
-				logging.info("No attached keyfiles found for removal.")
-				return
-
-			for serial_number in checked_serial_numbers:
-				self.db_handler.remove_blob_data(serial_number)
-				logging.info(f"Keyfile for serial number '{serial_number}' successfully removed in database.")
-
-			self.db_handler.commit()
-			self.reset_all_checkboxes()
-			self.update_table_row(checked_serial_numbers)
-
-		except Exception as e:
-			self.db_handler.rollback()
-			logging.error(f"Error occurred while removing keyfiles: {e}")
-			QMessageBox.warning(
-				self,
-				self.tr("Error"),
-				self.tr(f"An error occurred while removing keyfiles: {e}")
-			)
-
-	def replace_keyfile_db_disk(self):
-		r"""Replace the keyfile between the database and disk when there is a mismatch."""
-		try:
-			checked_serial_numbers = self.get_checked_serial_numbers()
-			serial_numbers = [
-				sn for sn in checked_serial_numbers
-				if self.check_db_status(sn) == DBStatus.MISMATCH and self.check_activation_status(sn) != ActivationStatus.UNKNOWN
-			]
-			if not serial_numbers:
-				return
-			path_list = []
-			for serial_number in serial_numbers:
-				activation_status = self.check_activation_status(serial_number)
-				status = "activated" if activation_status == ActivationStatus.ACTIVATED else "deactivated"
-				folder_path = self.key_handler.key_folder_path(serial_number, status)
-				path_list.append(folder_path)
-			dialog = KeyfileReplace(serial_numbers, self.db_handler, path_list, is_batch_mode=len(serial_numbers) > 1,
-									parent=self)
-			dialog.exec_()
-			self.reset_all_checkboxes()
-			self.update_table_row(serial_numbers)
-		except Exception as e:
-			logging.error(f"Error occurred during keyfile replacement: {e}")
-			QMessageBox.warning(
-				self,
-				self.tr("Error"),
-				self.tr(f"An error occurred during keyfile replacement: {e}")
-			)
-	
-	def copy_keyfile_to_disk(self):
-		r"""Copy keyfile from the database to disk, for keyfiles that only exist in the database but not on disk."""
-		checked_serial_numbers = self.get_checked_serial_numbers()
-		serial_numbers = [
-			sn for sn in checked_serial_numbers
-			if self.check_db_status(sn) == DBStatus.EXISTS and self.check_activation_status(sn) == ActivationStatus.UNKNOWN
-		]
-		if not serial_numbers:
-			return
-		for serial_number in serial_numbers:
-			output_folder_path = os.path.join(self.directory1, serial_number)
-			# reply = QMessageBox.question(
-			# 	self,
-			# 	self.tr("Confirm Copy"),
-			# 	self.tr("Are you sure you want to copy the file '{serial_number}' to disk?").format(
-			# 		serial_number=serial_number),
-			# 	QMessageBox.Yes | QMessageBox.No,
-			# 	QMessageBox.No
-			# )
-			#
-			# if reply == QMessageBox.Yes:
-			try:
-				self.db_handler.fetch_blob_and_save_as_folder(serial_number, output_folder_path)
-				self.db_handler.commit()
-				self.update_table_row([serial_number])
-				logging.info(
-					f"The file {serial_number} was successfully copied to the disk path {output_folder_path}.")
-			except Exception as e:
-				QMessageBox.warning(
-					self,
-					self.tr("Error"),
-					self.tr("Copy file failed: {error}").format(error=str(e))
-				)
-				logging.error(f"Error copying file {serial_number} to disk: {str(e)}")
-	
-	def update_db_attached_keyfile(self):
-		r"""
-		Manually select a folder from any location, zip it, and attach it to an existing database record.
-		This will overwrite the original keyfile stored in the database.
-		After attaching, the table is refreshed, and the operation is logged.
-		"""
-		try:
-			checked_serial_numbers = self.get_checked_serial_numbers()
-			serial_numbers = [
-				sn for sn in checked_serial_numbers
-				if self.check_db_status(sn) == DBStatus.EXISTS or DBStatus.MISMATCH
-			]
-			if not serial_numbers:
-				return
-			serial_number = serial_numbers[0]
-			folder_path = QFileDialog.getExistingDirectory(
-				self,
-				self.tr("Please select the folder to attach"),
-				""
-			)
-			if not folder_path:
-				return
-			zip_buffer = self.db_handler.create_zip_from_folder(folder_path)
-			# reply = QMessageBox.question(self, self.tr("Confirm Attach"),
-			# 							 self.tr("Are you sure you want to attach the keyfile into the database?"),
-			# 							 QMessageBox.Yes | QMessageBox.No)
-			#
-			# if reply == QMessageBox.No:
-			# 	return
-			self.db_handler.update_blob_data(zip_buffer.getvalue(), serial_number)
-			self.db_handler.commit()
-			logging.info(
-				f"The Keyfile '{os.path.basename(folder_path)}' was successfully zipped and attached to the database.")
-			# QMessageBox.information(
-			# 	self,
-			# 	self.tr("Success"),
-			# 	self.tr(f"Keyfile '{os.path.basename(folder_path)}' has been successfully attached to the database.")
-			# )
-			self.reset_all_checkboxes()
-			self.update_table_row([serial_number])
-		except Exception as e:
-			self.db_handler.rollback()
-			QMessageBox.warning(
-				self,
-				self.tr("Error"),
-				self.tr("Error occurred while attaching the keyfile: {error}").format(error=e)
-			)
-			logging.error(f"Error occurred while attaching the keyfile:{e}")
 	
 	def open_filter_widget(self):
 		r"""Control visibility of filter widget"""
@@ -953,7 +506,7 @@ class MainWindow(QMainWindow):
 		Set up the table with the necessary headers, styles, and configurations.
 		Enables the ability to drag and move columns for custom arrangement.
 		Sets certain columns (Status, Serial Number, and Keyfile) as read-only to prevent unintended modification.
-		Populate table with data in database, and connect a cell click event to display additional information.
+		Populate table with data in metadata.json, and connect a cell click event to display additional information.
 		"""
 		self.ui.tableWidget.setColumnCount(13)
 		self.ui.tableWidget.setHorizontalHeaderLabels([
@@ -1029,148 +582,62 @@ class MainWindow(QMainWindow):
 	
 	def populate_table(self):
 		r"""
-		Populate the table with key data and statuses from disk and database.
-		Retrieve key information from the disk and the database, checking for activation deactivation status,
-		existence in the database, and possible mismatches between the keyfile in disk and in the database.
+		Populate the table with key data and statuses from key files on disk.
 		"""
-		# start_time = time.time()
 		self.ui.tableWidget.setSortingEnabled(False)
 		activated_keys = set(self.key_handler.read_keys('activated'))
 		deactivated_keys = set(self.key_handler.read_keys('deactivated'))
-		database_keys = set(self.db_handler.read_keys())
-		keys_with_status = []
-		all_keys = activated_keys | deactivated_keys
-		db_only_keys = database_keys - all_keys
-		activated_only_keys = activated_keys - database_keys
-		deactivated_only_keys = deactivated_keys - database_keys
-		for key in database_keys & all_keys:
-			blob_data = self.db_handler.get_blob_data(key)
-			path = None
-			status = None
-			mismatch = False
-			if key in activated_keys:
-				path = os.path.join(self.directory1, key)
-				status = 'Activated'
-			elif key in deactivated_keys:
-				path = os.path.join(self.directory2, key)
-				status = 'Deactivated'
-			if blob_data and path and os.path.exists(path) and os.path.isdir(path):
-				with tempfile.TemporaryDirectory() as temp_dir:
-					try:
-						with zipfile.ZipFile(io.BytesIO(blob_data), 'r') as zip_ref:
-							zip_ref.extractall(temp_dir)
-						temp_hashes = self.get_folder_hashes(temp_dir)
-						local_hashes = self.get_folder_hashes(path)
-						if temp_hashes != local_hashes:
-							mismatch = True
-					except Exception as e:
-						print(f"An error occurred during comparison: {e}")
-						mismatch = True
-			keys_with_status.append((key, status, mismatch))
-		keys_with_status += [(key, 'Activated', False) for key in activated_only_keys]
-		keys_with_status += [(key, 'Deactivated', False) for key in deactivated_only_keys]
-		keys_with_status += [(key, 'Database Only', False) for key in db_only_keys]
+
+		keys_with_status = [(key, "Activated") for key in activated_keys] + \
+						   [(key, "Deactivated") for key in deactivated_keys]
+
 		self.ui.tableWidget.setRowCount(len(keys_with_status))
-		for index, (key, status, mismatch) in enumerate(keys_with_status):
+		for index, (key, status) in enumerate(keys_with_status):
 			for col in range(13):
 				if self.ui.tableWidget.item(index, col) is None:
 					self.ui.tableWidget.setItem(index, col, QTableWidgetItem())
-			mismatch_keyfile_icon = self.style().standardIcon(QStyle.SP_MessageBoxWarning)
 			if status == 'Activated':
 				activation_status = ActivationStatus.ACTIVATED
 				self.ui.tableWidget.setCellWidget(index, 1, self.create_status_button('Activated'))
 			elif status == 'Deactivated':
 				activation_status = ActivationStatus.DEACTIVATED
 				self.ui.tableWidget.setCellWidget(index, 1, self.create_status_button('Deactivated'))
-			else:
-				activation_status = ActivationStatus.UNKNOWN
-				self.ui.tableWidget.setCellWidget(index, 1, self.create_status_button('Unknown'))
+
 			activation_item = self.ui.tableWidget.item(index, 1)
 			activation_item.setData(Qt.DisplayRole, activation_status.value)
 			activation_item.setForeground(Qt.transparent)
 			activation_item.setData(Qt.UserRole + 1, activation_status)
 			check_item = self.ui.tableWidget.item(index, 0)
 			check_item.setCheckState(Qt.Unchecked)
-			if self.db_handler.key_exists_in_database(key):
-				details = list(self.db_handler.get_key_details(key))
-				if not status == "Database Only":
-					details[8] = key
-			else:
-				details = ("", "", "", "", "", "", "", "", key)
-			self.ui.tableWidget.item(index, 2).setText(details[0])
-			self.ui.tableWidget.item(index, 3).setText(details[1])
-			self.ui.tableWidget.item(index, 4).setText(details[2])
-			self.ui.tableWidget.item(index, 5).setText(details[3])
-			self.ui.tableWidget.item(index, 6).setText(details[4])
-			self.ui.tableWidget.item(index, 7).setText(details[5])
-			self.ui.tableWidget.item(index, 8).setText(details[6])
-			self.ui.tableWidget.item(index, 9).setText(details[7])
-			if isinstance(details[8], str):
-				keyfile_text = details[8]
-			elif isinstance(details[8], bytes):
-				keyfile_text = details[0]
-			else:
-				keyfile_text = ""
-			folder_on_icon = QIcon(resource_path('resources/icons/folder_on.svg'))  # Folder exists
-			folder_off_icon = QIcon(resource_path('resources/icons/folder_off.svg'))  # Folder missing
-			db_on_icon = QIcon(resource_path('resources/icons/db_on.svg'))  # Database exists
-			db_off_icon = QIcon(resource_path('resources/icons/db_off.svg'))  # Database missing
-			key_item = self.ui.tableWidget.item(index, 10)
-			key_item.setData(Qt.UserRole + 2, keyfile_text)
-			if status == 'Activated' or status == 'Deactivated':
-				if self.db_handler.key_exists_in_database(key) and self.db_handler.key_exists_in_keyfile(key):
-					icons = [folder_on_icon, db_on_icon]
-					widget = create_keyfile_cell_widget(icons, keyfile_text)
-					key_item.setData(Qt.UserRole, DBStatus.EXISTS)
-					if mismatch:
-						icons.append(mismatch_keyfile_icon)
-						widget = create_keyfile_cell_widget(icons, keyfile_text)
-						key_item.setData(Qt.UserRole, DBStatus.MISMATCH)
-				elif self.db_handler.key_exists_in_database(key) and not self.db_handler.key_exists_in_keyfile(key):
-					icons = [folder_on_icon, db_off_icon]
-					widget = create_keyfile_cell_widget(icons, keyfile_text)
-					key_item.setData(Qt.UserRole, DBStatus.MISSING_KEYFILE)
-				else:
-					icons = [folder_on_icon, db_off_icon]
-					widget = create_keyfile_cell_widget(icons, keyfile_text)
-					key_item.setData(Qt.UserRole, DBStatus.NOT_EXISTS)
-			else:
-				if self.db_handler.key_exists_in_database(key) and self.db_handler.key_exists_in_keyfile(key):
-					icons = [folder_off_icon, db_on_icon]
-					widget = create_keyfile_cell_widget(icons, keyfile_text)
-					key_item.setData(Qt.UserRole, DBStatus.EXISTS)
-				else:
-					icons = [folder_off_icon, db_off_icon]
-					widget = create_keyfile_cell_widget(icons, keyfile_text)
-					key_item.setData(Qt.UserRole, DBStatus.MISSING_KEYFILE)
-			self.ui.tableWidget.setCellWidget(index, 10, widget)
+
+			metadata = self.folder_content.read_metadata(key)
+
+			# keyfile - readonly
+			self.ui.tableWidget.item(index, 10).setText(key)
+			self.ui.tableWidget.item(index, 10).setData(Qt.UserRole + 2, key)
+			# serial number - readonly
+			self.ui.tableWidget.item(index, 2).setText(key)
+			# last edit date - read only
 			edit_date = self.folder_content.get_last_edit_date(key)
 			edit_date_str = edit_date.strftime("%Y-%m-%d") if edit_date else ""
 			self.ui.tableWidget.item(index, 11).setText(edit_date_str)
+			#  sensor length - read only
 			sensor_length = self.folder_content.read_sensor_length_for_key(key)
 			sensor_length_str = str(sensor_length) if sensor_length is not None else ""
 			self.ui.tableWidget.item(index, 12).setText(sensor_length_str)
+			# sensor name -read only
+			self.ui.tableWidget.item(index, 3).setText(self.folder_content.read_sensor_name_for_key(key))
+
+			if metadata:
+				self.ui.tableWidget.item(index, 4).setText(metadata.get("Project", ""))
+				self.ui.tableWidget.item(index, 5).setText(metadata.get("Operator", ""))
+				self.ui.tableWidget.item(index, 6).setText(metadata.get("Specimen", ""))
+				self.ui.tableWidget.item(index, 7).setText(metadata.get("DFOS_Type", ""))
+				self.ui.tableWidget.item(index, 8).setText(metadata.get("Installation", ""))
+				self.ui.tableWidget.item(index, 9).setText(metadata.get("Note", ""))
 
 		self.ui.tableWidget.setSortingEnabled(True)
 
-
-	def get_folder_hashes(self, folder_path):
-		r"""
-		Get hash values of all files in the folder.
-		\param folder_path (str): The path to the folder.
-		\return (dict): A dictionary with relative file paths as keys and hash values as values.
-		"""
-		file_hashes = {}
-		for root, dirs, files in os.walk(folder_path):
-			for file in sorted(files):
-				file_path = os.path.join(root, file)
-				relative_path = os.path.relpath(file_path, start=folder_path)
-				with open(file_path, 'rb') as f:
-					file_content = f.read()
-				file_hash = hashlib.md5(file_content).hexdigest()
-				file_hashes[relative_path] = file_hash
-		return file_hashes
-	
 	def create_status_button(self, status):
 		r"""
 		Creates a colored QPushButton based on its activation status.
@@ -1224,18 +691,13 @@ class MainWindow(QMainWindow):
 	def toggle_activation(self):
 		r"""
 		Activate the selected items (checkbox is checked) in the table.
-		If the activation status is 'Unknown', the checkbox is cleared and the row is skipped (because there is no such
-		keyfile in disk to operate). For valid items, the keyfile moved from deactivated directory to activate directory.
+		For valid items, the keyfile moved from deactivated directory to activate directory.
 		Upon successful activation, the item's status is updated to 'Activated' and the status button is turn green.
 		"""
 		for i in range(self.ui.tableWidget.rowCount()):
 			check_item = self.ui.tableWidget.item(i, 0)
 			activation_item = self.ui.tableWidget.item(i, 1)
 			key_file = self.ui.tableWidget.item(i, 10).data(Qt.UserRole + 2)
-			activation_status = activation_item.data(Qt.UserRole + 1)
-			if activation_status == ActivationStatus.UNKNOWN:
-				check_item.setCheckState(Qt.Unchecked)
-				continue
 			if check_item.checkState() == Qt.Checked:
 				success = self.key_handler.activate_key(key_file)
 				if success:
@@ -1246,18 +708,13 @@ class MainWindow(QMainWindow):
 	def toggle_deactivation(self):
 		r"""
 		Deactivate the selected item (checkbox is checked) in the table.
-		If the activation status is 'Unknown', the checkbox is cleared and the row is skipped (because there is no such
-		keyfile in disk to operate). For valid items, the keyfile moved from the activated directory to the deactivated directory.
+		For valid items, the keyfile moved from the activated directory to the deactivated directory.
 		Upon successful deactivation, the item's status is updated to 'Deactivated', and the status button turns grey.
 		"""
 		for i in range(self.ui.tableWidget.rowCount()):
 			check_item = self.ui.tableWidget.item(i, 0)
 			activation_item = self.ui.tableWidget.item(i, 1)
 			key_file = self.ui.tableWidget.item(i, 10).data(Qt.UserRole + 2)
-			activation_status = activation_item.data(Qt.UserRole + 1)
-			if activation_status == ActivationStatus.UNKNOWN:
-				check_item.setCheckState(Qt.Unchecked)
-				continue
 			if check_item.checkState() == Qt.Checked:
 				success = self.key_handler.deactivate_key(key_file)
 				if success:
@@ -1339,100 +796,54 @@ class MainWindow(QMainWindow):
 		"""
 		for serial_number in serial_numbers:
 			row_index = None
+
 			for row in range(self.ui.tableWidget.rowCount()):
 				key_item = self.ui.tableWidget.item(row, 10)
 				if key_item and key_item.data(Qt.UserRole + 2) == serial_number:
 					row_index = row
 					break
+
 			if row_index is None:
-				print(f"Serial number {serial_number} not found in the table.")
 				continue
-			status = None
-			mismatch = False
-			blob_data = self.db_handler.get_blob_data(serial_number)
-			path = None
+
 			if serial_number in self.key_handler.read_keys('activated'):
-				status = 'Activated'
-				path = os.path.join(self.directory1, serial_number)
-			elif serial_number in self.key_handler.read_keys('deactivated'):
-				status = 'Deactivated'
-				path = os.path.join(self.directory2, serial_number)
-			else:
-				status = 'Unknown'
-			if blob_data and path and os.path.exists(path) and os.path.isdir(path):
-				with tempfile.TemporaryDirectory() as temp_dir:
-					try:
-						with zipfile.ZipFile(io.BytesIO(blob_data), 'r') as zip_ref:
-							zip_ref.extractall(temp_dir)
-						temp_hashes = self.get_folder_hashes(temp_dir)
-						local_hashes = self.get_folder_hashes(path)
-						if temp_hashes != local_hashes:
-							mismatch = True
-					except Exception as e:
-						print(f"An error occurred during comparison: {e}")
-						mismatch = True
-			for col in range(13):
-				if self.ui.tableWidget.item(row_index, col) is None:
-					self.ui.tableWidget.setItem(row_index, col, QTableWidgetItem())
-			if status == 'Activated':
 				activation_status = ActivationStatus.ACTIVATED
 				self.ui.tableWidget.setCellWidget(row_index, 1, self.create_status_button('Activated'))
-			elif status == 'Deactivated':
+			elif serial_number in self.key_handler.read_keys('deactivated'):
 				activation_status = ActivationStatus.DEACTIVATED
 				self.ui.tableWidget.setCellWidget(row_index, 1, self.create_status_button('Deactivated'))
-			else:
-				activation_status = ActivationStatus.UNKNOWN
-				self.ui.tableWidget.setCellWidget(row_index, 1, self.create_status_button('Unknown'))
+
 			activation_item = self.ui.tableWidget.item(row_index, 1)
 			activation_item.setData(Qt.UserRole + 1, activation_status)
+
 			check_item = self.ui.tableWidget.item(row_index, 0)
 			check_item.setCheckState(Qt.Unchecked)
-			if self.db_handler.key_exists_in_database(serial_number):
-				details = list(self.db_handler.get_key_details(serial_number))
-				if not status == "Database Only":
-					details[8] = serial_number
-			else:
-				details = ("", "", "", "", "", "", "", "", serial_number)
-			self.ui.tableWidget.item(row_index, 2).setText(details[0])
-			self.ui.tableWidget.item(row_index, 3).setText(details[1])
-			self.ui.tableWidget.item(row_index, 4).setText(details[2])
-			self.ui.tableWidget.item(row_index, 5).setText(details[3])
-			self.ui.tableWidget.item(row_index, 6).setText(details[4])
-			self.ui.tableWidget.item(row_index, 7).setText(details[5])
-			self.ui.tableWidget.item(row_index, 8).setText(details[6])
-			self.ui.tableWidget.item(row_index, 9).setText(details[7])
+
+			metadata = self.folder_content.read_metadata(serial_number)
+
 			key_item = self.ui.tableWidget.item(row_index, 10)
-			key_item.setData(Qt.UserRole + 2, details[8])
-			folder_on_icon = QIcon(resource_path('resources/icons/folder_on.svg'))
-			folder_off_icon = QIcon(resource_path('resources/icons/folder_off.svg'))
-			db_on_icon = QIcon(resource_path('resources/icons/db_on.svg'))
-			db_off_icon = QIcon(resource_path('resources/icons/db_off.svg'))
-			mismatch_keyfile_icon = self.style().standardIcon(QStyle.SP_MessageBoxWarning)
-			if status in ['Activated', 'Deactivated']:
-				if self.db_handler.key_exists_in_database(serial_number) and self.db_handler.key_exists_in_keyfile(
-						serial_number):
-					icons = [folder_on_icon, db_on_icon]
-					widget = create_keyfile_cell_widget(icons, details[8])
-					key_item.setData(Qt.UserRole, DBStatus.EXISTS)
-					if mismatch:
-						icons.append(mismatch_keyfile_icon)
-						widget = create_keyfile_cell_widget(icons, details[8])
-						key_item.setData(Qt.UserRole, DBStatus.MISMATCH)
-				else:
-					icons = [folder_on_icon, db_off_icon]
-					widget = create_keyfile_cell_widget(icons, details[8])
-					key_item.setData(Qt.UserRole, DBStatus.MISSING_KEYFILE)
-			else:
-				icons = [folder_off_icon, db_off_icon]
-				widget = create_keyfile_cell_widget(icons, details[8])
-				key_item.setData(Qt.UserRole, DBStatus.MISSING_KEYFILE)
-			self.ui.tableWidget.setCellWidget(row_index, 10, widget)
+			key_item.setText(serial_number)
+			key_item.setData(Qt.UserRole + 2, serial_number)
+
+			self.ui.tableWidget.item(row_index, 2).setText(serial_number)
+
+			self.ui.tableWidget.item(row_index, 3).setText(self.folder_content.read_sensor_name_for_key(serial_number))
+
 			edit_date = self.folder_content.get_last_edit_date(serial_number)
 			edit_date_str = edit_date.strftime("%Y-%m-%d") if edit_date else ""
 			self.ui.tableWidget.item(row_index, 11).setText(edit_date_str)
+
 			sensor_length = self.folder_content.read_sensor_length_for_key(serial_number)
 			sensor_length_str = str(sensor_length) if sensor_length is not None else ""
 			self.ui.tableWidget.item(row_index, 12).setText(sensor_length_str)
+
+			if metadata:
+				self.ui.tableWidget.item(row_index, 4).setText(metadata.get("Project", ""))
+				self.ui.tableWidget.item(row_index, 5).setText(metadata.get("Operator", ""))
+				self.ui.tableWidget.item(row_index, 6).setText(metadata.get("Specimen", ""))
+				self.ui.tableWidget.item(row_index, 7).setText(metadata.get("DFOS_Type", ""))
+				self.ui.tableWidget.item(row_index, 8).setText(metadata.get("Installation", ""))
+				self.ui.tableWidget.item(row_index, 9).setText(metadata.get("Note", ""))
 
 
 def file_path(relative_path):
@@ -1462,27 +873,6 @@ def resource_path(relative_path):
 	else:
 		base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 	return os.path.join(base_dir, relative_path)
-
-
-def create_keyfile_cell_widget(icons, text):
-	r"""
-	Creates a widget that displays a set of icons alongside a text label.
-	(e.g., folder and database icons in front of a keyfile name).
-	\param icons (list[QIcon]): A list of QIcon objects to be displayed.
-	\param text (str): The text to display next to the icons.
-	\return (QWidget): A QWidget containing the icons and the text label.
-	"""
-	widget = QWidget()
-	layout = QHBoxLayout(widget)
-	layout.setContentsMargins(0, 0, 0, 0)
-	for icon in icons:
-		label = QLabel()
-		label.setPixmap(icon.pixmap(20, 20))
-		layout.addWidget(label)
-	text_label = QLabel(text)
-	layout.addWidget(text_label)
-	layout.addStretch()
-	return widget
 
 
 def main():

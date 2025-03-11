@@ -50,12 +50,6 @@
    <addaction name="actionDelete"/>
    <addaction name="actionSaveChange"/>
    <addaction name="separator"/>
-   <addaction name="actionImport"/>
-   <addaction name="actionAttach"/>
-   <addaction name="actionReplace"/>
-   <addaction name="actionCopy"/>
-   <addaction name="actionRemove"/>
-   <addaction name="separator"/>
    <addaction name="actionFilter"/>
    <addaction name="actionInformation"/>
    <addaction name="actionSearch"/>
@@ -360,10 +354,6 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionNewDatabase"/>
-    <addaction name="actionConnectDatabase"/>
-    <addaction name="actionImportDatabase"/>
-    <addaction name="separator"/>
     <addaction name="actionSaveChange"/>
     <addaction name="actionRefresh"/>
     <addaction name="actionExit"/>
@@ -404,10 +394,7 @@
     <addaction name="actionUSBLoad"/>
     <addaction name="actionExportKeyfiles"/>
     <addaction name="actionSaveAsJson"/>
-    <addaction name="separator"/>
-    <addaction name="actionQuickImport"/>
     <addaction name="actionRenameSensor"/>
-    <addaction name="actionUpdateDBKeyfile"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSensors"/>
@@ -612,70 +599,6 @@
     <bool>false</bool>
    </property>
   </action>
-  <action name="actionImport">
-   <property name="icon">
-    <iconset resource="../toolicons.qrc">
-     <normaloff>:/icons/icons/import.svg</normaloff>:/icons/icons/import.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Import</string>
-   </property>
-   <property name="toolTip">
-    <string>Import to database</string>
-   </property>
-  </action>
-  <action name="actionAttach">
-   <property name="icon">
-    <iconset resource="../toolicons.qrc">
-     <normaloff>:/icons/icons/attach.svg</normaloff>:/icons/icons/attach.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Attach</string>
-   </property>
-   <property name="toolTip">
-    <string>Attach keyfile</string>
-   </property>
-  </action>
-  <action name="actionReplace">
-   <property name="icon">
-    <iconset resource="../toolicons.qrc">
-     <normaloff>:/icons/icons/replace.svg</normaloff>:/icons/icons/replace.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Replace</string>
-   </property>
-   <property name="toolTip">
-    <string>Replace Keyfile</string>
-   </property>
-  </action>
-  <action name="actionCopy">
-   <property name="icon">
-    <iconset resource="../toolicons.qrc">
-     <normaloff>:/icons/icons/copy.svg</normaloff>:/icons/icons/copy.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Copy</string>
-   </property>
-   <property name="toolTip">
-    <string>Copy Keyfile to Disk</string>
-   </property>
-  </action>
-  <action name="actionNewDatabase">
-   <property name="text">
-    <string>New Database</string>
-   </property>
-   <property name="toolTip">
-    <string>Create a new Database</string>
-   </property>
-  </action>
-  <action name="actionConnectDatabase">
-   <property name="text">
-    <string>Connect Database</string>
-   </property>
-   <property name="toolTip">
-    <string>Connect to a Database</string>
-   </property>
-  </action>
   <action name="actionDeactive">
    <property name="icon">
     <iconset resource="../toolicons.qrc">
@@ -706,14 +629,6 @@
     <bool>false</bool>
    </property>
   </action>
-  <action name="actionImportDatabase">
-   <property name="text">
-    <string>Import Database</string>
-   </property>
-   <property name="toolTip">
-    <string>Import a Database into Current</string>
-   </property>
-  </action>
   <action name="actionRenameSensor">
    <property name="text">
     <string>Rename Sensor</string>
@@ -722,40 +637,12 @@
     <string>Rename Sensor Name</string>
    </property>
   </action>
-  <action name="actionQuickImport">
-   <property name="text">
-    <string>Quick Import</string>
-   </property>
-   <property name="toolTip">
-    <string>Quick import all missing keyfiles into the database</string>
-   </property>
-  </action>
-  <action name="actionUpdateDBKeyfile">
-   <property name="text">
-    <string>Update DB Keyfile</string>
-   </property>
-   <property name="toolTip">
-    <string>Update attached Keyfile in Database</string>
-   </property>
-  </action>
   <action name="actionUSBLoad">
    <property name="text">
     <string>Load from USB</string>
    </property>
    <property name="toolTip">
     <string>Load Key Files from USB</string>
-   </property>
-  </action>
-  <action name="actionRemove">
-   <property name="icon">
-    <iconset resource="../toolicons.qrc">
-     <normaloff>:/icons/icons/remove.svg</normaloff>:/icons/icons/remove.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Remove</string>
-   </property>
-   <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
   <action name="actionExportKeyfiles">

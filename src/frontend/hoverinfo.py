@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QDialog, QLabel, QVBoxLayout
 from PySide6.QtCore import Qt, QEvent, QTimer, QPoint
-from frontend.keystatus import DBStatus, ActivationStatus
+from frontend.keystatus import ActivationStatus
 
 
 class HoverInfo(QDialog):
@@ -29,9 +29,6 @@ class HoverInfo(QDialog):
 
 		self.activate_label = QLabel(self.tr("Activation Status: "))
 		layout.addWidget(self.activate_label)
-
-		self.db_status_label = QLabel(self.tr("Database Status: "))
-		layout.addWidget(self.db_status_label)
 
 		self.setLayout(layout)
 
@@ -107,39 +104,16 @@ class HoverInfo(QDialog):
 				activate_status = self.tr("Keyfile is Activated")
 			elif activation_status == ActivationStatus.DEACTIVATED:
 				activate_status = self.tr("Keyfile is Deactivated")
-			elif activation_status == ActivationStatus.UNKNOWN:
-				activate_status = self.tr("Keyfile Missing in Disk")
 			else:
 				activate_status = self.tr("Unknown")
 		else:
 			activate_status = self.tr("Unknown")
 
-		icon_column_item = self.table_widget.item(row, 10)
-		if icon_column_item:
-			status = icon_column_item.data(Qt.UserRole)
-			if status == DBStatus.EXISTS:
-				db_status = self.tr("Exists in Database")
-			elif status == DBStatus.MISSING_KEYFILE:
-				db_status = self.tr("Keyfile Missing in Database")
-			elif status == DBStatus.NOT_EXISTS:
-				db_status = self.tr("Not Exists in Database")
-			elif status == DBStatus.MISMATCH:
-				db_status = self.tr("Keyfile Mismatch between database and disk")
-			else:
-				db_status = self.tr("Unknown")
-		else:
-			db_status = self.tr("Unknown")
-
-		# self.cell_label.setText(f"{column_name}: {cell_value}")
-		# self.activate_label.setText(f"Activation Status: {activate_status}")
-		# self.db_status_label.setText(f"Database Status: {db_status}")
-
 		self.cell_label.setText(f"{column_name}: {cell_value}")
 		self.activate_label.setText(
 			self.tr("Activation Status: {activate_status}").format(activate_status=activate_status))
-		self.db_status_label.setText(self.tr("Database Status: {db_status}").format(db_status=db_status))
 
 		table_pos = self.table_widget.mapToGlobal(pos)
-		self.move(table_pos + QPoint(20, 80))  # show in bottom right corner of the mouse
+		self.move(table_pos + QPoint(20, 80))
 		self.show()
 

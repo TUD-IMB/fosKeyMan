@@ -7,7 +7,7 @@ class TableOperator:
 	r"""
 	Class to handle operations on the table, such as adding or deleting rows, filtering rows based on different criteria,
 	and handling checkbox selection (check all/uncheck all).
-	This class only make UI-level changes without modifying the database.
+	This class only make UI-level changes.
 	"""
 
 	def __init__(self, table_widget):
@@ -20,7 +20,7 @@ class TableOperator:
 
 	def add_new_row(self):
 		r"""
-		Add a new row to the table widget. This function only modifies the UI and does not affect the database.
+		Add a new row to the table widget.
 		"""
 		row_position = self.table_widget.rowCount()
 		self.table_widget.insertRow(row_position)
@@ -28,7 +28,6 @@ class TableOperator:
 	def delete_row(self):
 		r"""
 		Delete the currently selected row from the table widget.
-		This function only modifies the UI and does not affect the database.
 		"""
 		selected_row = self.table_widget.currentRow()
 		if selected_row != -1:

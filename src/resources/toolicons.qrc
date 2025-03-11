@@ -1,13 +1,8 @@
 <RCC>
   <qresource prefix="icons">
-    <file>icons/remove.svg</file>
     <file>icons/deactive.svg</file>
     <file>icons/filter.svg</file>
-    <file>icons/replace.svg</file>
-    <file>icons/copy.svg</file>
     <file>icons/information.svg</file>
-    <file>icons/attach.svg</file>
-    <file>icons/import.svg</file>
     <file>icons/refresh.svg</file>
     <file>icons/active.svg</file>
     <file>icons/checkall.svg</file>

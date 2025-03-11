@@ -236,3 +236,25 @@ class FolderContent:
 			return od6ref_data.get("sensorDataProcParams", {}).get("sensorLength (m)", None)
 		else:
 			return None
+
+	def read_metadata(self, key):
+		"""
+		Read the content of the metadata.json file from the specified key's folder.
+		The method checks if the key's folder exists in the activated or deactivated directories,
+		and attempts to load the 'metadata.json' file from within the folder.
+
+		:param key: The name of the key to locate its corresponding key file folder.
+		:return: A dictionary containing the parsed JSON data, or an empty dict if the file does not exist.
+		"""
+		keyfile_path_act = os.path.join(self.activated_path, key, "metadata.json")
+		keyfile_path_deact = os.path.join(self.deactivated_path, key, "metadata.json")
+
+		file_path = keyfile_path_act if os.path.exists(keyfile_path_act) else keyfile_path_deact
+		if file_path and os.path.exists(file_path):
+			try:
+				with open(file_path, "r", encoding="utf-8") as file:
+					return json.load(file)
+			except json.JSONDecodeError:
+				print(f"Error: Could not decode JSON in {file_path}")
+				return {}
+		return {}
