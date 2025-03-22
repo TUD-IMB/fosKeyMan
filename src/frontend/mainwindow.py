@@ -19,6 +19,7 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidg
 	QFileDialog, QPushButton, QWidget, QHBoxLayout, QLabel, QVBoxLayout
 from PySide6.QtCore import QTranslator, Qt, QCoreApplication, QSize
 
+from frontend.metadataeditor import MetadataEditor
 from frontend.renamesensor import RenameSensor
 from frontend.ui.uimain import Ui_MainWindow
 from backend.keyhandler import KeyHandler
@@ -84,7 +85,6 @@ class MainWindow(QMainWindow):
 		If all required paths (directory1, directory2) are valid, it will set up the table.
 		If any of the paths are missing, it will open the setting dialog for the user to initialize the configuration.
 		"""
-		# self.ui.show()
 		self.show()
 		self.switch_language(self.language)
 		if self.directory1 and self.directory2:
@@ -147,6 +147,23 @@ class MainWindow(QMainWindow):
 		self.ui.actionAbout.triggered.connect(self.show_about_dialog)
 		self.ui.actionSaveChange.triggered.connect(self.save_as_json)
 		self.ui.actionSaveAsJson.triggered.connect(self.save_as_json)
+		self.ui.actionEdit.triggered.connect(self.open_json_edit_dialog)
+
+	def open_json_edit_dialog(self):
+		checked_serial_numbers = self.get_checked_serial_numbers()
+		if not checked_serial_numbers:
+			QMessageBox.warning(self, self.tr("Error"), self.tr("No keyfile selected for edit."))
+			return
+
+		serial_number = checked_serial_numbers[0]
+		metadata = self.folder_content.read_metadata(serial_number)
+
+		dialog = MetadataEditor(serial_number, metadata, parent=self)
+		if dialog.exec_() == QDialog.DialogCode.Accepted:
+			updated_metadata = dialog.result_metadata
+			self.folder_content.update_metadata(serial_number, updated_metadata)
+			self.update_table_row([serial_number])
+		self.reset_all_checkboxes()
 
 	def save_as_json(self):
 		r"""
@@ -223,6 +240,7 @@ class MainWindow(QMainWindow):
 				# 		json.dump(existing_data, f, indent=4, ensure_ascii=False)
 				# elif os.path.exists(meta_json_path):
 				# 	os.remove(meta_json_path)
+		self.reset_all_checkboxes()
 
 	def show_about_dialog(self):
 		r"""
@@ -358,7 +376,6 @@ class MainWindow(QMainWindow):
 		dialog = QDialog(self)
 		open_ui = Ui_Open()
 		open_ui.setupUi(dialog)
-		# dialog.resize(800, 300)
 		self.config_manager.open_ui = open_ui
 		open_ui.acBrowseButton.clicked.connect(lambda: self.config_manager.select_directory1(dialog, open_ui))
 		open_ui.deacBrowseButton.clicked.connect(lambda: self.config_manager.select_directory2(dialog, open_ui))

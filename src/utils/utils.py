@@ -15,3 +15,22 @@ def format_json_to_html(json_data):
 	">{json_data}</pre>
 	"""
 	return html_content
+
+
+def apply_icon_button_style(button):
+	button_style = """
+	QPushButton {
+		border: none;
+		background: transparent;
+		padding: 2px;
+	}
+	QPushButton:hover {
+		background-color: lightgray;
+		border-radius: 4px;
+	}
+	QPushButton:pressed {
+		background-color: lightblue;
+		border-radius: 4px;
+	}
+	"""
+	button.setStyleSheet(button_style)

@@ -238,13 +238,11 @@ class FolderContent:
 			return None
 
 	def read_metadata(self, key):
-		"""
-		Read the content of the metadata.json file from the specified key's folder.
-		The method checks if the key's folder exists in the activated or deactivated directories,
-		and attempts to load the 'metadata.json' file from within the folder.
+		r"""
+		Read the content of the metadata.json file from the specified key file.
 
-		:param key: The name of the key to locate its corresponding key file folder.
-		:return: A dictionary containing the parsed JSON data, or an empty dict if the file does not exist.
+		\param key: The name of the key to locate its corresponding folder.
+		\return: A dictionary containing the parsed JSON data, or an empty dict if the file does not exist.
 		"""
 		keyfile_path_act = os.path.join(self.activated_path, key, "metadata.json")
 		keyfile_path_deact = os.path.join(self.deactivated_path, key, "metadata.json")
@@ -258,3 +256,24 @@ class FolderContent:
 				print(f"Error: Could not decode JSON in {file_path}")
 				return {}
 		return {}
+
+	def update_metadata(self, key, metadata):
+		r"""
+		Update the metadata.json for a given key (serial number).
+
+		\param key: The name of the key to locate its corresponding folder.
+		\param metadata: Dictionary to save.
+		"""
+		keyfile_path_act = os.path.join(self.activated_path, key, "metadata.json")
+		keyfile_path_deact = os.path.join(self.deactivated_path, key, "metadata.json")
+
+		file_path = keyfile_path_act if os.path.exists(keyfile_path_act) else keyfile_path_deact
+
+		if file_path and os.path.exists(file_path):
+			try:
+				with open(file_path, "w", encoding="utf-8") as f:
+					json.dump(metadata, f, indent=4, ensure_ascii=False)
+			except Exception as e:
+				print(f"Failed to save metadata for '{key}': {e}")
+
+
