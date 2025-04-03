@@ -1,5 +1,5 @@
 from PySide6.QtGui import Qt
-from PySide6.QtWidgets import QMessageBox
+from PySide6.QtWidgets import QMessageBox, QComboBox, QLineEdit, QWidget
 from frontend.keystatus import ActivationStatus
 
 
@@ -58,80 +58,60 @@ class TableOperator:
 				if checkbox is not None:
 					checkbox.setCheckState(new_state)
 
-	def filter_table(self, serial_number_line_edit, name_line_edit, project_line_edit, operator_line_edit,
-					 specimen_line_edit, dfos_type_line_edit, state_combobox):
+	def filter_table(self, filter_inputs):
 		r"""
-		Filter the table rows based on user input from various filter fields (serial number, name, project, etc.).
+		Filter the table rows based on user input from various filter fields.
 		Rows that do not match the criteria will be hidden.
 
-		\param serial_number_line_edit (QLineEdit): Input field for filtering by serial number.
-		\param name_line_edit (QLineEdit): Input field for filtering by sensor name.
-		\param project_line_edit (QLineEdit): Input field for filtering by project.
-		\param operator_line_edit (QLineEdit): Input field for filtering by operator.
-		\param specimen_line_edit (QLineEdit): Input field for filtering by specimen.
-		\param dfos_type_line_edit (QLineEdit): Input field for filtering by DFOS type.
-		\param state_combobox (QComboBox): Dropdown for filtering by status ('Activated', 'Deactivated').
+		\param filter_inputs (dict[str, QWidget]): A dictionary mapping filter label text (also the table column header) to the corresponding input widget (QLineEdit or QComboBox).
 		"""
 
-		serial_number = serial_number_line_edit.text()
-		name = name_line_edit.text()
-		project = project_line_edit.text()
-		operator = operator_line_edit.text()
-		specimen = specimen_line_edit.text()
-		dfos_type = dfos_type_line_edit.text()
-		state = state_combobox.currentText()
+		label_to_index = {}
+		for i in range(self.table_widget.columnCount()):
+			header_item = self.table_widget.horizontalHeaderItem(i)
+			if header_item:
+				label_to_index[header_item.text()] = i
 
 		for row in range(self.table_widget.rowCount()):
 			match = True
 
-			serial_item = self.table_widget.item(row, 2)
-			name_item = self.table_widget.item(row, 3)
-			project_item = self.table_widget.item(row, 4)
-			operator_item = self.table_widget.item(row, 5)
-			specimen_item = self.table_widget.item(row, 6)
-			dfos_type_item = self.table_widget.item(row, 7)
-			state_item = self.table_widget.item(row, 1)
-
-			if serial_number and serial_number not in serial_item.text():
-				match = False
-			if name and name not in name_item.text():
-				match = False
-			if project and project not in project_item.text():
-				match = False
-			if operator and operator not in operator_item.text():
-				match = False
-			if specimen and specimen not in specimen_item.text():
-				match = False
-			if dfos_type and dfos_type not in dfos_type_item.text():
-				match = False
-			if state and state != "All":
-				if state == 'Activated' and state_item.data(Qt.ItemDataRole.UserRole + 1) != ActivationStatus.ACTIVATED:
+			for label_text, widget in filter_inputs.items():
+				if label_text not in label_to_index:
 					match = False
-				elif state == 'Deactivated' and state_item.data(Qt.ItemDataRole.UserRole + 1) != ActivationStatus.DEACTIVATED:
-					match = False
+					break
 
-			# hide rows that do not match the filter criteria
+				col_index = label_to_index[label_text]
+				item = self.table_widget.item(row, col_index)
+				if item is None:
+					match = False
+					break
+
+				filter_text = widget.currentText() if isinstance(widget, QComboBox) else widget.text().strip()
+
+				if label_text == "Status":
+					status_value = item.data(Qt.ItemDataRole.UserRole + 1)
+					if filter_text == 'Activated' and status_value != ActivationStatus.ACTIVATED:
+						match = False
+					elif filter_text == 'Deactivated' and status_value != ActivationStatus.DEACTIVATED:
+						match = False
+				else:
+					if filter_text not in item.text():
+						match = False
+
 			self.table_widget.setRowHidden(row, not match)
 
-	def reset_filter(self, serial_number_line_edit, name_line_edit, project_line_edit, operator_line_edit,
-					 specimen_line_edit, dfos_type_line_edit):
+	def reset_filter(self, filter_inputs):
 		r"""
-		Reset the filters by clearing all input fields and showing all rows in the table.
+		Reset the filters by clearing all input fields and showing all rows in the table
 
-		\param serial_number_line_edit (QLineEdit): Input field for filtering by serial number.
-		\param name_line_edit (QLineEdit): Input field for filtering by name.git
-		\param project_line_edit (QLineEdit): Input field for filtering by project.
-		\param operator_line_edit (QLineEdit): Input field for filtering by operator.
-		\param specimen_line_edit (QLineEdit): Input field for filtering by specimen.
-		\param dfos_type_line_edit (QLineEdit): Input field for filtering by DFOS type.
+		\param filter_inputs (dict[str, QWidget]): A dictionary mapping filter label text (also the table column header) to the corresponding input widget (QLineEdit or QComboBox).
 		"""
-
-		serial_number_line_edit.clear()
-		name_line_edit.clear()
-		project_line_edit.clear()
-		operator_line_edit.clear()
-		specimen_line_edit.clear()
-		dfos_type_line_edit.clear()
+		for widget in filter_inputs.values():
+			if isinstance(widget, QLineEdit):
+				widget.clear()
+			elif isinstance(widget, QComboBox):
+				widget.setCurrentIndex(0)
 
 		for row in range(self.table_widget.rowCount()):
 			self.table_widget.setRowHidden(row, False)
+

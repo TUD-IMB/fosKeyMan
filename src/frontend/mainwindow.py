@@ -16,7 +16,7 @@ import webbrowser
 from PySide6.QtGui import QIcon, QColor, QBrush
 from PySide6.QtSvgWidgets import QSvgWidget
 from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidgetItem, QHeaderView, QDialog, \
-	QFileDialog, QPushButton, QWidget, QHBoxLayout, QLabel, QVBoxLayout
+	QFileDialog, QPushButton, QWidget, QHBoxLayout, QLabel, QVBoxLayout, QLineEdit, QComboBox
 from PySide6.QtCore import QTranslator, Qt, QCoreApplication, QSize
 
 from frontend.columnconfigurator import ColumnConfigurator
@@ -66,6 +66,7 @@ class MainWindow(QMainWindow):
 		self.ui.searchPushButton.clicked.connect(self.execute_search)
 		self.setWindowIcon(QIcon(resource_path('resources/foskeyman_logo_short.svg')))
 		self.adjust_window_size()
+		self.dynamic_filter_inputs = {}
 
 	def adjust_window_size(self):
 		r"""
@@ -91,9 +92,41 @@ class MainWindow(QMainWindow):
 		if self.directory1 and self.directory2:
 			self.initialize_handlers()
 			self.setup_table()
+			self.setup_filter_dockwidget()
 		else:
 			self.open_setting_dialog()
-	
+
+	def setup_filter_dockwidget(self):
+		layout = self.ui.filterFormLayout
+
+		while layout.rowCount():
+			layout.removeRow(0)
+
+		self.dynamic_filter_inputs = {}
+
+		status_label = QLabel("Status", self)
+		status_combo = QComboBox(self)
+		status_combo.addItems(["All", "Activated", "Deactivated"])
+		layout.addRow(status_label, status_combo)
+		self.dynamic_filter_inputs["Status"] = status_combo
+
+		serial_label = QLabel("Serial Number", self)
+		serial_input = QLineEdit(self)
+		layout.addRow(serial_label, serial_input)
+		self.dynamic_filter_inputs["Serial Number"] = serial_input
+
+		name_label = QLabel("Sensor Name", self)
+		name_input = QLineEdit(self)
+		layout.addRow(name_label, name_input)
+		self.dynamic_filter_inputs["Sensor Name"] = name_input
+
+		for col in self.custom_columns:
+			label = QLabel(col, self)
+			line_edit = QLineEdit(self)
+			line_edit.setObjectName(f"{col.lower().replace(' ', '')}LineEdit")
+			layout.addRow(label, line_edit)
+			self.dynamic_filter_inputs[col] = line_edit
+
 	def connect_actions(self):
 		r"""
 		Connect UI actions to corresponding methods.
@@ -112,28 +145,11 @@ class MainWindow(QMainWindow):
 		self.ui.actionInformation.triggered.connect(self.open_info_widget)
 		self.ui.filterDockWidget.visibilityChanged.connect(self.ui.actionFilter.setChecked)
 		self.ui.infoDockWidget.visibilityChanged.connect(self.ui.actionInformation.setChecked)
-		self.ui.stateComboBox.addItems([self.tr("All"), self.tr("Activated"), self.tr("Deactivated")])
-		self.ui.stateComboBox.setCurrentText("All")
 		self.ui.filterButton.clicked.connect(
-			lambda: self.table_operator.filter_table(
-				self.ui.serialNumberLineEdit,
-				self.ui.nameLineEdit,
-				self.ui.projectLineEdit,
-				self.ui.operatorLineEdit,
-				self.ui.specimenLineEdit,
-				self.ui.dFOS_TypeLineEdit,
-				self.ui.stateComboBox
-			)
+			lambda: self.table_operator.filter_table(self.dynamic_filter_inputs)
 		)
 		self.ui.cancelButton.clicked.connect(
-			lambda: self.table_operator.reset_filter(
-				self.ui.serialNumberLineEdit,
-				self.ui.nameLineEdit,
-				self.ui.projectLineEdit,
-				self.ui.operatorLineEdit,
-				self.ui.specimenLineEdit,
-				self.ui.dFOS_TypeLineEdit
-			)
+			lambda: self.table_operator.reset_filter(self.dynamic_filter_inputs)
 		)
 		self.ui.actionSearch.triggered.connect(self.open_search_widget)
 		self.ui.searchDockWidget.visibilityChanged.connect(self.ui.actionSearch.setChecked)
@@ -177,6 +193,7 @@ class MainWindow(QMainWindow):
 			self.config_manager.save_config()
 
 			self.setup_table()
+			self.setup_filter_dockwidget()
 
 	def save_as_json(self):
 		r"""

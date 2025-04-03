@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1015</width>
+    <width>773</width>
     <height>782</height>
    </rect>
   </property>
@@ -115,169 +115,26 @@
    <widget class="QWidget" name="dockWidgetContents_2">
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <layout class="QFormLayout" name="formLayout">
-       <item row="0" column="0">
-        <widget class="QLabel" name="serialNumberLabel">
-         <property name="toolTip">
-          <string>Serial Number</string>
-         </property>
-         <property name="statusTip">
-          <string/>
-         </property>
-         <property name="whatsThis">
-          <string/>
-         </property>
-         <property name="accessibleName">
-          <string/>
-         </property>
-         <property name="accessibleDescription">
-          <string/>
-         </property>
-         <property name="text">
-          <string>Serial Number</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="serialNumberLineEdit">
-         <property name="toolTip">
-          <string>Enter serial number to filter</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="nameLabel">
-         <property name="toolTip">
-          <string>Sensor Name</string>
-         </property>
-         <property name="accessibleName">
-          <string/>
-         </property>
-         <property name="accessibleDescription">
-          <string/>
-         </property>
-         <property name="text">
-          <string>Sensor Name</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="nameLineEdit">
-         <property name="toolTip">
-          <string>Enter name to filter</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="projectLabel">
-         <property name="toolTip">
-          <string>Project</string>
-         </property>
-         <property name="accessibleName">
-          <string/>
-         </property>
-         <property name="accessibleDescription">
-          <string/>
-         </property>
-         <property name="text">
-          <string>Project</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QLineEdit" name="projectLineEdit">
-         <property name="toolTip">
-          <string>Enter project name to filter</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="operatorLabel">
-         <property name="toolTip">
-          <string>Operator</string>
-         </property>
-         <property name="accessibleName">
-          <string/>
-         </property>
-         <property name="accessibleDescription">
-          <string/>
-         </property>
-         <property name="text">
-          <string>Operator</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QLineEdit" name="operatorLineEdit">
-         <property name="toolTip">
-          <string>Enter operator name to filter</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="specimenLabel">
-         <property name="toolTip">
-          <string>Specimen</string>
-         </property>
-         <property name="accessibleName">
-          <string/>
-         </property>
-         <property name="accessibleDescription">
-          <string/>
-         </property>
-         <property name="text">
-          <string>Specimen</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1">
-        <widget class="QLineEdit" name="specimenLineEdit">
-         <property name="toolTip">
-          <string>Enter specimen name to filter</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="dfosTypeLabel">
-         <property name="toolTip">
-          <string>DFOS Type</string>
-         </property>
-         <property name="accessibleName">
-          <string/>
-         </property>
-         <property name="accessibleDescription">
-          <string/>
-         </property>
-         <property name="text">
-          <string>DFOS_Type</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="1">
-        <widget class="QLineEdit" name="dFOS_TypeLineEdit">
-         <property name="toolTip">
-          <string>Enter DFOS type to filter</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0">
-        <widget class="QLabel" name="stateLabel">
-         <property name="toolTip">
-          <string>Status</string>
-         </property>
-         <property name="text">
-          <string>Status</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1">
-        <widget class="QComboBox" name="stateComboBox">
-         <property name="toolTip">
-          <string>Select keyfile status to filter</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      <widget class="QScrollArea" name="scrollArea">
+       <property name="widgetResizable">
+        <bool>true</bool>
+       </property>
+       <widget class="QWidget" name="scrollAreaWidgetContents_2">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>254</width>
+          <height>212</height>
+         </rect>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_6">
+         <item>
+          <layout class="QFormLayout" name="filterFormLayout"/>
+         </item>
+        </layout>
+       </widget>
+      </widget>
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
@@ -303,19 +160,6 @@
        </item>
       </layout>
      </item>
-     <item>
-      <spacer name="verticalSpacer">
-       <property name="orientation">
-        <enum>Qt::Orientation::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
     </layout>
    </widget>
   </widget>
@@ -324,7 +168,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1015</width>
+     <width>773</width>
      <height>33</height>
     </rect>
    </property>

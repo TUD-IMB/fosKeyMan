@@ -17,18 +17,18 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
 from PySide6.QtWidgets import (QAbstractScrollArea, QApplication, QComboBox, QDockWidget,
-    QFormLayout, QHBoxLayout, QHeaderView, QLabel,
-    QLineEdit, QMainWindow, QMenu, QMenuBar,
-    QPushButton, QSizePolicy, QSpacerItem, QStatusBar,
-    QTableWidget, QTableWidgetItem, QTextBrowser, QToolBar,
-    QVBoxLayout, QWidget)
+    QFormLayout, QHBoxLayout, QHeaderView, QLineEdit,
+    QMainWindow, QMenu, QMenuBar, QPushButton,
+    QScrollArea, QSizePolicy, QStatusBar, QTableWidget,
+    QTableWidgetItem, QTextBrowser, QToolBar, QVBoxLayout,
+    QWidget)
 from frontend.ui import toolicons_rc
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1015, 782)
+        MainWindow.resize(773, 782)
         self.actionNew = QAction(MainWindow)
         self.actionNew.setObjectName(u"actionNew")
         icon = QIcon()
@@ -153,80 +153,22 @@ class Ui_MainWindow(object):
         self.dockWidgetContents_2.setObjectName(u"dockWidgetContents_2")
         self.verticalLayout = QVBoxLayout(self.dockWidgetContents_2)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.formLayout = QFormLayout()
-        self.formLayout.setObjectName(u"formLayout")
-        self.serialNumberLabel = QLabel(self.dockWidgetContents_2)
-        self.serialNumberLabel.setObjectName(u"serialNumberLabel")
+        self.scrollArea = QScrollArea(self.dockWidgetContents_2)
+        self.scrollArea.setObjectName(u"scrollArea")
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollAreaWidgetContents_2 = QWidget()
+        self.scrollAreaWidgetContents_2.setObjectName(u"scrollAreaWidgetContents_2")
+        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 254, 212))
+        self.verticalLayout_6 = QVBoxLayout(self.scrollAreaWidgetContents_2)
+        self.verticalLayout_6.setObjectName(u"verticalLayout_6")
+        self.filterFormLayout = QFormLayout()
+        self.filterFormLayout.setObjectName(u"filterFormLayout")
 
-        self.formLayout.setWidget(0, QFormLayout.LabelRole, self.serialNumberLabel)
+        self.verticalLayout_6.addLayout(self.filterFormLayout)
 
-        self.serialNumberLineEdit = QLineEdit(self.dockWidgetContents_2)
-        self.serialNumberLineEdit.setObjectName(u"serialNumberLineEdit")
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents_2)
 
-        self.formLayout.setWidget(0, QFormLayout.FieldRole, self.serialNumberLineEdit)
-
-        self.nameLabel = QLabel(self.dockWidgetContents_2)
-        self.nameLabel.setObjectName(u"nameLabel")
-
-        self.formLayout.setWidget(1, QFormLayout.LabelRole, self.nameLabel)
-
-        self.nameLineEdit = QLineEdit(self.dockWidgetContents_2)
-        self.nameLineEdit.setObjectName(u"nameLineEdit")
-
-        self.formLayout.setWidget(1, QFormLayout.FieldRole, self.nameLineEdit)
-
-        self.projectLabel = QLabel(self.dockWidgetContents_2)
-        self.projectLabel.setObjectName(u"projectLabel")
-
-        self.formLayout.setWidget(2, QFormLayout.LabelRole, self.projectLabel)
-
-        self.projectLineEdit = QLineEdit(self.dockWidgetContents_2)
-        self.projectLineEdit.setObjectName(u"projectLineEdit")
-
-        self.formLayout.setWidget(2, QFormLayout.FieldRole, self.projectLineEdit)
-
-        self.operatorLabel = QLabel(self.dockWidgetContents_2)
-        self.operatorLabel.setObjectName(u"operatorLabel")
-
-        self.formLayout.setWidget(3, QFormLayout.LabelRole, self.operatorLabel)
-
-        self.operatorLineEdit = QLineEdit(self.dockWidgetContents_2)
-        self.operatorLineEdit.setObjectName(u"operatorLineEdit")
-
-        self.formLayout.setWidget(3, QFormLayout.FieldRole, self.operatorLineEdit)
-
-        self.specimenLabel = QLabel(self.dockWidgetContents_2)
-        self.specimenLabel.setObjectName(u"specimenLabel")
-
-        self.formLayout.setWidget(4, QFormLayout.LabelRole, self.specimenLabel)
-
-        self.specimenLineEdit = QLineEdit(self.dockWidgetContents_2)
-        self.specimenLineEdit.setObjectName(u"specimenLineEdit")
-
-        self.formLayout.setWidget(4, QFormLayout.FieldRole, self.specimenLineEdit)
-
-        self.dfosTypeLabel = QLabel(self.dockWidgetContents_2)
-        self.dfosTypeLabel.setObjectName(u"dfosTypeLabel")
-
-        self.formLayout.setWidget(5, QFormLayout.LabelRole, self.dfosTypeLabel)
-
-        self.dFOS_TypeLineEdit = QLineEdit(self.dockWidgetContents_2)
-        self.dFOS_TypeLineEdit.setObjectName(u"dFOS_TypeLineEdit")
-
-        self.formLayout.setWidget(5, QFormLayout.FieldRole, self.dFOS_TypeLineEdit)
-
-        self.stateLabel = QLabel(self.dockWidgetContents_2)
-        self.stateLabel.setObjectName(u"stateLabel")
-
-        self.formLayout.setWidget(6, QFormLayout.LabelRole, self.stateLabel)
-
-        self.stateComboBox = QComboBox(self.dockWidgetContents_2)
-        self.stateComboBox.setObjectName(u"stateComboBox")
-
-        self.formLayout.setWidget(6, QFormLayout.FieldRole, self.stateComboBox)
-
-
-        self.verticalLayout.addLayout(self.formLayout)
+        self.verticalLayout.addWidget(self.scrollArea)
 
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
@@ -243,15 +185,11 @@ class Ui_MainWindow(object):
 
         self.verticalLayout.addLayout(self.horizontalLayout)
 
-        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
-
-        self.verticalLayout.addItem(self.verticalSpacer)
-
         self.filterDockWidget.setWidget(self.dockWidgetContents_2)
         MainWindow.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.filterDockWidget)
         self.menuBar = QMenuBar(MainWindow)
         self.menuBar.setObjectName(u"menuBar")
-        self.menuBar.setGeometry(QRect(0, 0, 1015, 33))
+        self.menuBar.setGeometry(QRect(0, 0, 773, 33))
         self.menuFile = QMenu(self.menuBar)
         self.menuFile.setObjectName(u"menuFile")
         self.menuHelp = QMenu(self.menuBar)
@@ -420,97 +358,6 @@ class Ui_MainWindow(object):
         self.filterDockWidget.setToolTip(QCoreApplication.translate("MainWindow", u"Filter content based on specified criteria", None))
 #endif // QT_CONFIG(tooltip)
         self.filterDockWidget.setWindowTitle(QCoreApplication.translate("MainWindow", u"Content Filter", None))
-#if QT_CONFIG(tooltip)
-        self.serialNumberLabel.setToolTip(QCoreApplication.translate("MainWindow", u"Serial Number", None))
-#endif // QT_CONFIG(tooltip)
-#if QT_CONFIG(statustip)
-        self.serialNumberLabel.setStatusTip("")
-#endif // QT_CONFIG(statustip)
-#if QT_CONFIG(whatsthis)
-        self.serialNumberLabel.setWhatsThis("")
-#endif // QT_CONFIG(whatsthis)
-#if QT_CONFIG(accessibility)
-        self.serialNumberLabel.setAccessibleName("")
-#endif // QT_CONFIG(accessibility)
-#if QT_CONFIG(accessibility)
-        self.serialNumberLabel.setAccessibleDescription("")
-#endif // QT_CONFIG(accessibility)
-        self.serialNumberLabel.setText(QCoreApplication.translate("MainWindow", u"Serial Number", None))
-#if QT_CONFIG(tooltip)
-        self.serialNumberLineEdit.setToolTip(QCoreApplication.translate("MainWindow", u"Enter serial number to filter", None))
-#endif // QT_CONFIG(tooltip)
-#if QT_CONFIG(tooltip)
-        self.nameLabel.setToolTip(QCoreApplication.translate("MainWindow", u"Sensor Name", None))
-#endif // QT_CONFIG(tooltip)
-#if QT_CONFIG(accessibility)
-        self.nameLabel.setAccessibleName("")
-#endif // QT_CONFIG(accessibility)
-#if QT_CONFIG(accessibility)
-        self.nameLabel.setAccessibleDescription("")
-#endif // QT_CONFIG(accessibility)
-        self.nameLabel.setText(QCoreApplication.translate("MainWindow", u"Sensor Name", None))
-#if QT_CONFIG(tooltip)
-        self.nameLineEdit.setToolTip(QCoreApplication.translate("MainWindow", u"Enter name to filter", None))
-#endif // QT_CONFIG(tooltip)
-#if QT_CONFIG(tooltip)
-        self.projectLabel.setToolTip(QCoreApplication.translate("MainWindow", u"Project", None))
-#endif // QT_CONFIG(tooltip)
-#if QT_CONFIG(accessibility)
-        self.projectLabel.setAccessibleName("")
-#endif // QT_CONFIG(accessibility)
-#if QT_CONFIG(accessibility)
-        self.projectLabel.setAccessibleDescription("")
-#endif // QT_CONFIG(accessibility)
-        self.projectLabel.setText(QCoreApplication.translate("MainWindow", u"Project", None))
-#if QT_CONFIG(tooltip)
-        self.projectLineEdit.setToolTip(QCoreApplication.translate("MainWindow", u"Enter project name to filter", None))
-#endif // QT_CONFIG(tooltip)
-#if QT_CONFIG(tooltip)
-        self.operatorLabel.setToolTip(QCoreApplication.translate("MainWindow", u"Operator", None))
-#endif // QT_CONFIG(tooltip)
-#if QT_CONFIG(accessibility)
-        self.operatorLabel.setAccessibleName("")
-#endif // QT_CONFIG(accessibility)
-#if QT_CONFIG(accessibility)
-        self.operatorLabel.setAccessibleDescription("")
-#endif // QT_CONFIG(accessibility)
-        self.operatorLabel.setText(QCoreApplication.translate("MainWindow", u"Operator", None))
-#if QT_CONFIG(tooltip)
-        self.operatorLineEdit.setToolTip(QCoreApplication.translate("MainWindow", u"Enter operator name to filter", None))
-#endif // QT_CONFIG(tooltip)
-#if QT_CONFIG(tooltip)
-        self.specimenLabel.setToolTip(QCoreApplication.translate("MainWindow", u"Specimen", None))
-#endif // QT_CONFIG(tooltip)
-#if QT_CONFIG(accessibility)
-        self.specimenLabel.setAccessibleName("")
-#endif // QT_CONFIG(accessibility)
-#if QT_CONFIG(accessibility)
-        self.specimenLabel.setAccessibleDescription("")
-#endif // QT_CONFIG(accessibility)
-        self.specimenLabel.setText(QCoreApplication.translate("MainWindow", u"Specimen", None))
-#if QT_CONFIG(tooltip)
-        self.specimenLineEdit.setToolTip(QCoreApplication.translate("MainWindow", u"Enter specimen name to filter", None))
-#endif // QT_CONFIG(tooltip)
-#if QT_CONFIG(tooltip)
-        self.dfosTypeLabel.setToolTip(QCoreApplication.translate("MainWindow", u"DFOS Type", None))
-#endif // QT_CONFIG(tooltip)
-#if QT_CONFIG(accessibility)
-        self.dfosTypeLabel.setAccessibleName("")
-#endif // QT_CONFIG(accessibility)
-#if QT_CONFIG(accessibility)
-        self.dfosTypeLabel.setAccessibleDescription("")
-#endif // QT_CONFIG(accessibility)
-        self.dfosTypeLabel.setText(QCoreApplication.translate("MainWindow", u"DFOS_Type", None))
-#if QT_CONFIG(tooltip)
-        self.dFOS_TypeLineEdit.setToolTip(QCoreApplication.translate("MainWindow", u"Enter DFOS type to filter", None))
-#endif // QT_CONFIG(tooltip)
-#if QT_CONFIG(tooltip)
-        self.stateLabel.setToolTip(QCoreApplication.translate("MainWindow", u"Status", None))
-#endif // QT_CONFIG(tooltip)
-        self.stateLabel.setText(QCoreApplication.translate("MainWindow", u"Status", None))
-#if QT_CONFIG(tooltip)
-        self.stateComboBox.setToolTip(QCoreApplication.translate("MainWindow", u"Select keyfile status to filter", None))
-#endif // QT_CONFIG(tooltip)
 #if QT_CONFIG(tooltip)
         self.cancelButton.setToolTip(QCoreApplication.translate("MainWindow", u"Clear filter and reset", None))
 #endif // QT_CONFIG(tooltip)
