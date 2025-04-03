@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Edit</class>
- <widget class="QWidget" name="Edit">
+ <class>Column</class>
+ <widget class="QWidget" name="Column">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -17,9 +17,16 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Metadata Edit</string>
+   <string>Table Column</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Configure metadata keys to display as table columns.</string>
+     </property>
+    </widget>
+   </item>
    <item>
     <layout class="QVBoxLayout" name="tableLayout">
      <item>

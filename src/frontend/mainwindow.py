@@ -19,6 +19,7 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidg
 	QFileDialog, QPushButton, QWidget, QHBoxLayout, QLabel, QVBoxLayout
 from PySide6.QtCore import QTranslator, Qt, QCoreApplication, QSize
 
+from frontend.columnconfigurator import ColumnConfigurator
 from frontend.metadataeditor import MetadataEditor
 from frontend.renamesensor import RenameSensor
 from frontend.ui.uimain import Ui_MainWindow
@@ -56,7 +57,7 @@ class MainWindow(QMainWindow):
 		self.key_handler = None
 		self.folder_content = None
 		self.config_manager = ConfigManager(file_path('fosKeyManConfig.json'))
-		self.directory1, self.directory2, self.language = self.config_manager.check_and_load_previous_config()
+		self.directory1, self.directory2, self.language, self.custom_columns = self.config_manager.check_and_load_previous_config()
 		self.translator = QTranslator(self)
 		self.table_operator = TableOperator(self.ui.tableWidget)
 		self.connect_actions()
@@ -148,6 +149,7 @@ class MainWindow(QMainWindow):
 		self.ui.actionSaveChange.triggered.connect(self.save_as_json)
 		self.ui.actionSaveAsJson.triggered.connect(self.save_as_json)
 		self.ui.actionEdit.triggered.connect(self.open_json_edit_dialog)
+		self.ui.actionTableColumn.triggered.connect(self.open_column_configurator)
 
 	def open_json_edit_dialog(self):
 		checked_serial_numbers = self.get_checked_serial_numbers()
@@ -164,6 +166,17 @@ class MainWindow(QMainWindow):
 			self.folder_content.update_metadata(serial_number, updated_metadata)
 			self.update_table_row([serial_number])
 		self.reset_all_checkboxes()
+
+	def open_column_configurator(self):
+
+		dialog = ColumnConfigurator(self.custom_columns, parent=self)
+		if dialog.exec_() == QDialog.DialogCode.Accepted:
+			self.custom_columns = dialog.selected_columns
+
+			self.config_manager.custom_columns = self.custom_columns
+			self.config_manager.save_config()
+
+			self.setup_table()
 
 	def save_as_json(self):
 		r"""
@@ -507,7 +520,7 @@ class MainWindow(QMainWindow):
 		else:
 			output += " "
 		self.ui.infoTextBrowser.setHtml(output)
-	
+
 	def setup_table(self):
 		r"""
 		Set up the table with the necessary headers, styles, and configurations.
@@ -515,21 +528,25 @@ class MainWindow(QMainWindow):
 		Sets certain columns (Status, Serial Number, and Keyfile) as read-only to prevent unintended modification.
 		Populate table with data in metadata.json, and connect a cell click event to display additional information.
 		"""
-		self.ui.tableWidget.setColumnCount(12)
-		self.ui.tableWidget.setHorizontalHeaderLabels([
+		fixed_columns = [
 			' ',
 			self.tr('Status'),
 			self.tr('Serial Number'),
-			self.tr('Sensor Name'),
-			self.tr('Project'),
-			self.tr('Operator'),
-			self.tr('Specimen'),
-			self.tr('DFOS_Type'),
-			self.tr('Installation'),
-			self.tr('Note'),
+			self.tr('Sensor Name')
+		]
+
+		custom_columns = self.custom_columns
+
+		fixed_tail_columns = [
 			self.tr('Last Edit Date'),
 			self.tr('Sensor Length (m)')
-		])
+		]
+
+		all_columns = fixed_columns + [self.tr(col) for col in custom_columns] + fixed_tail_columns
+
+		self.ui.tableWidget.setColumnCount(len(all_columns))
+		self.ui.tableWidget.setHorizontalHeaderLabels(all_columns)
+
 		self.ui.tableWidget.setStyleSheet("""
 			QHeaderView::section {
 				background-color: lightgray;
@@ -541,26 +558,27 @@ class MainWindow(QMainWindow):
 			QTableWidget {
 				gridline-color: grey;
 			}
-			# QTableWidget::item:selected {
-			# 	background-color: transparent;
-			# 	color: black; 
-			# }
 		""")
 		self.ui.tableWidget.setColumnWidth(0, 10)
 		self.ui.tableWidget.setColumnWidth(1, 180)
+
 		header = self.ui.tableWidget.horizontalHeader()
 		header.setSectionsMovable(True)
 		header.setDragEnabled(True)
 		header.setDragDropMode(QHeaderView.DragDropMode.DragDrop)
-		header.moveSection(header.visualIndex(2), 9)
+
 		if self.key_handler is None:
 			return
+
 		self.ui.tableWidget.setRowCount(0)
 		self.populate_table()
-		self.set_columns_read_only([1, 2, 3, 10, 11])
-		self.set_columns_background_color([2, 3, 10, 11])
+
+		read_only_indices = [1, 2, 3] + [len(all_columns) - 2, len(all_columns) - 1]
+		self.set_columns_read_only(read_only_indices)
+		self.set_columns_background_color([2, 3, len(all_columns) - 2, len(all_columns) - 1])
+
 		self.populate_search_combobox()
-	
+
 	def set_columns_read_only(self, columns):
 		r"""
 		Set the specified columns to read-only.
@@ -585,12 +603,10 @@ class MainWindow(QMainWindow):
 				item = self.ui.tableWidget.item(row, column)
 				if item:
 					item.setBackground(QBrush(QColor(245, 245, 245)))
-	
+
 	def populate_table(self):
-		r"""
-		Populate the table with key data and statuses from key files on disk.
-		"""
 		self.ui.tableWidget.setSortingEnabled(False)
+
 		activated_keys = set(self.key_handler.read_keys('activated'))
 		deactivated_keys = set(self.key_handler.read_keys('deactivated'))
 
@@ -598,49 +614,52 @@ class MainWindow(QMainWindow):
 						   [(key, "Deactivated") for key in deactivated_keys]
 
 		self.ui.tableWidget.setRowCount(len(keys_with_status))
-		for index, (key, status) in enumerate(keys_with_status):
-			for col in range(12):
-				if self.ui.tableWidget.item(index, col) is None:
-					self.ui.tableWidget.setItem(index, col, QTableWidgetItem())
+
+		for row_idx, (key, status) in enumerate(keys_with_status):
+			total_cols = self.ui.tableWidget.columnCount()
+
+			for col in range(total_cols):
+				if self.ui.tableWidget.item(row_idx, col) is None:
+					self.ui.tableWidget.setItem(row_idx, col, QTableWidgetItem())
+
 			if status == 'Activated':
 				activation_status = ActivationStatus.ACTIVATED
-				self.ui.tableWidget.setCellWidget(index, 1, self.create_status_button('Activated'))
-			elif status == 'Deactivated':
-				activation_status = ActivationStatus.DEACTIVATED
-				self.ui.tableWidget.setCellWidget(index, 1, self.create_status_button('Deactivated'))
+				self.ui.tableWidget.setCellWidget(row_idx, 1, self.create_status_button('Activated'))
 			else:
-				continue
+				activation_status = ActivationStatus.DEACTIVATED
+				self.ui.tableWidget.setCellWidget(row_idx, 1, self.create_status_button('Deactivated'))
 
-			activation_item = self.ui.tableWidget.item(index, 1)
+			activation_item = self.ui.tableWidget.item(row_idx, 1)
 			activation_item.setData(Qt.ItemDataRole.DisplayRole, activation_status.value)
 			activation_item.setForeground(Qt.GlobalColor.transparent)
 			activation_item.setData(Qt.ItemDataRole.UserRole + 1, activation_status)
-			check_item = self.ui.tableWidget.item(index, 0)
+
+			check_item = self.ui.tableWidget.item(row_idx, 0)
 			check_item.setCheckState(Qt.CheckState.Unchecked)
 
 			metadata = self.folder_content.read_metadata(key)
 
-			# serial number - readonly
-			self.ui.tableWidget.item(index, 2).setText(key)
-			self.ui.tableWidget.item(index, 2).setData(Qt.ItemDataRole.UserRole + 2, key)
-			# last edit date - read only
+			self.ui.tableWidget.item(row_idx, 2).setText(key)
+			self.ui.tableWidget.item(row_idx, 2).setData(Qt.ItemDataRole.UserRole + 2, key)
+
+			self.ui.tableWidget.item(row_idx, 3).setText(self.folder_content.read_sensor_name_for_key(key))
+
 			edit_date = self.folder_content.get_last_edit_date(key)
 			edit_date_str = edit_date.strftime("%Y-%m-%d") if edit_date else ""
-			self.ui.tableWidget.item(index, 10).setText(edit_date_str)
-			#  sensor length - read only
+
+			last_edit_idx = self.ui.tableWidget.columnCount() - 2
+			sensor_len_idx = self.ui.tableWidget.columnCount() - 1
+
+			self.ui.tableWidget.item(row_idx, last_edit_idx).setText(edit_date_str)
+
 			sensor_length = self.folder_content.read_sensor_length_for_key(key)
 			sensor_length_str = str(sensor_length) if sensor_length is not None else ""
-			self.ui.tableWidget.item(index, 11).setText(sensor_length_str)
-			# sensor name -read only
-			self.ui.tableWidget.item(index, 3).setText(self.folder_content.read_sensor_name_for_key(key))
+			self.ui.tableWidget.item(row_idx, sensor_len_idx).setText(sensor_length_str)
 
-			if metadata:
-				self.ui.tableWidget.item(index, 4).setText(metadata.get("Project", ""))
-				self.ui.tableWidget.item(index, 5).setText(metadata.get("Operator", ""))
-				self.ui.tableWidget.item(index, 6).setText(metadata.get("Specimen", ""))
-				self.ui.tableWidget.item(index, 7).setText(metadata.get("DFOS_Type", ""))
-				self.ui.tableWidget.item(index, 8).setText(metadata.get("Installation", ""))
-				self.ui.tableWidget.item(index, 9).setText(metadata.get("Note", ""))
+			for i, col_name in enumerate(self.custom_columns):
+				col_idx = 4 + i
+				value = metadata.get(col_name, "")
+				self.ui.tableWidget.item(row_idx, col_idx).setText(value)
 
 		self.ui.tableWidget.setSortingEnabled(True)
 
@@ -739,8 +758,35 @@ class MainWindow(QMainWindow):
 	
 	def exit_application(self):
 		r"""Method to handle application exit."""
+		self.save_current_column_order()
 		QCoreApplication.instance().quit()
-	
+
+	def closeEvent(self, event):
+		"""Triggered when user clicks X to close the window."""
+		self.save_current_column_order()
+		event.accept()
+
+	def save_current_column_order(self):
+		header = self.ui.tableWidget.horizontalHeader()
+		total_columns = self.ui.tableWidget.columnCount()
+
+		ordered_column_names = []
+		for visual_pos in range(total_columns):
+			logical_index = header.logicalIndex(visual_pos)
+			header_item = self.ui.tableWidget.horizontalHeaderItem(logical_index)
+			if header_item:
+				column_name = header_item.text()
+				ordered_column_names.append(column_name)
+
+		ordered_custom_columns = []
+		for name in ordered_column_names:
+			if name in self.custom_columns:
+				ordered_custom_columns.append(name)
+
+		self.custom_columns = ordered_custom_columns
+		self.config_manager.custom_columns = self.custom_columns
+		self.config_manager.save_config()
+
 	def open_documentation(self):
 		r"""Open the Doxygen generated documentation web page."""
 		documentation_url = "https://tud-imb.github.io/fosKeyMan/"
@@ -783,7 +829,7 @@ class MainWindow(QMainWindow):
 				self.ui.searchTextBrowser.append(result_text)
 		else:
 			self.ui.searchTextBrowser.setPlainText(self.tr("No results found."))
-	
+
 	def update_table_row(self, serial_numbers):
 		r"""
 		Update specific rows in the table given a list of serial numbers.
@@ -793,7 +839,8 @@ class MainWindow(QMainWindow):
 			row_index = None
 
 			for row in range(self.ui.tableWidget.rowCount()):
-				if self.ui.tableWidget.item(row, 2).data(Qt.ItemDataRole.UserRole + 2) == serial_number:
+				item = self.ui.tableWidget.item(row, 2)
+				if item and item.data(Qt.ItemDataRole.UserRole + 2) == serial_number:
 					row_index = row
 					break
 
@@ -824,19 +871,19 @@ class MainWindow(QMainWindow):
 
 			edit_date = self.folder_content.get_last_edit_date(serial_number)
 			edit_date_str = edit_date.strftime("%Y-%m-%d") if edit_date else ""
-			self.ui.tableWidget.item(row_index, 10).setText(edit_date_str)
+			last_edit_idx = self.ui.tableWidget.columnCount() - 2
+			self.ui.tableWidget.item(row_index, last_edit_idx).setText(edit_date_str)
 
 			sensor_length = self.folder_content.read_sensor_length_for_key(serial_number)
 			sensor_length_str = str(sensor_length) if sensor_length is not None else ""
-			self.ui.tableWidget.item(row_index, 11).setText(sensor_length_str)
+			sensor_len_idx = self.ui.tableWidget.columnCount() - 1
+			self.ui.tableWidget.item(row_index, sensor_len_idx).setText(sensor_length_str)
 
 			if metadata:
-				self.ui.tableWidget.item(row_index, 4).setText(metadata.get("Project", ""))
-				self.ui.tableWidget.item(row_index, 5).setText(metadata.get("Operator", ""))
-				self.ui.tableWidget.item(row_index, 6).setText(metadata.get("Specimen", ""))
-				self.ui.tableWidget.item(row_index, 7).setText(metadata.get("DFOS_Type", ""))
-				self.ui.tableWidget.item(row_index, 8).setText(metadata.get("Installation", ""))
-				self.ui.tableWidget.item(row_index, 9).setText(metadata.get("Note", ""))
+				for i, col_name in enumerate(self.custom_columns):
+					col_idx = 4 + i
+					value = metadata.get(col_name, "")
+					self.ui.tableWidget.item(row_index, col_idx).setText(value)
 
 
 def file_path(relative_path):

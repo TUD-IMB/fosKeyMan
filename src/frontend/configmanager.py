@@ -11,6 +11,8 @@ class ConfigManager(QObject):
 	Handle user interaction for selecting directories, and ensures that the configuration is
 	correctly loaded from and saved to a JSON file.
 	"""
+	DEFAULT_COLUMNS = ["Project", "Operator", "Specimen", "DFOS_Type", "Installation", "Note"]
+
 	def __init__(self, config_path):
 		r"""
 		Initialize the ConfigManager with the path to the configuration file.
@@ -22,6 +24,7 @@ class ConfigManager(QObject):
 		self.directory1 = None
 		self.directory2 = None
 		self.language = None
+		self.custom_columns = None
 		self.config = self.load_config()
 
 	def create_default_config(self):
@@ -33,7 +36,8 @@ class ConfigManager(QObject):
 		default_config = {
 			'directory1': '',
 			'directory2': '',
-			'language': 'english'
+			'language': 'english',
+			'custom_columns': self.DEFAULT_COLUMNS
 		}
 		with open(self.config_path, 'w') as f:
 			json.dump(default_config, f)
@@ -61,7 +65,8 @@ class ConfigManager(QObject):
 		config_data = {
 			'directory1': self.directory1,
 			'directory2': self.directory2,
-			'language': self.language
+			'language': self.language,
+			'custom_columns': self.custom_columns
 		}
 		with open(self.config_path, 'w') as f:
 			json.dump(config_data, f)
@@ -75,6 +80,7 @@ class ConfigManager(QObject):
 		dir1 = self.config.get('directory1', None)
 		dir2 = self.config.get('directory2', None)
 		language = self.config.get('language', 'english')
+		columns = self.config.get('custom_columns', self.DEFAULT_COLUMNS)
 
 		if dir1 and os.path.exists(dir1):
 			self.directory1 = dir1
@@ -87,7 +93,12 @@ class ConfigManager(QObject):
 		else:
 			self.language = 'english'
 
-		return self.directory1, self.directory2, self.language
+		if isinstance(columns, list) and all(isinstance(col, str) for col in columns):
+			self.custom_columns = columns
+		else:
+			self.custom_columns = self.DEFAULT_COLUMNS
+
+		return self.directory1, self.directory2, self.language, self.custom_columns
 
 	def select_directory1(self, dialog, open_ui):
 		r"""

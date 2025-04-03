@@ -350,6 +350,7 @@
     <addaction name="actionInformation"/>
     <addaction name="actionFilter"/>
     <addaction name="actionSearch"/>
+    <addaction name="actionTableColumn"/>
    </widget>
    <widget class="QMenu" name="menuSetting">
     <property name="title">
@@ -643,6 +644,11 @@
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionTableColumn">
+   <property name="text">
+    <string>Table Columns</string>
    </property>
   </action>
  </widget>
