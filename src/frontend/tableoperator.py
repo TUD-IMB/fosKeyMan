@@ -1,3 +1,5 @@
+import fnmatch
+
 from PySide6.QtGui import Qt
 from PySide6.QtWidgets import QMessageBox, QComboBox, QLineEdit, QWidget
 from frontend.keystatus import ActivationStatus
@@ -88,6 +90,9 @@ class TableOperator:
 
 				filter_text = widget.currentText() if isinstance(widget, QComboBox) else widget.text().strip()
 
+				if not filter_text or filter_text == "All":
+					continue
+
 				if label_text == "Status":
 					status_value = item.data(Qt.ItemDataRole.UserRole + 1)
 					if filter_text == 'Activated' and status_value != ActivationStatus.ACTIVATED:
@@ -95,7 +100,8 @@ class TableOperator:
 					elif filter_text == 'Deactivated' and status_value != ActivationStatus.DEACTIVATED:
 						match = False
 				else:
-					if filter_text not in item.text():
+					# if filter_text not in item.text():
+					if not fnmatch.fnmatch(item.text(), filter_text):
 						match = False
 
 			self.table_widget.setRowHidden(row, not match)
