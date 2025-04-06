@@ -16,8 +16,8 @@ import webbrowser
 from PySide6.QtGui import QIcon, QColor, QBrush
 from PySide6.QtSvgWidgets import QSvgWidget
 from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidgetItem, QHeaderView, QDialog, \
-	QFileDialog, QPushButton, QWidget, QHBoxLayout, QLabel, QVBoxLayout, QLineEdit, QComboBox
-from PySide6.QtCore import QTranslator, Qt, QCoreApplication, QSize
+	QFileDialog, QPushButton, QWidget, QHBoxLayout, QLabel, QVBoxLayout, QLineEdit, QComboBox, QDateEdit
+from PySide6.QtCore import QTranslator, Qt, QCoreApplication, QSize, QDate
 
 from frontend.columnconfigurator import ColumnConfigurator
 from frontend.metadataeditor import MetadataEditor
@@ -126,6 +126,31 @@ class MainWindow(QMainWindow):
 			line_edit.setObjectName(f"{col.lower().replace(' ', '')}LineEdit")
 			layout.addRow(label, line_edit)
 			self.dynamic_filter_inputs[col] = line_edit
+
+		date_container = QWidget(self)
+		date_layout = QHBoxLayout(date_container)
+		date_layout.setContentsMargins(0, 0, 0, 0)
+
+		start_label = QLabel("Start", self)
+		start_date_edit = QDateEdit(self)
+		start_date_edit.setDisplayFormat("yyyy-MM-dd")
+		start_date_edit.setCalendarPopup(True)
+		start_date_edit.setDate(QDate(2000, 1, 1))
+
+		end_label = QLabel("End", self)
+		end_date_edit = QDateEdit(self)
+		end_date_edit.setDisplayFormat("yyyy-MM-dd")
+		end_date_edit.setCalendarPopup(True)
+		end_date_edit.setDate(QDate.currentDate())
+
+		date_layout.addWidget(start_label)
+		date_layout.addWidget(start_date_edit)
+		date_layout.addWidget(end_label)
+		date_layout.addWidget(end_date_edit)
+
+		layout.addRow(date_container)
+		self.dynamic_filter_inputs["Start"] = start_date_edit
+		self.dynamic_filter_inputs["End"] = end_date_edit
 
 	def connect_actions(self):
 		r"""

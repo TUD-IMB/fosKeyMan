@@ -1,7 +1,9 @@
 import fnmatch
+from datetime import datetime
 
+from PySide6.QtCore import QDate
 from PySide6.QtGui import Qt
-from PySide6.QtWidgets import QMessageBox, QComboBox, QLineEdit, QWidget
+from PySide6.QtWidgets import QMessageBox, QComboBox, QLineEdit, QWidget, QDateEdit
 from frontend.keystatus import ActivationStatus
 
 
@@ -78,6 +80,9 @@ class TableOperator:
 			match = True
 
 			for label_text, widget in filter_inputs.items():
+				if label_text in ["Start", "End"]:
+					continue
+
 				if label_text not in label_to_index:
 					match = False
 					break
@@ -104,6 +109,24 @@ class TableOperator:
 					if not fnmatch.fnmatch(item.text(), filter_text):
 						match = False
 
+			start_widget = filter_inputs.get("Start")
+			end_widget = filter_inputs.get("End")
+
+			start_date = start_widget.date() if start_widget else None
+			end_date = end_widget.date() if end_widget else None
+
+			col_index = label_to_index["Last Edit Date"]
+			item = self.table_widget.item(row, col_index)
+			if item and item.text():
+				cell_date = datetime.strptime(item.text(), "%Y-%m-%d").date()
+
+				if start_date and cell_date < start_date:
+					match = False
+				if end_date and cell_date > end_date:
+					match = False
+			else:
+				match = False
+
 			self.table_widget.setRowHidden(row, not match)
 
 	def reset_filter(self, filter_inputs):
@@ -112,12 +135,15 @@ class TableOperator:
 
 		\param filter_inputs (dict[str, QWidget]): A dictionary mapping filter label text (also the table column header) to the corresponding input widget (QLineEdit or QComboBox).
 		"""
-		for widget in filter_inputs.values():
+		for label_text, widget in filter_inputs.items():
 			if isinstance(widget, QLineEdit):
 				widget.clear()
 			elif isinstance(widget, QComboBox):
 				widget.setCurrentIndex(0)
-
+			elif isinstance(widget, QDateEdit):
+				if label_text == "Start":
+					widget.setDate(QDate(2000, 1, 1))
+				elif label_text == "End":
+					widget.setDate(QDate.currentDate())
 		for row in range(self.table_widget.rowCount()):
 			self.table_widget.setRowHidden(row, False)
-
