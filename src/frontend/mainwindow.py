@@ -188,7 +188,6 @@ class MainWindow(QMainWindow):
 		self.ui.actionExportKeyfiles.triggered.connect(self.keyfile_export)
 		self.ui.actionAbout.triggered.connect(self.show_about_dialog)
 		self.ui.actionSaveChange.triggered.connect(self.save_as_json)
-		self.ui.actionSaveAsJson.triggered.connect(self.save_as_json)
 		self.ui.actionEdit.triggered.connect(self.open_json_edit_dialog)
 		self.ui.actionTableColumn.triggered.connect(self.open_column_configurator)
 
@@ -225,27 +224,13 @@ class MainWindow(QMainWindow):
 		Export non-empty, non-read-only table values from selected rows
 		to a 'metadata.json' file inside the corresponding Keyfile directory.
 		"""
-		# checked_serial_numbers = self.get_checked_serial_numbers()
-		# if not checked_serial_numbers:
-		# 	QMessageBox.warning(self, self.tr("Error"), self.tr("No keyfile selected for export."))
-		# 	return
 
 		table = self.ui.tableWidget
 		read_only_columns = [0, 1, 2, 3, 10, 11]
 
-		column_translation = {
-			"Projekt": "Project",
-			"Verantwortliche(r)": "Operator",
-			"Probe": "Specimen",
-			"DFOS-Typ": "DFOS_Type",
-			"Installation": "Installation",
-			"Notiz": "Note",
-		}
-
 		for row in range(table.rowCount()):
 			serial_number = table.item(row, 2).data(Qt.ItemDataRole.UserRole + 2)
 
-			# if serial_number in checked_serial_numbers:
 			if self.check_activation_status(serial_number) == ActivationStatus.ACTIVATED:
 				keyfile_path = os.path.join(self.directory1, serial_number)
 			elif self.check_activation_status(serial_number) == ActivationStatus.DEACTIVATED:
@@ -275,26 +260,23 @@ class MainWindow(QMainWindow):
 				item = table.item(row, col)
 				column_name = table.horizontalHeaderItem(col).text()
 
-				if self.language == "german":
-					english_column_name = column_translation.get(column_name, column_name)
-				else:
-					english_column_name = column_name
+				field_name = column_name
 
 				if item and item.text().strip():
-					meta_data[english_column_name] = item.text().strip()
-				elif english_column_name in existing_data:
-					del existing_data[english_column_name]
+					meta_data[field_name] = item.text().strip()
+				elif field_name in existing_data:
+					del existing_data[field_name]
 
 			existing_data.update(meta_data)
 
 			with open(meta_json_path, "w", encoding="utf-8") as f:
 				json.dump(existing_data, f, indent=4, ensure_ascii=False)
 
-				# if existing_data:
-				# 	with open(meta_json_path, "w", encoding="utf-8") as f:
-				# 		json.dump(existing_data, f, indent=4, ensure_ascii=False)
-				# elif os.path.exists(meta_json_path):
-				# 	os.remove(meta_json_path)
+			# if existing_data:
+			# 	with open(meta_json_path, "w", encoding="utf-8") as f:
+			# 		json.dump(existing_data, f, indent=4, ensure_ascii=False)
+			# elif os.path.exists(meta_json_path):
+			# 	os.remove(meta_json_path)
 		self.reset_all_checkboxes()
 
 	def show_about_dialog(self):

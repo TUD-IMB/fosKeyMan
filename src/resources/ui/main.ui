@@ -216,7 +216,6 @@
     </property>
     <addaction name="actionUSBLoad"/>
     <addaction name="actionExportKeyfiles"/>
-    <addaction name="actionSaveAsJson"/>
     <addaction name="actionRenameSensor"/>
    </widget>
    <addaction name="menuFile"/>
@@ -471,11 +470,6 @@
   <action name="actionExportKeyfiles">
    <property name="text">
     <string>Export Keyfiles</string>
-   </property>
-  </action>
-  <action name="actionSaveAsJson">
-   <property name="text">
-    <string>Save as json</string>
    </property>
   </action>
   <action name="actionEdit">
