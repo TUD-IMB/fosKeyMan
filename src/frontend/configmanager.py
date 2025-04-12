@@ -144,4 +144,6 @@ class ConfigManager(QObject):
 								self.tr("Please select a valid directory for deactivated keyfiles."))
 			return
 
+		# self.custom_columns = self.DEFAULT_COLUMNS
+
 		dialog.accept()

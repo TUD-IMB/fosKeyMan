@@ -74,20 +74,25 @@ class TableOperator:
 		for i in range(self.table_widget.columnCount()):
 			header_item = self.table_widget.horizontalHeaderItem(i)
 			if header_item:
-				label_to_index[header_item.text()] = i
+				internal_key = header_item.data(Qt.ItemDataRole.UserRole)
+				if internal_key:
+					label_to_index[internal_key] = i
+				else:
+					label_to_index[header_item.text()] = i
 
 		for row in range(self.table_widget.rowCount()):
 			match = True
 
 			for label_text, widget in filter_inputs.items():
-				if label_text in ["Start", "End"]:
+				if label_text in ["start", "end"]:
 					continue
 
-				if label_text not in label_to_index:
+				if label_text in label_to_index:
+					col_index = label_to_index[label_text]
+				else:
 					match = False
 					break
 
-				col_index = label_to_index[label_text]
 				item = self.table_widget.item(row, col_index)
 				if item is None:
 					match = False
@@ -95,27 +100,33 @@ class TableOperator:
 
 				filter_text = widget.currentText() if isinstance(widget, QComboBox) else widget.text().strip()
 
-				if not filter_text or filter_text == "All":
+				if not filter_text or filter_text == "All" or filter_text == "Alle":
 					continue
 
-				if label_text == "Status":
+				if label_text == "status":
 					status_value = item.data(Qt.ItemDataRole.UserRole + 1)
-					if filter_text == 'Activated' and status_value != ActivationStatus.ACTIVATED:
-						match = False
-					elif filter_text == 'Deactivated' and status_value != ActivationStatus.DEACTIVATED:
+
+					status_mapping = {
+						"Activated": ActivationStatus.ACTIVATED,
+						"Deactivated": ActivationStatus.DEACTIVATED,
+						"Aktiviert": ActivationStatus.ACTIVATED,
+						"Deaktiviert": ActivationStatus.DEACTIVATED
+					}
+
+					expected_status = status_mapping.get(filter_text, None)
+
+					if expected_status is None or status_value != expected_status:
 						match = False
 				else:
-					# if filter_text not in item.text():
 					if not fnmatch.fnmatch(item.text(), filter_text):
 						match = False
 
-			start_widget = filter_inputs.get("Start")
-			end_widget = filter_inputs.get("End")
+			start_widget = filter_inputs.get("start")
+			end_widget = filter_inputs.get("end")
 
 			start_date = start_widget.date() if start_widget else None
 			end_date = end_widget.date() if end_widget else None
-
-			col_index = label_to_index["Last Edit Date"]
+			col_index = label_to_index["last_edit_date"]
 			item = self.table_widget.item(row, col_index)
 			if item and item.text():
 				cell_date = datetime.strptime(item.text(), "%Y-%m-%d").date()

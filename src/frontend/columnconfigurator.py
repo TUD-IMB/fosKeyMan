@@ -9,7 +9,7 @@ from utils.utils import apply_icon_button_style
 class ColumnConfigurator(QDialog):
 	def __init__(self, initial_columns, parent=None):
 		super(ColumnConfigurator, self).__init__(parent)
-		self.setWindowTitle("Configure Table Columns")
+		self.setWindowTitle(self.tr("Configure Table Columns"))
 
 		self.ui = Ui_Column()
 		self.ui.setupUi(self)
@@ -25,7 +25,7 @@ class ColumnConfigurator(QDialog):
 
 	def setup_main_table(self):
 		self.ui.tableWidget.setColumnCount(2)
-		self.ui.tableWidget.setHorizontalHeaderLabels(["Column Name", ""])
+		self.ui.tableWidget.setHorizontalHeaderLabels([self.tr("Column Name"), ""])
 		self.ui.tableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
 		self.ui.tableWidget.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Fixed)
 		self.ui.tableWidget.setColumnWidth(1, 40)
@@ -64,7 +64,7 @@ class ColumnConfigurator(QDialog):
 			self.insert_column_row(col_name)
 			self.ui.addTableWidget.setItem(0, 0, QTableWidgetItem())
 		else:
-			QMessageBox.warning(self, "Input Error", "Please enter a column name.")
+			QMessageBox.warning(self, self.tr("Input Error"), self.tr("Please enter a column name."))
 
 	def insert_column_row(self, column_name: str):
 		row_pos = self.ui.tableWidget.rowCount()

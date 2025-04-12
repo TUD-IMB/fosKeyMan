@@ -104,21 +104,25 @@ class MainWindow(QMainWindow):
 
 		self.dynamic_filter_inputs = {}
 
-		status_label = QLabel("Status", self)
+		status_label = QLabel(self.tr("Status"), self)
 		status_combo = QComboBox(self)
-		status_combo.addItems(["All", "Activated", "Deactivated"])
+		status_combo.addItems([
+			self.tr("All"),
+			self.tr("Activated"),
+			self.tr("Deactivated")
+		])
 		layout.addRow(status_label, status_combo)
-		self.dynamic_filter_inputs["Status"] = status_combo
+		self.dynamic_filter_inputs["status"] = status_combo
 
-		serial_label = QLabel("Serial Number", self)
+		serial_label = QLabel(self.tr("Serial Number"), self)
 		serial_input = QLineEdit(self)
 		layout.addRow(serial_label, serial_input)
-		self.dynamic_filter_inputs["Serial Number"] = serial_input
+		self.dynamic_filter_inputs["serial_number"] = serial_input
 
-		name_label = QLabel("Sensor Name", self)
+		name_label = QLabel(self.tr("Sensor Name"), self)
 		name_input = QLineEdit(self)
 		layout.addRow(name_label, name_input)
-		self.dynamic_filter_inputs["Sensor Name"] = name_input
+		self.dynamic_filter_inputs["sensor_name"] = name_input
 
 		for col in self.custom_columns:
 			label = QLabel(col, self)
@@ -131,13 +135,13 @@ class MainWindow(QMainWindow):
 		date_layout = QHBoxLayout(date_container)
 		date_layout.setContentsMargins(0, 0, 0, 0)
 
-		start_label = QLabel("Start", self)
+		start_label = QLabel(self.tr("Start"), self)
 		start_date_edit = QDateEdit(self)
 		start_date_edit.setDisplayFormat("yyyy-MM-dd")
 		start_date_edit.setCalendarPopup(True)
 		start_date_edit.setDate(QDate(2000, 1, 1))
 
-		end_label = QLabel("End", self)
+		end_label = QLabel(self.tr("End"), self)
 		end_date_edit = QDateEdit(self)
 		end_date_edit.setDisplayFormat("yyyy-MM-dd")
 		end_date_edit.setCalendarPopup(True)
@@ -149,8 +153,8 @@ class MainWindow(QMainWindow):
 		date_layout.addWidget(end_date_edit)
 
 		layout.addRow(date_container)
-		self.dynamic_filter_inputs["Start"] = start_date_edit
-		self.dynamic_filter_inputs["End"] = end_date_edit
+		self.dynamic_filter_inputs["start"] = start_date_edit
+		self.dynamic_filter_inputs["end"] = end_date_edit
 
 	def connect_actions(self):
 		r"""
@@ -430,6 +434,7 @@ class MainWindow(QMainWindow):
 			if self.config_manager.directory1 and self.config_manager.directory2:
 				self.directory1 = self.config_manager.directory1
 				self.directory2 = self.config_manager.directory2
+				# self.custom_columns = self.config_manager.custom_columns
 				self.config_manager.save_config()
 				self.initialize_handlers()
 	
@@ -444,6 +449,7 @@ class MainWindow(QMainWindow):
 			return
 		self.folder_content = FolderContent(self.directory1, self.directory2)
 		self.setup_table()
+		self.setup_filter_dockwidget()
 
 	def rename_sensor_name(self):
 		r"""
@@ -570,6 +576,18 @@ class MainWindow(QMainWindow):
 
 		self.ui.tableWidget.setColumnCount(len(all_columns))
 		self.ui.tableWidget.setHorizontalHeaderLabels(all_columns)
+
+		fixed_keys = ['checkbox', 'status', 'serial_number', 'sensor_name']
+		fixed_tail_keys = ['last_edit_date', 'sensor_length']
+
+		for i, key in enumerate(fixed_keys):
+			header_item = self.ui.tableWidget.horizontalHeaderItem(i)
+			header_item.setData(Qt.ItemDataRole.UserRole, key)
+
+		for i, key in enumerate(fixed_tail_keys):
+			idx = len(all_columns) - len(fixed_tail_keys) + i
+			header_item = self.ui.tableWidget.horizontalHeaderItem(idx)
+			header_item.setData(Qt.ItemDataRole.UserRole, key)
 
 		self.ui.tableWidget.setStyleSheet("""
 			QHeaderView::section {
@@ -779,7 +797,8 @@ class MainWindow(QMainWindow):
 		self.config_manager.language = language
 		self.config_manager.save_config()
 		self.setup_table()
-	
+		self.setup_filter_dockwidget()
+
 	def exit_application(self):
 		r"""Method to handle application exit."""
 		self.save_current_column_order()

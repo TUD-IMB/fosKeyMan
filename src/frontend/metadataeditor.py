@@ -95,7 +95,7 @@ class MetadataEditor(QDialog):
 			self.ui.addTableWidget.setItem(0, 0, QTableWidgetItem())
 			self.ui.addTableWidget.setItem(0, 1, QTableWidgetItem())
 		else:
-			QMessageBox.warning(self, "Input Error", "Both Property and Value must be filled.")
+			QMessageBox.warning(self, self.tr("Input Error"), self.tr("Both Property and Value must be filled."))
 
 	def confirm_and_close(self):
 		self.result_metadata = self.get_updated_metadata()
