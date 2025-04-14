@@ -7,9 +7,17 @@ from utils.utils import apply_icon_button_style
 
 
 class MetadataEditor(QDialog):
+	r"""
+	Class to edit the metadata.json contents for a keyfile.
+	"""
+	def __init__(self, serial_number, metadata, parent):
+		r"""
+		Initialize the MetadataEditor dialog.
 
-	def __init__(self, serial_number: str, metadata: dict, parent=None):
-
+		\param serial_number (str): Serial number of the keyfile.
+		\param metadata (dict): Existing metadata dictionary.
+		\param parent (QWidget, optional): Parent widget for this dialog.
+		"""
 		super(MetadataEditor, self).__init__(parent)
 
 		self.serial_number = serial_number
@@ -27,7 +35,9 @@ class MetadataEditor(QDialog):
 		self.result_metadata = None
 
 	def setup_main_table(self):
-
+		r"""
+		Set up the main table to display and edit existing metadata entries.
+		"""
 		self.ui.tableWidget.setColumnCount(3)
 		self.ui.tableWidget.setHorizontalHeaderLabels(["Property", "Value", ""])
 		self.ui.tableWidget.horizontalHeader().setStretchLastSection(False)
@@ -40,6 +50,9 @@ class MetadataEditor(QDialog):
 			self.insert_json_row(key, value)
 
 	def setup_add_table(self):
+		r"""
+		Set up a small input table for adding new metadata key-value pairs.
+		"""
 		self.ui.addTableWidget.setColumnCount(3)
 		self.ui.addTableWidget.setRowCount(1)
 		self.ui.addTableWidget.horizontalHeader().setVisible(False)
@@ -68,6 +81,9 @@ class MetadataEditor(QDialog):
 		add_button.clicked.connect(self.add_new_row)
 
 	def insert_json_row(self, key, value):
+		r"""
+		Insert a new key-value pair as a row into the main metadata table.
+		"""
 		row_position = self.ui.tableWidget.rowCount()
 		self.ui.tableWidget.insertRow(row_position)
 
@@ -84,6 +100,9 @@ class MetadataEditor(QDialog):
 		self.ui.tableWidget.setCellWidget(row_position, 2, delete_button)
 
 	def add_new_row(self):
+		r"""
+		Add a new metadata entry from the input fields to the main table.
+		"""
 		key_item = self.ui.addTableWidget.item(0, 0)
 		value_item = self.ui.addTableWidget.item(0, 1)
 
@@ -98,14 +117,15 @@ class MetadataEditor(QDialog):
 			QMessageBox.warning(self, self.tr("Input Error"), self.tr("Both Property and Value must be filled."))
 
 	def confirm_and_close(self):
-		self.result_metadata = self.get_updated_metadata()
-		self.accept()
-
-	def get_updated_metadata(self):
+		r"""
+		Confirm the changes and close the editor dialog.
+		"""
 		updated_metadata = {}
 		for row in range(self.ui.tableWidget.rowCount()):
 			key_item = self.ui.tableWidget.item(row, 0)
 			value_item = self.ui.tableWidget.item(row, 1)
 			if key_item and value_item:
 				updated_metadata[key_item.text()] = value_item.text()
-		return updated_metadata
+
+		self.result_metadata = updated_metadata
+		self.accept()

@@ -7,7 +7,16 @@ from utils.utils import apply_icon_button_style
 
 
 class ColumnConfigurator(QDialog):
+	r"""
+	Class to configure (add, remove) the customized table columns.
+	"""
 	def __init__(self, initial_columns, parent=None):
+		r"""
+		Initialize the column configurator dialog.
+
+		\param initial_columns (list[str]): The initial list of customized columns.
+		\param parent (QWidget, optional): Parent widget for this dialog.
+		"""
 		super(ColumnConfigurator, self).__init__(parent)
 		self.setWindowTitle(self.tr("Configure Table Columns"))
 
@@ -24,6 +33,9 @@ class ColumnConfigurator(QDialog):
 		self.ui.confirmButton.clicked.connect(self.confirm_and_close)
 
 	def setup_main_table(self):
+		r"""
+		Set up the main table to display and manage the current customized columns.
+		"""
 		self.ui.tableWidget.setColumnCount(2)
 		self.ui.tableWidget.setHorizontalHeaderLabels([self.tr("Column Name"), ""])
 		self.ui.tableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
@@ -34,6 +46,9 @@ class ColumnConfigurator(QDialog):
 			self.insert_column_row(col_name)
 
 	def setup_add_table(self):
+		r"""
+		Set up a small input table for adding new column names.
+		"""
 		self.ui.addTableWidget.setColumnCount(2)
 		self.ui.addTableWidget.setRowCount(1)
 		self.ui.addTableWidget.horizontalHeader().setVisible(False)
@@ -58,6 +73,9 @@ class ColumnConfigurator(QDialog):
 		add_button.clicked.connect(self.add_new_column)
 
 	def add_new_column(self):
+		r"""
+		Add a new column name from the input field to the main table.
+		"""
 		item = self.ui.addTableWidget.item(0, 0)
 		col_name = item.text().strip() if item else ""
 		if col_name:
@@ -66,7 +84,12 @@ class ColumnConfigurator(QDialog):
 		else:
 			QMessageBox.warning(self, self.tr("Input Error"), self.tr("Please enter a column name."))
 
-	def insert_column_row(self, column_name: str):
+	def insert_column_row(self, column_name):
+		r"""
+		Insert a new column name as a row into the main table with a delete button.
+
+		\param column_name (str): The name of the column to insert.
+		"""
 		row_pos = self.ui.tableWidget.rowCount()
 		self.ui.tableWidget.insertRow(row_pos)
 		self.ui.tableWidget.setItem(row_pos, 0, QTableWidgetItem(column_name))
@@ -81,6 +104,9 @@ class ColumnConfigurator(QDialog):
 		self.ui.tableWidget.setCellWidget(row_pos, 1, delete_button)
 
 	def confirm_and_close(self):
+		r"""
+		Confirm the selected columns to display and close the configurator dialog.
+		"""
 		self.selected_columns = []
 		for row in range(self.ui.tableWidget.rowCount()):
 			item = self.ui.tableWidget.item(row, 0)

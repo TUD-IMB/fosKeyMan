@@ -97,6 +97,9 @@ class MainWindow(QMainWindow):
 			self.open_setting_dialog()
 
 	def setup_filter_dockwidget(self):
+		r"""
+		Dynamically set up the filter dock widget based on the current table columns.
+		"""
 		layout = self.ui.filterFormLayout
 
 		while layout.rowCount():
@@ -196,6 +199,10 @@ class MainWindow(QMainWindow):
 		self.ui.actionTableColumn.triggered.connect(self.open_column_configurator)
 
 	def open_json_edit_dialog(self):
+		r"""
+		Open a dialog to edit metadata of the selected keyfile.
+		Update the table row and the metadata.json file after editing is completed .
+		"""
 		checked_serial_numbers = self.get_checked_serial_numbers()
 		if not checked_serial_numbers:
 			QMessageBox.warning(self, self.tr("Error"), self.tr("No keyfile selected for edit."))
@@ -212,7 +219,10 @@ class MainWindow(QMainWindow):
 		self.reset_all_checkboxes()
 
 	def open_column_configurator(self):
-
+		r"""
+		Open a dialog to configure table columns.
+		Save the selected columns to config.json and refresh the table and filter in the UI.
+		"""
 		dialog = ColumnConfigurator(self.custom_columns, parent=self)
 		if dialog.exec_() == QDialog.DialogCode.Accepted:
 			self.custom_columns = dialog.selected_columns
@@ -225,8 +235,8 @@ class MainWindow(QMainWindow):
 
 	def save_as_json(self):
 		r"""
-		Export non-empty, non-read-only table values from selected rows
-		to a 'metadata.json' file inside the corresponding Keyfile directory.
+		Save the contents of the table to 'metadata.json' file inside each corresponding keyfile directory.
+		If the JSON file exists, update it; if it does not exist, create and save a new file.
 		"""
 
 		table = self.ui.tableWidget
@@ -555,7 +565,7 @@ class MainWindow(QMainWindow):
 		r"""
 		Set up the table with the necessary headers, styles, and configurations.
 		Enables the ability to drag and move columns for custom arrangement.
-		Sets certain columns (Status, Serial Number, and Keyfile) as read-only to prevent unintended modification.
+		Sets certain columns as read-only to prevent unintended modification.
 		Populate table with data in metadata.json, and connect a cell click event to display additional information.
 		"""
 		fixed_columns = [
@@ -647,6 +657,9 @@ class MainWindow(QMainWindow):
 					item.setBackground(QBrush(QColor(245, 245, 245)))
 
 	def populate_table(self):
+		r"""
+		Load activated and deactivated keys, set their status, and fill in all related metadata fields.
+		"""
 		self.ui.tableWidget.setSortingEnabled(False)
 
 		activated_keys = set(self.key_handler.read_keys('activated'))
@@ -810,6 +823,10 @@ class MainWindow(QMainWindow):
 		event.accept()
 
 	def save_current_column_order(self):
+		r"""
+		Save the current order of custom columns based on the table's visual layout (only applies to customized columns;
+		fixed columns are not affected). Update the configuration and write the new column order to config.json.
+		"""
 		header = self.ui.tableWidget.horizontalHeader()
 		total_columns = self.ui.tableWidget.columnCount()
 
