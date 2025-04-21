@@ -23,6 +23,7 @@ class ConfigManager(QObject):
 		self.config_path = config_path
 		self.directory1 = None
 		self.directory2 = None
+		self.directory3 = None
 		self.language = None
 		self.custom_columns = None
 		self.config = self.load_config()
@@ -36,6 +37,7 @@ class ConfigManager(QObject):
 		default_config = {
 			'directory1': '',
 			'directory2': '',
+			'directory3': '',
 			'language': 'english',
 			'custom_columns': self.DEFAULT_COLUMNS
 		}
@@ -65,6 +67,7 @@ class ConfigManager(QObject):
 		config_data = {
 			'directory1': self.directory1,
 			'directory2': self.directory2,
+			'directory3': self.directory3,
 			'language': self.language,
 			'custom_columns': self.custom_columns
 		}
@@ -79,6 +82,7 @@ class ConfigManager(QObject):
 		"""
 		dir1 = self.config.get('directory1', None)
 		dir2 = self.config.get('directory2', None)
+		dir3 = self.config.get('directory3', None)
 		language = self.config.get('language', 'english')
 		columns = self.config.get('custom_columns', self.DEFAULT_COLUMNS)
 
@@ -87,6 +91,9 @@ class ConfigManager(QObject):
 
 		if dir2 and os.path.exists(dir2):
 			self.directory2 = dir2
+
+		if dir3 and os.path.exists(dir3):
+			self.directory3 = dir3
 
 		if language in ('english', 'german'):
 			self.language = language
@@ -98,7 +105,7 @@ class ConfigManager(QObject):
 		else:
 			self.custom_columns = self.DEFAULT_COLUMNS
 
-		return self.directory1, self.directory2, self.language, self.custom_columns
+		return self.directory1, self.directory2, self.directory3, self.language, self.custom_columns
 
 	def select_directory1(self, dialog, open_ui):
 		r"""
@@ -124,6 +131,18 @@ class ConfigManager(QObject):
 			self.directory2 = dir2
 			open_ui.deacLineEdit.setText(dir2)
 
+	def select_directory3(self, dialog, open_ui):
+		r"""
+		Open a file dialog for the user to select the trash directory.
+
+		\param dialog (QDialog): The dialog window that allows the user to select directories.
+		\param open_ui (QWidget): The UI that contains the directory input fields.
+		"""
+		dir3 = QFileDialog.getExistingDirectory(dialog, self.tr("Please select the trash key file directory"))
+		if dir3:
+			self.directory3 = dir3
+			open_ui.trashLineEdit.setText(dir3)
+
 	def confirm_directory_selection(self, dialog, open_ui):
 		r"""
 		Confirm the directory selection made by the user.
@@ -134,6 +153,7 @@ class ConfigManager(QObject):
 		"""
 		dir1 = open_ui.acLineEdit.text().strip()
 		dir2 = open_ui.deacLineEdit.text().strip()
+		dir3 = open_ui.trashLineEdit.text().strip()
 
 		if not dir1 or not os.path.exists(dir1):
 			QMessageBox.warning(dialog, self.tr("Error"),
@@ -143,7 +163,9 @@ class ConfigManager(QObject):
 			QMessageBox.warning(dialog, self.tr("Error"),
 								self.tr("Please select a valid directory for deactivated keyfiles."))
 			return
-
-		# self.custom_columns = self.DEFAULT_COLUMNS
+		if not dir3 or not os.path.exists(dir3):
+			QMessageBox.warning(dialog, self.tr("Error"),
+								self.tr("Please select a valid directory for deactivated keyfiles."))
+			return
 
 		dialog.accept()

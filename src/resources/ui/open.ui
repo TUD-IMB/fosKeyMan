@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>152</height>
+    <height>212</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -102,6 +102,36 @@
        <property name="toolTip">
         <string>Browse for deactivated directory</string>
        </property>
+       <property name="text">
+        <string>Browse</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="label">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Trash Directory</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="sizeConstraint">
+      <enum>QLayout::SizeConstraint::SetMinimumSize</enum>
+     </property>
+     <item>
+      <widget class="QLineEdit" name="trashLineEdit"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="trashBrowseButton">
        <property name="text">
         <string>Browse</string>
        </property>

@@ -23,6 +23,7 @@ from PySide6.QtCore import QTranslator, Qt, QCoreApplication, QSize, QDate
 from frontend.columnconfigurator import ColumnConfigurator
 from frontend.metadataeditor import MetadataEditor
 from frontend.renamesensor import RenameSensor
+from frontend.trashmanager import TrashManager
 from frontend.ui.uimain import Ui_MainWindow
 from backend.keyhandler import KeyHandler
 from backend.foldercontent import FolderContent
@@ -31,6 +32,7 @@ from frontend.hoverinfo import HoverInfo
 from frontend.tableoperator import TableOperator
 from frontend.keystatus import ActivationStatus
 from frontend.ui.uiopen import Ui_Open
+from frontend.ui.uitrash import Ui_Trash
 from utils.utils import format_json_to_html
 
 logging.basicConfig(
@@ -55,10 +57,11 @@ class MainWindow(QMainWindow):
 		self.ui.setupUi(self)
 		self.directory1 = None
 		self.directory2 = None
+		self.directory3 = None
 		self.key_handler = None
 		self.folder_content = None
 		self.config_manager = ConfigManager(file_path('fosKeyManConfig.json'))
-		self.directory1, self.directory2, self.language, self.custom_columns = self.config_manager.check_and_load_previous_config()
+		self.directory1, self.directory2, self.directory3, self.language, self.custom_columns = self.config_manager.check_and_load_previous_config()
 		self.translator = QTranslator(self)
 		self.table_operator = TableOperator(self.ui.tableWidget)
 		self.connect_actions()
@@ -90,7 +93,7 @@ class MainWindow(QMainWindow):
 		"""
 		self.show()
 		self.switch_language(self.language)
-		if self.directory1 and self.directory2:
+		if self.directory1 and self.directory2 and self.directory3:
 			self.initialize_handlers()
 			self.setup_table()
 			self.setup_filter_dockwidget()
@@ -187,8 +190,10 @@ class MainWindow(QMainWindow):
 		self.ui.actionSearch.triggered.connect(self.open_search_widget)
 		self.ui.searchDockWidget.visibilityChanged.connect(self.ui.actionSearch.setChecked)
 		self.ui.actionRefresh.triggered.connect(self.setup_table)
-		self.ui.actionNew.triggered.connect(self.table_operator.add_new_row)
-		self.ui.actionDelete.triggered.connect(self.table_operator.delete_row)
+		# self.ui.actionNew.triggered.connect(self.table_operator.add_new_row)
+		# self.ui.actionDelete.triggered.connect(self.table_operator.delete_row)
+		self.ui.actionDelete.triggered.connect(self.delete_keyfile)
+		self.ui.actionDeletedKeyfiles.triggered.connect(self.open_trash_manage_dialog)
 		self.ui.actionRenameSensor.triggered.connect(self.rename_sensor_name)
 		self.ui.actionExit.triggered.connect(self.exit_application)
 		self.ui.actionDocumentation.triggered.connect(self.open_documentation)
@@ -452,6 +457,37 @@ class MainWindow(QMainWindow):
 		QMessageBox.information(self, self.tr("Success"), self.tr("Selected keyfiles exported successfully."))
 		self.reset_all_checkboxes()
 
+	def delete_keyfile(self):
+		r"""
+		Delete selected keyfiles and move them to trash directory.
+		"""
+		checked_serial_numbers = self.get_checked_serial_numbers()
+		if not checked_serial_numbers:
+			QMessageBox.warning(self, self.tr("Warning"), self.tr("No keyfile selected for deletion."))
+			return
+
+		confirm = QMessageBox.question(
+			self,
+			self.tr("Confirm Deletion"),
+			self.tr("Are you sure you want to delete the selected keyfiles?"),
+			QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+		)
+		if confirm != QMessageBox.StandardButton.Yes:
+			return
+
+		for serial in checked_serial_numbers:
+			self.key_handler.delete_key(serial)
+
+		self.setup_table()
+
+	def open_trash_manage_dialog(self):
+		"""
+		Open a dialog that displays deleted keyfiles and allows user to restore or permanently delete them.
+		"""
+		dialog = TrashManager(self.key_handler, parent=self)
+		dialog.exec()
+		self.setup_table()
+
 	def open_setting_dialog(self):
 		r"""
 		Open a dialog for selecting two directories.
@@ -463,20 +499,23 @@ class MainWindow(QMainWindow):
 		self.config_manager.open_ui = open_ui
 		open_ui.acBrowseButton.clicked.connect(lambda: self.config_manager.select_directory1(dialog, open_ui))
 		open_ui.deacBrowseButton.clicked.connect(lambda: self.config_manager.select_directory2(dialog, open_ui))
+		open_ui.trashBrowseButton.clicked.connect(lambda: self.config_manager.select_directory3(dialog, open_ui))
 
 		dialog.setWindowFlags(dialog.windowFlags() & ~Qt.WindowType.WindowContextHelpButtonHint)
 		dialog.setWindowTitle(self.tr("Directory Settings"))
 		# Pre-fill the input fields if the directories have already been selected previously
-		if self.directory1 and self.directory2:
+		if self.directory1 and self.directory2 and self.directory3:
 			open_ui.acLineEdit.setText(self.directory1)
 			open_ui.deacLineEdit.setText(self.directory2)
+			open_ui.trashLineEdit.setText(self.directory3)
 
 		open_ui.confirmButton.clicked.connect(lambda: self.config_manager.confirm_directory_selection(dialog, open_ui))
 		open_ui.cancelButton.clicked.connect(dialog.reject)
 		if dialog.exec_():
-			if self.config_manager.directory1 and self.config_manager.directory2:
+			if self.config_manager.directory1 and self.config_manager.directory2 and self.config_manager.directory3:
 				self.directory1 = self.config_manager.directory1
 				self.directory2 = self.config_manager.directory2
+				self.directory3 = self.config_manager.directory3
 				# self.custom_columns = self.config_manager.custom_columns
 				self.config_manager.save_config()
 				self.initialize_handlers()
@@ -486,7 +525,7 @@ class MainWindow(QMainWindow):
 		Initialize KeyHandler and FolderContent based on the selected directory paths.
 		If success, set up the table for further operations.
 		"""
-		self.key_handler = KeyHandler(self.directory1, self.directory2)
+		self.key_handler = KeyHandler(self.directory1, self.directory2, self.directory3)
 		if not self.key_handler.check_directories():
 			QMessageBox.warning(self, "Error", self.tr("Directory validation failure"))
 			return

@@ -19,7 +19,7 @@ class KeyHandler:
 	It provides methods to check if the directories exist, read keyfiles, and move keyfiles between activated
 	and deactivated directories.
 	"""
-	def __init__(self, activated_path, deactivated_path):
+	def __init__(self, activated_path, deactivated_path, trash_path):
 		r"""
 		Initialize the KeyHandler with the paths for activated and deactivated directories.
 		\param activated_path (str): The file path where activated keyfiles are stored.
@@ -27,6 +27,7 @@ class KeyHandler:
 		"""
 		self.activated_path = activated_path
 		self.deactivated_path = deactivated_path
+		self.trash_path = trash_path
 	
 	def check_directories(self):
 		r"""
@@ -36,6 +37,8 @@ class KeyHandler:
 		if not os.path.exists(self.activated_path):
 			return False
 		if not os.path.exists(self.deactivated_path):
+			return False
+		if not os.path.exists(self.trash_path):
 			return False
 		return True
 	
@@ -48,8 +51,12 @@ class KeyHandler:
 		"""
 		if status == 'activated':
 			base_directory = self.activated_path
-		else:
+		elif status == 'deactivated':
 			base_directory = self.deactivated_path
+		elif status == 'trash':
+			base_directory = self.trash_path
+		else:
+			return
 		serial_numbers = []
 		for folder_name in os.listdir(base_directory):
 			folder_path = os.path.join(base_directory, folder_name)
@@ -95,7 +102,62 @@ class KeyHandler:
 			return True
 		else:
 			return False
-	
+
+	def delete_key(self, key_file):
+		r"""
+		Move a keyfile from either the activated or deactivated directory into the trash directory.
+		\param key_file (str): The folder name of the keyfile to delete.
+		\return (bool): True if deleted (moved to trash), False if not found.
+		"""
+		source_path = None
+
+		if os.path.exists(os.path.join(self.activated_path, key_file)):
+			source_path = os.path.join(self.activated_path, key_file)
+		elif os.path.exists(os.path.join(self.deactivated_path, key_file)):
+			source_path = os.path.join(self.deactivated_path, key_file)
+
+		if not source_path:
+			return False
+
+		trash_target = os.path.join(self.trash_path, key_file)
+
+		if os.path.exists(trash_target):
+			shutil.rmtree(trash_target)
+
+		shutil.move(source_path, trash_target)
+		return True
+
+	def undo_delete_key(self, key_file):
+		r"""
+		Restore a keyfile from the trash directory to the deactivated directory.
+		\param key_file (str): The folder name of the keyfile to restore.
+		\return (bool): True if restored, False if not found in trash.
+		"""
+		trash_path = os.path.join(self.trash_path, key_file)
+		restore_path = os.path.join(self.deactivated_path, key_file)
+
+		if not os.path.exists(trash_path):
+			return False
+
+		if os.path.exists(restore_path):
+			shutil.rmtree(restore_path)
+
+		shutil.move(trash_path, restore_path)
+		return True
+
+	def permanently_delete_key(self, key_file):
+		r"""
+		Permanently delete a keyfile folder from the trash directory.
+		\param key_file (str): The folder name of the keyfile to delete.
+		\return (bool): True if deleted, False if not found.
+		"""
+		trash_path = os.path.join(self.trash_path, key_file)
+
+		if os.path.exists(trash_path) and os.path.isdir(trash_path):
+			shutil.rmtree(trash_path)
+			return True
+		return False
+
 	def key_folder_path(self, serial_number, status):
 		r"""
 		Find the folder path containing the given serial number by searching through the userProperties.json files.

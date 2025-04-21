@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="icons">
+    <file>icons/undo.svg</file>
     <file>icons/editadd.svg</file>
     <file>icons/editbin.svg</file>
     <file>icons/edit.svg</file>

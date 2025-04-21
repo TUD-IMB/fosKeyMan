@@ -23,7 +23,7 @@ class Ui_Open(object):
     def setupUi(self, Open):
         if not Open.objectName():
             Open.setObjectName(u"Open")
-        Open.resize(400, 152)
+        Open.resize(400, 212)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -82,6 +82,29 @@ class Ui_Open(object):
 
         self.verticalLayout_2.addLayout(self.horizontalLayout_3)
 
+        self.label = QLabel(Open)
+        self.label.setObjectName(u"label")
+        sizePolicy1.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
+        self.label.setSizePolicy(sizePolicy1)
+
+        self.verticalLayout_2.addWidget(self.label)
+
+        self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.horizontalLayout.setSizeConstraint(QLayout.SizeConstraint.SetMinimumSize)
+        self.trashLineEdit = QLineEdit(Open)
+        self.trashLineEdit.setObjectName(u"trashLineEdit")
+
+        self.horizontalLayout.addWidget(self.trashLineEdit)
+
+        self.trashBrowseButton = QPushButton(Open)
+        self.trashBrowseButton.setObjectName(u"trashBrowseButton")
+
+        self.horizontalLayout.addWidget(self.trashBrowseButton)
+
+
+        self.verticalLayout_2.addLayout(self.horizontalLayout)
+
         self.horizontalLayout_4 = QHBoxLayout()
         self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
         self.horizontalLayout_4.setSizeConstraint(QLayout.SizeConstraint.SetMinimumSize)
@@ -129,6 +152,8 @@ class Ui_Open(object):
         self.deacBrowseButton.setToolTip(QCoreApplication.translate("Open", u"Browse for deactivated directory", None))
 #endif // QT_CONFIG(tooltip)
         self.deacBrowseButton.setText(QCoreApplication.translate("Open", u"Browse", None))
+        self.label.setText(QCoreApplication.translate("Open", u"Trash Directory", None))
+        self.trashBrowseButton.setText(QCoreApplication.translate("Open", u"Browse", None))
 #if QT_CONFIG(tooltip)
         self.cancelButton.setToolTip(QCoreApplication.translate("Open", u"Cancel and Close", None))
 #endif // QT_CONFIG(tooltip)

@@ -46,7 +46,6 @@
    <addaction name="actionDeactive"/>
    <addaction name="separator"/>
    <addaction name="actionRefresh"/>
-   <addaction name="actionNew"/>
    <addaction name="actionDelete"/>
    <addaction name="actionSaveChange"/>
    <addaction name="separator"/>
@@ -194,6 +193,7 @@
     <addaction name="actionInformation"/>
     <addaction name="actionFilter"/>
     <addaction name="actionSearch"/>
+    <addaction name="separator"/>
     <addaction name="actionTableColumn"/>
    </widget>
    <widget class="QMenu" name="menuSetting">
@@ -216,6 +216,7 @@
     </property>
     <addaction name="actionImportKeyfiles"/>
     <addaction name="actionExportKeyfiles"/>
+    <addaction name="actionDeletedKeyfiles"/>
     <addaction name="actionRenameSensor"/>
    </widget>
    <addaction name="menuFile"/>
@@ -283,18 +284,6 @@
     </layout>
    </widget>
   </widget>
-  <action name="actionNew">
-   <property name="icon">
-    <iconset resource="../toolicons.qrc">
-     <normaloff>:/icons/icons/createnew.svg</normaloff>:/icons/icons/createnew.svg</iconset>
-   </property>
-   <property name="text">
-    <string>New</string>
-   </property>
-   <property name="toolTip">
-    <string>New row</string>
-   </property>
-  </action>
   <action name="actionEnglish">
    <property name="text">
     <string>English</string>
@@ -323,7 +312,7 @@
   <action name="actionDelete">
    <property name="icon">
     <iconset resource="../toolicons.qrc">
-     <normaloff>:/icons/icons/delete.svg</normaloff>:/icons/icons/delete.svg</iconset>
+     <normaloff>:/icons/icons/editbin.svg</normaloff>:/icons/icons/editbin.svg</iconset>
    </property>
    <property name="text">
     <string>Delete</string>
@@ -487,6 +476,11 @@
   <action name="actionTableColumn">
    <property name="text">
     <string>Table Columns</string>
+   </property>
+  </action>
+  <action name="actionDeletedKeyfiles">
+   <property name="text">
+    <string>Deleted Keyfiles</string>
    </property>
   </action>
  </widget>
