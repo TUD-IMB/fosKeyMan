@@ -214,7 +214,7 @@
     <property name="title">
      <string>Sensors </string>
     </property>
-    <addaction name="actionUSBLoad"/>
+    <addaction name="actionImportKeyfiles"/>
     <addaction name="actionExportKeyfiles"/>
     <addaction name="actionRenameSensor"/>
    </widget>
@@ -459,9 +459,9 @@
     <string>Rename Sensor Name</string>
    </property>
   </action>
-  <action name="actionUSBLoad">
+  <action name="actionImportKeyfiles">
    <property name="text">
-    <string>Load from USB</string>
+    <string>Import Keyfiles</string>
    </property>
    <property name="toolTip">
     <string>Load Key Files from USB</string>

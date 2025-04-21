@@ -12,6 +12,7 @@ import sys
 import os
 import json
 import webbrowser
+import zipfile
 
 from PySide6.QtGui import QIcon, QColor, QBrush
 from PySide6.QtSvgWidgets import QSvgWidget
@@ -191,7 +192,7 @@ class MainWindow(QMainWindow):
 		self.ui.actionRenameSensor.triggered.connect(self.rename_sensor_name)
 		self.ui.actionExit.triggered.connect(self.exit_application)
 		self.ui.actionDocumentation.triggered.connect(self.open_documentation)
-		self.ui.actionUSBLoad.triggered.connect(self.keyfile_transfer)
+		self.ui.actionImportKeyfiles.triggered.connect(self.keyfile_import)
 		self.ui.actionExportKeyfiles.triggered.connect(self.keyfile_export)
 		self.ui.actionAbout.triggered.connect(self.show_about_dialog)
 		self.ui.actionSaveChange.triggered.connect(self.save_as_json)
@@ -331,49 +332,75 @@ class MainWindow(QMainWindow):
 		layout.addWidget(license_label)
 		dialog.setLayout(layout)
 		dialog.exec_()
-	
-	def keyfile_transfer(self):
+
+	def keyfile_import(self):
 		r"""
-		Exchange keys with external media.
-		Allow user to select a source directory and transfer all keyfile folders to the default deactivated directory.
-		Check conflicts in both activated and deactivated directories and handles them based on user selection (overwrite or skip).
+		Import selected .od6pkg keyfiles as extracted folders into the deactivated directory.
+		Conflicts are handled based on user choice.
 		"""
-		source_dir = QFileDialog.getExistingDirectory(self, "Select Directory to Transfer")
-		if source_dir:
-			try:
-				for item_name in os.listdir(source_dir):
-					source_path = os.path.join(source_dir, item_name)
-					check_path_dir2 = os.path.join(self.directory2, item_name)
-					check_path_dir1 = os.path.join(self.directory1, item_name)
-					final_target_path = os.path.join(self.directory2, item_name)
-					if os.path.isdir(source_path):
-						conflict_path = None
-						if os.path.exists(check_path_dir2):
-							conflict_path = check_path_dir2
-						elif os.path.exists(check_path_dir1):
-							conflict_path = check_path_dir1
-						if conflict_path:
-							user_choice = QMessageBox.question(
-								self,
-								"Conflict Detected",
-								f"The folder '{item_name}' already exists. Overwrite?",
-								QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
-								)
-							if user_choice == QMessageBox.StandardButton.Yes:
-								shutil.rmtree(conflict_path)
-							elif user_choice == QMessageBox.StandardButton.No:
-								continue
-						shutil.copytree(source_path, final_target_path, dirs_exist_ok=True)
-				QMessageBox.information(self, "Success",
-										f"All keyfile folders have been copied to deactivated directory.")
-			except Exception as e:
-				QMessageBox.critical(self, "Error", f"An error occurred: {e}")
+		file_paths, _ = QFileDialog.getOpenFileNames(
+			self,
+			self.tr("Select .od6pkg Files to Import"),
+			"",
+			self.tr("OD6 Package Files (*.od6pkg)")
+		)
+
+		if not file_paths:
+			return
+
+		try:
+			for source_path in file_paths:
+				item_name = os.path.basename(source_path)
+
+				base_name = os.path.splitext(item_name)[0]
+				final_target_path = os.path.join(self.directory2, base_name)
+
+				check_path_dir2 = os.path.join(self.directory2, base_name)
+				check_path_dir1 = os.path.join(self.directory1, base_name)
+
+				conflict_path = None
+				if os.path.exists(check_path_dir2):
+					conflict_path = check_path_dir2
+				elif os.path.exists(check_path_dir1):
+					conflict_path = check_path_dir1
+
+				if conflict_path:
+					user_choice = QMessageBox.question(
+						self,
+						"Conflict Detected",
+						f"The folder '{base_name}' already exists. Overwrite?",
+						QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+					)
+					if user_choice == QMessageBox.StandardButton.Yes:
+						shutil.rmtree(conflict_path)
+					else:
+						continue
+
+				try:
+					with zipfile.ZipFile(source_path, 'r') as zip_ref:
+						zip_ref.extractall(final_target_path)
+				except zipfile.BadZipFile:
+					QMessageBox.warning(
+						self,
+						self.tr("Invalid File"),
+						self.tr(f"File '{item_name}' is not a valid .od6pkg archive and will be skipped.")
+					)
+					continue
+
+			QMessageBox.information(
+				self,
+				self.tr("Success"),
+				self.tr("Selected keyfiles have been imported to the deactivated directory.")
+			)
+		except Exception as e:
+			QMessageBox.critical(self, self.tr("Error"), self.tr(f"An error occurred: {e}"))
+
 		self.setup_table()
 
 	def keyfile_export(self):
 		r"""
 		Export selected keyfiles from activated or deactivated directories to an external directory.
-		Handle conflicts by allowing overwriting or skipping.
+		Compress each keyfile folder into .od6pkg format.
 		"""
 		checked_serial_numbers = self.get_checked_serial_numbers()
 		if not checked_serial_numbers:
@@ -386,39 +413,45 @@ class MainWindow(QMainWindow):
 
 		for serial_number in checked_serial_numbers:
 			source_folder = None
-
 			if self.check_activation_status(serial_number) == ActivationStatus.ACTIVATED:
 				source_folder = os.path.join(self.directory1, serial_number)
 			elif self.check_activation_status(serial_number) == ActivationStatus.DEACTIVATED:
 				source_folder = os.path.join(self.directory2, serial_number)
 
-			if source_folder and os.path.exists(source_folder):
-				destination_folder = os.path.join(export_path, serial_number)
-
-				if os.path.exists(destination_folder):
-					user_choice = QMessageBox.question(
-						self,
-						self.tr("Conflict Detected"),
-						self.tr(f"The folder '{serial_number}' already exists in the destination. Overwrite?"),
-						QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
-					)
-					if user_choice == QMessageBox.StandardButton.Yes:
-						shutil.rmtree(destination_folder)
-					else:
-						continue
-
-				try:
-					shutil.copytree(source_folder, destination_folder, dirs_exist_ok=True)
-					logging.info(f"Keyfile {serial_number} exported to {destination_folder}.")
-				except Exception as e:
-					QMessageBox.warning(self, self.tr("Error"),
-										self.tr(f"Failed to export keyfile {serial_number}: {e}"))
-			else:
+			if not source_folder or not os.path.exists(source_folder):
 				QMessageBox.warning(self, self.tr("Error"),
 									self.tr(f"Source folder for keyfile {serial_number} does not exist."))
+				continue
+
+			od6pkg_path = os.path.join(export_path, f"{serial_number}.od6pkg")
+
+			if os.path.exists(od6pkg_path):
+				user_choice = QMessageBox.question(
+					self,
+					self.tr("Conflict Detected"),
+					self.tr(f"The file '{serial_number}.od6pkg' already exists. Overwrite?"),
+					QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+				)
+				if user_choice != QMessageBox.StandardButton.Yes:
+					continue
+				os.remove(od6pkg_path)
+
+			try:
+				with zipfile.ZipFile(od6pkg_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+					for root, dirs, files in os.walk(source_folder):
+						for file in files:
+							file_path = os.path.join(root, file)
+							arcname = os.path.relpath(file_path, start=source_folder)
+							zipf.write(file_path, arcname)
+
+				logging.info(f"Keyfile {serial_number} exported and packaged to {od6pkg_path}.")
+			except Exception as e:
+				QMessageBox.warning(self, self.tr("Error"),
+									self.tr(f"Failed to export keyfile {serial_number}: {e}"))
 
 		QMessageBox.information(self, self.tr("Success"), self.tr("Selected keyfiles exported successfully."))
-	
+		self.reset_all_checkboxes()
+
 	def open_setting_dialog(self):
 		r"""
 		Open a dialog for selecting two directories.

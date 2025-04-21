@@ -3,7 +3,7 @@ from datetime import datetime
 
 from PySide6.QtCore import QDate
 from PySide6.QtGui import Qt
-from PySide6.QtWidgets import QMessageBox, QComboBox, QLineEdit, QWidget, QDateEdit
+from PySide6.QtWidgets import QMessageBox, QComboBox, QLineEdit, QDateEdit
 from frontend.keystatus import ActivationStatus
 
 
