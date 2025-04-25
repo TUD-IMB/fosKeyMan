@@ -54,53 +54,35 @@ The core functional code has two main parts: backend and  frontend. Below is an 
 
 ## Backend
 
-**`databasehandler.py`**: Handle interactions with the SQLite database, including CRUD operations (Create, Read, Update, Delete) for tables,
-as well as operations for attaching and downloading keyfiles in database.
+**`keyhandler.py`**: Handles keyfile-related operations on disk, such as toggling activation 
+ and performing soft deletion by moving files between directories.
 
-**`keyhandler.py`**: Handle keyfile-related operations on disk, such as reading keyfile names (for setting up tables)
-and changing the file locations of keyfiles under the activated and deactivated directories (for toggling activation and deactivation).
+**`foldercontent.py`**: Reads the content within keyfiles on disk, specifically the `userProperties.json` and `gageSegment.json` files,
+and handles operations on the `metadata.json` file.
 
-**`foldercontent.py`**: Read the content within keyfile on disk, specifically for `.json` files stored within keyfiles.
 
 ## Frontend
 
-**`keystatus.py`**:  Enumeration class that defines various statuses for both the database and keyfile activation states. 
-
- **DatabaseStatus** (4 types): 
- - **EXISTS**: The keyfile exists in the database. 
- - **MISSING_KEYFILE**: The keyfile record is in the database, but the attached keyfile is missing. 
- - **NOT_EXISTS**: The keyfile record does not exist in the database. 
- - **MISMATCH**: There is a mismatch between the keyfile stored in the database and the one stored on the disk. 
- 
- **ActivationStatus** (3 types): 
- - **ACTIVATED**: The keyfile is activated and exists on the disk. 
- -  **DEACTIVATED**: The keyfile is deactivated and exists on the disk. 
- - **UNKNOWN**: The keyfile is not found in either the activated or deactivated directory. This status can further be divided into: 
-	 - **In the database**: The file record exists in the database but not in the directories. 
-	 -  **Missing**: The file is neither in the directories nor in the database.
+**`keystatus.py`**:  Enumeration class that defines activation statuses. 
+  
+- **ACTIVATED**: The keyfile is activated and located in the activated directory on disk.  
+- **DEACTIVATED**: The keyfile is deactivated and located in the deactivated directory on disk.
 
 **`mainwindow.py`**: The main application window class that coordinates various UI components and connects actions to their corresponding behaviors.
 
-**`configmanager.py`**: Manage the loading, saving, and validation of configuration settings for directories and database paths.
-Handle user interaction for selecting directories and database paths, and ensures that the configuration is correctly loaded from and saved to config.json file.
+**`configmanager.py`**: Manage the loading, saving, and validation of configuration settings for directories paths.
 
-**`hoverinfo.py`**: Displays explanatory information when the mouse hovers over a table cell, providing details about the cell's content as well as its state in the database and on the disk.
+**`hoverinfo.py`**: Display explanatory information when the mouse hovers over a table cell, providing details about the cell's content as well as its state.
 
-**`tableoperator.py`**: Handle operations on the table, such as adding or deleting rows, filtering based on various criteria (hidden some rows), and table checkbox selections (check all/uncheck all).
+**`tableoperator.py`**: Handle operations on the table, filtering based on various criteria (hidden some rows), and table checkbox selections (check all/uncheck all).
 This class performs UI-level changes only and does not modify the database. 
 
-**`toolmanager.py`**: Control the availability of tools based on the status of keyfile.
-It dynamically enables or disables actions in the UI depending on the target table cell.
-The following actions are managed:
+**`metadataeditor.py`**: Add, edit, and delete metadata fields in keyfiles.  
 
-- **Add/ Delete/ Save Change**: For keyfiles that exist in the database.
-- **Import**: For keyfiles that exist only on the disk and not in the database.
-- **Attach**: For records in the database that are missing their corresponding keyfiles.
-- **Copy**: For keyfiles present in the database but not on the disk; the keyfile will be copied to the activated directory.
-- **Replace**: For keyfiles that exist in both the database and on the disk but have a mismatch.
+**`renamesensor.py`**: Rename the sensor name in the `userProperties.json` file.  
 
-**`keyfilereplace.py`**: Manage the logic for comparing the keyfiles and replacing keyfiles between the database and the disk.
-Resolve keyfile mismatches.
+**`trashmanager.py`**: Manage the deletion and restoration of keyfiles.
+
 
 # Internationalization (i18n)
 

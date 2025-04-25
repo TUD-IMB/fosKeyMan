@@ -37,22 +37,22 @@
 <context>
     <name>ColumnConfigurator</name>
     <message>
-        <location filename="../../frontend/columnconfigurator.py" line="12"/>
+        <location filename="../../frontend/columnconfigurator.py" line="21"/>
         <source>Configure Table Columns</source>
         <translation>Tabellenspalten konfigurieren</translation>
     </message>
     <message>
-        <location filename="../../frontend/columnconfigurator.py" line="28"/>
+        <location filename="../../frontend/columnconfigurator.py" line="40"/>
         <source>Column Name</source>
         <translation>Spaltenname</translation>
     </message>
     <message>
-        <location filename="../../frontend/columnconfigurator.py" line="67"/>
+        <location filename="../../frontend/columnconfigurator.py" line="85"/>
         <source>Input Error</source>
         <translation>Eingabefehler</translation>
     </message>
     <message>
-        <location filename="../../frontend/columnconfigurator.py" line="67"/>
+        <location filename="../../frontend/columnconfigurator.py" line="85"/>
         <source>Please enter a column name.</source>
         <translation>Bitte geben Sie einen Spaltennamen ein.</translation>
     </message>
@@ -115,12 +115,12 @@
 <context>
     <name>ConfigManager</name>
     <message>
-        <location filename="../../frontend/configmanager.py" line="110"/>
+        <location filename="../../frontend/configmanager.py" line="117"/>
         <source>Please select the activation key file directory</source>
         <translation>Bitte wählen Sie das Verzeichnis für Aktivierungsschlüsseldateien aus</translation>
     </message>
     <message>
-        <location filename="../../frontend/configmanager.py" line="122"/>
+        <location filename="../../frontend/configmanager.py" line="129"/>
         <source>Please select the deactivation key file directory</source>
         <translation>Bitte wählen Sie das Verzeichnis für Deaktivierungsschlüsseldateien aus</translation>
     </message>
@@ -129,18 +129,25 @@
         <translation type="vanished">Datenbankdatei auswählen</translation>
     </message>
     <message>
-        <location filename="../../frontend/configmanager.py" line="139"/>
-        <location filename="../../frontend/configmanager.py" line="143"/>
+        <location filename="../../frontend/configmanager.py" line="141"/>
+        <source>Please select the trash key file directory</source>
+        <translation>Bitte wählen Sie das Verzeichnis für gelöschte Schlüsseldateien aus</translation>
+    </message>
+    <message>
+        <location filename="../../frontend/configmanager.py" line="159"/>
+        <location filename="../../frontend/configmanager.py" line="163"/>
+        <location filename="../../frontend/configmanager.py" line="167"/>
         <source>Error</source>
         <translation>Fehler</translation>
     </message>
     <message>
-        <location filename="../../frontend/configmanager.py" line="140"/>
+        <location filename="../../frontend/configmanager.py" line="160"/>
         <source>Please select a valid directory for activated keyfiles.</source>
         <translation>Bitte wählen Sie ein gültiges Verzeichnis für aktivierte Schlüsseldateien aus.</translation>
     </message>
     <message>
-        <location filename="../../frontend/configmanager.py" line="144"/>
+        <location filename="../../frontend/configmanager.py" line="164"/>
+        <location filename="../../frontend/configmanager.py" line="168"/>
         <source>Please select a valid directory for deactivated keyfiles.</source>
         <translation>Bitte wählen Sie ein gültiges Verzeichnis für deaktivierte Schlüsseldateien aus.</translation>
     </message>
@@ -450,34 +457,34 @@
         <translation>Werkzeuge</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="73"/>
+        <location filename="../ui/main.ui" line="72"/>
         <source>Display more details about the selected item</source>
         <translation>Mehr Details zum ausgewählten Element anzeigen</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="76"/>
-        <location filename="../ui/main.ui" line="415"/>
+        <location filename="../ui/main.ui" line="75"/>
+        <location filename="../ui/main.ui" line="404"/>
         <source>Information</source>
         <translation>Informationen</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="86"/>
+        <location filename="../ui/main.ui" line="85"/>
         <source>More information about the selected record</source>
         <translation>Mehr Informationen über den ausgewählten Datensatz</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="107"/>
+        <location filename="../ui/main.ui" line="106"/>
         <source>Filter content based on specified criteria</source>
         <translation>Inhalte basierend auf den angegebenen Kriterien filtern</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="110"/>
+        <location filename="../ui/main.ui" line="109"/>
         <source>Content Filter</source>
         <translation>Inhaltsfilter</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="116"/>
-        <location filename="../../frontend/mainwindow.py" line="561"/>
+        <location filename="../../frontend/mainwindow.py" line="123"/>
+        <location filename="../../frontend/mainwindow.py" line="645"/>
         <source>Serial Number</source>
         <translation>Seriennummer</translation>
     </message>
@@ -486,8 +493,8 @@
         <translation type="vanished">Seriennummer zum Filtern eingeben</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="121"/>
-        <location filename="../../frontend/mainwindow.py" line="565"/>
+        <location filename="../../frontend/mainwindow.py" line="128"/>
+        <location filename="../../frontend/mainwindow.py" line="649"/>
         <source>Sensor Name</source>
         <translation>Sensorname</translation>
     </message>
@@ -540,39 +547,39 @@
         <translation type="vanished">Name der zu filternden Schlüsseldatei eingeben</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="144"/>
+        <location filename="../ui/main.ui" line="143"/>
         <source>Clear filter and reset</source>
         <translation>Filter löschen und zurücksetzen</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="147"/>
+        <location filename="../ui/main.ui" line="146"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="154"/>
+        <location filename="../ui/main.ui" line="153"/>
         <source>Apply filter based on the entered criteria</source>
         <translation>Filter basierend auf den eingegebenen Kriterien anwenden</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="157"/>
-        <location filename="../ui/main.ui" line="392"/>
-        <location filename="../ui/main.ui" line="395"/>
+        <location filename="../ui/main.ui" line="156"/>
+        <location filename="../ui/main.ui" line="381"/>
+        <location filename="../ui/main.ui" line="384"/>
         <source>Filter</source>
         <translation>Filter</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="177"/>
+        <location filename="../ui/main.ui" line="176"/>
         <source>File</source>
         <translation>Datei</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="185"/>
+        <location filename="../ui/main.ui" line="184"/>
         <source>Help</source>
         <translation>Hilfe</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="192"/>
+        <location filename="../ui/main.ui" line="191"/>
         <source>View</source>
         <translation>Ansicht</translation>
     </message>
@@ -587,66 +594,74 @@
         <translation>Sprache</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="235"/>
-        <location filename="../ui/main.ui" line="238"/>
-        <location filename="../ui/main.ui" line="448"/>
+        <location filename="../ui/main.ui" line="236"/>
+        <location filename="../ui/main.ui" line="239"/>
+        <location filename="../ui/main.ui" line="437"/>
         <source>Full Text Search</source>
         <translation>Volltextsuche</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="248"/>
+        <location filename="../ui/main.ui" line="249"/>
         <source>Select Search Keyfile</source>
         <translation>Schlüsseldatei für die Suche auswählen</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="257"/>
-        <location filename="../ui/main.ui" line="270"/>
-        <location filename="../ui/main.ui" line="445"/>
+        <location filename="../ui/main.ui" line="258"/>
+        <location filename="../ui/main.ui" line="271"/>
+        <location filename="../ui/main.ui" line="434"/>
         <source>Search</source>
         <translation>Suche</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="267"/>
+        <location filename="../ui/main.ui" line="268"/>
         <source>Full text seach in selected keyfile</source>
         <translation>Volltextsuche in ausgewählter Schlüsseldatei</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="279"/>
+        <location filename="../ui/main.ui" line="280"/>
         <source>Search Result</source>
         <translation>Suchergebnis</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="292"/>
+        <location filename="../ui/main.ui" line="483"/>
+        <source>Deleted Keyfiles</source>
+        <translation>Gelöschte Schlüsseldateien</translation>
+    </message>
+    <message>
         <source>New</source>
-        <translation>Neu</translation>
+        <translation type="vanished">Neu</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="295"/>
         <source>New row</source>
-        <translation>Neue Zeile</translation>
+        <translation type="vanished">Neue Zeile</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="300"/>
+        <location filename="../ui/main.ui" line="289"/>
         <source>English</source>
         <translation>Englisch</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="305"/>
+        <location filename="../ui/main.ui" line="294"/>
         <source>German</source>
         <translation>Deutsch</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="472"/>
+        <location filename="../ui/main.ui" line="453"/>
+        <source>Import Keyfiles</source>
+        <translation>Schlüsseldateien importieren</translation>
+    </message>
+    <message>
+        <location filename="../ui/main.ui" line="461"/>
         <source>Export Keyfiles</source>
         <translation>Schlüsseldateien exportieren</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="481"/>
+        <location filename="../ui/main.ui" line="470"/>
         <source>Edit</source>
         <translation>Bearbeiten</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="489"/>
+        <location filename="../ui/main.ui" line="478"/>
         <source>Table Columns</source>
         <translation>Tabellenspalten</translation>
     </message>
@@ -655,61 +670,61 @@
         <translation type="obsolete">Dokument</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="315"/>
+        <location filename="../ui/main.ui" line="304"/>
         <source>About</source>
         <translation>Über</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="320"/>
+        <location filename="../ui/main.ui" line="309"/>
         <source>Exit</source>
         <translation>Beenden</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="329"/>
+        <location filename="../ui/main.ui" line="318"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="332"/>
+        <location filename="../ui/main.ui" line="321"/>
         <source>Delete row</source>
         <translation>Zeile löschen</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="341"/>
+        <location filename="../ui/main.ui" line="330"/>
         <source>Save</source>
         <translation>Speichern</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="344"/>
+        <location filename="../ui/main.ui" line="333"/>
         <source>Save Change</source>
         <translation>Änderung speichern</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="353"/>
-        <location filename="../ui/main.ui" line="356"/>
+        <location filename="../ui/main.ui" line="342"/>
+        <location filename="../ui/main.ui" line="345"/>
         <source>Refresh</source>
         <translation>Aktualisieren</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="110"/>
-        <location filename="../../frontend/mainwindow.py" line="702"/>
-        <location filename="../ui/main.ui" line="365"/>
+        <location filename="../../frontend/mainwindow.py" line="117"/>
+        <location filename="../../frontend/mainwindow.py" line="801"/>
+        <location filename="../ui/main.ui" line="354"/>
         <source>Activated</source>
         <translation>Aktiviert</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="377"/>
-        <location filename="../ui/main.ui" line="380"/>
+        <location filename="../ui/main.ui" line="366"/>
+        <location filename="../ui/main.ui" line="369"/>
         <source>Select All</source>
         <translation>Alles auswählen</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="403"/>
+        <location filename="../ui/main.ui" line="392"/>
         <source>Connection Settings</source>
         <translation>Verbindungseinstellungen</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="418"/>
+        <location filename="../ui/main.ui" line="407"/>
         <source>More information</source>
         <translation>Mehr Informationen</translation>
     </message>
@@ -758,7 +773,7 @@
         <translation type="obsolete">Datenbank verbinden</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="430"/>
+        <location filename="../ui/main.ui" line="419"/>
         <source>Dactivated</source>
         <translation>Deaktiviert</translation>
     </message>
@@ -767,8 +782,8 @@
         <translation type="obsolete"> </translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="106"/>
-        <location filename="../../frontend/mainwindow.py" line="560"/>
+        <location filename="../../frontend/mainwindow.py" line="113"/>
+        <location filename="../../frontend/mainwindow.py" line="644"/>
         <source>Status</source>
         <translation>Status</translation>
     </message>
@@ -781,88 +796,142 @@
         <translation type="vanished">Notiz</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="137"/>
+        <location filename="../../frontend/mainwindow.py" line="144"/>
         <source>Start</source>
         <translation>Start</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="143"/>
+        <location filename="../../frontend/mainwindow.py" line="150"/>
         <source>End</source>
         <translation>Ende</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="200"/>
+        <location filename="../../frontend/mainwindow.py" line="213"/>
         <source>No keyfile selected for edit.</source>
         <translation>Keine Schlüsseldatei zum Bearbeiten ausgewählt.</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="369"/>
+        <location filename="../../frontend/mainwindow.py" line="411"/>
         <source>No keyfile selected for export.</source>
         <translation>Keine Schlüsseldatei zum Exportieren ausgewählt.</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="372"/>
+        <location filename="../../frontend/mainwindow.py" line="414"/>
         <source>Select Export Directory</source>
         <translation>Exportverzeichnis auswählen</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="390"/>
+        <location filename="../../frontend/mainwindow.py" line="435"/>
         <source>Conflict Detected</source>
         <translation>Konflikt erkannt</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="391"/>
         <source>The folder &apos;{serial_number}&apos; already exists in the destination. Overwrite?</source>
-        <translation>Der Ordner &apos;{serial_number}&apos; existiert am Zielort bereits. Überschreiben?</translation>
+        <translation type="vanished">Der Ordner &apos;{serial_number}&apos; existiert am Zielort bereits. Überschreiben?</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="404"/>
+        <location filename="../../frontend/mainwindow.py" line="454"/>
         <source>Failed to export keyfile {serial_number}: {e}</source>
         <translation>Export der Schlüsseldatei {serial_number} fehlgeschlagen: {e}</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="407"/>
+        <location filename="../../frontend/mainwindow.py" line="427"/>
         <source>Source folder for keyfile {serial_number} does not exist.</source>
         <translation>Quellordner für Schlüsseldatei {serial_number} existiert nicht.</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="409"/>
+        <location filename="../../frontend/mainwindow.py" line="347"/>
+        <source>Select .od6pkg Files to Import</source>
+        <translation>.od6pkg-Dateien zum Importieren auswählen</translation>
+    </message>
+    <message>
+        <location filename="../../frontend/mainwindow.py" line="350"/>
+        <source>OD6 Package Files (*.od6pkg)</source>
+        <translation>OD6-Paketdateien (*.od6pkg)</translation>
+    </message>
+    <message>
+        <location filename="../../frontend/mainwindow.py" line="389"/>
+        <source>Invalid File</source>
+        <translation>Ungültige Datei</translation>
+    </message>
+    <message>
+        <location filename="../../frontend/mainwindow.py" line="391"/>
+        <source>File &apos;{item_name}&apos; is not a valid .od6pkg archive and will be skipped.</source>
+        <translation>Datei &apos;{item_name}&apos; ist kein gültiges .od6pkg-Archiv und wird übersprungen.</translation>
+    </message>
+    <message>
+        <location filename="../../frontend/mainwindow.py" line="398"/>
+        <source>Selected keyfiles have been imported to the deactivated directory.</source>
+        <translation>Ausgewählte Schlüsseldateien wurden in das Verzeichnis für deaktivierte Dateien importiert.</translation>
+    </message>
+    <message>
+        <location filename="../../frontend/mainwindow.py" line="400"/>
+        <source>An error occurred: {e}</source>
+        <translation>Ein Fehler ist aufgetreten: {e}</translation>
+    </message>
+    <message>
+        <location filename="../../frontend/mainwindow.py" line="436"/>
+        <source>The file &apos;{serial_number}.od6pkg&apos; already exists. Overwrite?</source>
+        <translation>Die Datei &apos;{serial_number}.od6pkg&apos; existiert bereits. Überschreiben?</translation>
+    </message>
+    <message>
+        <location filename="../../frontend/mainwindow.py" line="456"/>
         <source>Selected keyfiles exported successfully.</source>
         <translation>Ausgewählte Schlüsseldateien wurden erfolgreich exportiert.</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="424"/>
+        <location filename="../../frontend/mainwindow.py" line="465"/>
+        <source>Warning</source>
+        <translation>Warnung</translation>
+    </message>
+    <message>
+        <location filename="../../frontend/mainwindow.py" line="465"/>
+        <source>No keyfile selected for deletion.</source>
+        <translation>Keine Schlüsseldatei zum Löschen ausgewählt.</translation>
+    </message>
+    <message>
+        <location filename="../../frontend/mainwindow.py" line="470"/>
+        <source>Confirm Deletion</source>
+        <translation>Löschen bestätigen</translation>
+    </message>
+    <message>
+        <location filename="../../frontend/mainwindow.py" line="471"/>
+        <source>Are you sure you want to delete the selected keyfiles?</source>
+        <translation>Möchten Sie die ausgewählten Schlüsseldateien wirklich löschen?</translation>
+    </message>
+    <message>
+        <location filename="../../frontend/mainwindow.py" line="504"/>
         <source>Directory Settings</source>
         <translation>Verzeichniseinstellungen</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="572"/>
+        <location filename="../../frontend/mainwindow.py" line="656"/>
         <source>Sensor Length (m)</source>
         <translation>Sensorlänge (m)</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="827"/>
-        <location filename="../../frontend/mainwindow.py" line="842"/>
+        <location filename="../../frontend/mainwindow.py" line="931"/>
+        <location filename="../../frontend/mainwindow.py" line="946"/>
         <source>Search Selected</source>
         <translation>Suche ausgewählt</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="845"/>
+        <location filename="../../frontend/mainwindow.py" line="949"/>
         <source>Search term cannot be empty. Please enter a search term.</source>
         <translation>Der Suchbegriff kann nicht leer sein. Bitte geben Sie einen Suchbegriff ein.</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="858"/>
+        <location filename="../../frontend/mainwindow.py" line="962"/>
         <source>No results found.</source>
         <translation>Keine Ergebnisse gefunden.</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="368"/>
+        <location filename="../ui/main.ui" line="357"/>
         <source>Actived</source>
         <translation>Aktiviert</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="433"/>
+        <location filename="../ui/main.ui" line="422"/>
         <source>Deactived</source>
         <translation>Deaktiviert</translation>
     </message>
@@ -883,7 +952,7 @@
         <translation type="vanished">Datenbank- und Verzeichniseinstellungen</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="446"/>
+        <location filename="../../frontend/mainwindow.py" line="529"/>
         <source>Directory validation failure</source>
         <translation>Verzeichnisvalidierungsfehler</translation>
     </message>
@@ -896,7 +965,8 @@
         <translation type="obsolete">Sind Sie sicher, dass Sie die Schlüsseldatei &apos;{keyfile}&apos; in die Datenbank importieren möchten?</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="409"/>
+        <location filename="../../frontend/mainwindow.py" line="396"/>
+        <location filename="../../frontend/mainwindow.py" line="456"/>
         <source>Success</source>
         <translation>Erfolg</translation>
     </message>
@@ -925,10 +995,11 @@
         <translation type="vanished">Verbindung zur Datenbank fehlgeschlagen: {error}</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="200"/>
-        <location filename="../../frontend/mainwindow.py" line="369"/>
-        <location filename="../../frontend/mainwindow.py" line="403"/>
-        <location filename="../../frontend/mainwindow.py" line="406"/>
+        <location filename="../../frontend/mainwindow.py" line="213"/>
+        <location filename="../../frontend/mainwindow.py" line="400"/>
+        <location filename="../../frontend/mainwindow.py" line="411"/>
+        <location filename="../../frontend/mainwindow.py" line="426"/>
+        <location filename="../../frontend/mainwindow.py" line="453"/>
         <source>Error</source>
         <translation>Fehler</translation>
     </message>
@@ -965,8 +1036,8 @@
         <translation type="vanished">Fehler beim Erstellen einer neuen Datenbank: {error}</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="112"/>
-        <location filename="../../frontend/mainwindow.py" line="703"/>
+        <location filename="../../frontend/mainwindow.py" line="119"/>
+        <location filename="../../frontend/mainwindow.py" line="802"/>
         <source>Deactivated</source>
         <translation>Deaktiviert</translation>
     </message>
@@ -983,7 +1054,7 @@
         <translation type="vanished">Keine neuen Schlüsseldateien zum Importieren gefunden.</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="568"/>
+        <location filename="../../frontend/mainwindow.py" line="652"/>
         <source>Last Edit Date</source>
         <translation>Letztes Bearbeitungsdatum</translation>
     </message>
@@ -1009,7 +1080,7 @@
         <translation>Sensoren </translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="310"/>
+        <location filename="../ui/main.ui" line="299"/>
         <source>Documentation</source>
         <translation>Dokumentation</translation>
     </message>
@@ -1018,7 +1089,7 @@
         <translation type="vanished">Datenbank verbinden</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="456"/>
+        <location filename="../ui/main.ui" line="445"/>
         <source>Rename Sensor</source>
         <translation>Sensor umbenennen</translation>
     </message>
@@ -1031,12 +1102,11 @@
         <translation type="vanished">Schlüsseldatei in DB hochladen</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="464"/>
         <source>Load from USB</source>
-        <translation>Von USB laden</translation>
+        <translation type="vanished">Von USB laden</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="109"/>
+        <location filename="../../frontend/mainwindow.py" line="116"/>
         <source>All</source>
         <translation>Alle</translation>
     </message>
@@ -1061,7 +1131,7 @@
         <translation type="vanished">Eine Datenbank in die aktuelle importieren</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="459"/>
+        <location filename="../ui/main.ui" line="448"/>
         <source>Rename Sensor Name</source>
         <translation>Sensornamen umbenennen</translation>
     </message>
@@ -1074,7 +1144,7 @@
         <translation type="vanished">Zugefügte Schlüsseldatei in der Datenbank aktualisieren</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="467"/>
+        <location filename="../ui/main.ui" line="456"/>
         <source>Load Key Files from USB</source>
         <translation>Schlüsseldateien von USB laden</translation>
     </message>
@@ -1326,12 +1396,12 @@
 <context>
     <name>MetadataEditor</name>
     <message>
-        <location filename="../../frontend/metadataeditor.py" line="98"/>
+        <location filename="../../frontend/metadataeditor.py" line="117"/>
         <source>Input Error</source>
         <translation>Eingabefehler</translation>
     </message>
     <message>
-        <location filename="../../frontend/metadataeditor.py" line="98"/>
+        <location filename="../../frontend/metadataeditor.py" line="117"/>
         <source>Both Property and Value must be filled.</source>
         <translation>Sowohl Eigenschaft als auch Wert müssen ausgefüllt werden.</translation>
     </message>
@@ -1364,6 +1434,7 @@
     <message>
         <location filename="../ui/open.ui" line="66"/>
         <location filename="../ui/open.ui" line="106"/>
+        <location filename="../ui/open.ui" line="136"/>
         <source>Browse</source>
         <translation>Durchsuchen</translation>
     </message>
@@ -1394,17 +1465,17 @@
         <translation type="obsolete">Abbrechen und schließen</translation>
     </message>
     <message>
-        <location filename="../ui/open.ui" line="123"/>
+        <location filename="../ui/open.ui" line="153"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../ui/open.ui" line="136"/>
+        <location filename="../ui/open.ui" line="166"/>
         <source>Confirm your selections</source>
         <translation>Bestätigen Sie Ihre Auswahl</translation>
     </message>
     <message>
-        <location filename="../ui/open.ui" line="139"/>
+        <location filename="../ui/open.ui" line="169"/>
         <source>Confirm</source>
         <translation>Bestätigen</translation>
     </message>
@@ -1429,6 +1500,11 @@
         <translation>Pfad zum deaktivierten Schlüsseldatei-Verzeichnis</translation>
     </message>
     <message>
+        <location filename="../ui/open.ui" line="121"/>
+        <source>Trash Directory</source>
+        <translation>Gelöschtes Verzeichnis</translation>
+    </message>
+    <message>
         <source>Select the database file</source>
         <translation type="vanished">Datenbankdatei auswählen</translation>
     </message>
@@ -1437,7 +1513,7 @@
         <translation type="vanished">Pfad zur Datenbankdatei</translation>
     </message>
     <message>
-        <location filename="../ui/open.ui" line="120"/>
+        <location filename="../ui/open.ui" line="150"/>
         <source>Cancel and Close</source>
         <translation>Abbrechen und Schließen</translation>
     </message>
@@ -1552,6 +1628,83 @@
     <message>
         <source>Proceed</source>
         <translation type="vanished">Fortfahren</translation>
+    </message>
+</context>
+<context>
+    <name>Trash</name>
+    <message>
+        <location filename="../ui/trash.ui" line="20"/>
+        <source>Deleted Keyfiles</source>
+        <translation>Gelöschte Schlüsseldateien</translation>
+    </message>
+    <message>
+        <location filename="../ui/trash.ui" line="26"/>
+        <source>Manage deleted keyfiles. You can restore or permanently remove them from the trash.</source>
+        <translation>Verwalten Sie gelöschte Schlüsseldateien. Sie können sie wiederherstellen oder dauerhaft löschen.</translation>
+    </message>
+    <message>
+        <location filename="../ui/trash.ui" line="48"/>
+        <source>Confirm your selections</source>
+        <translation>Bestätigen Sie Ihre Auswahl</translation>
+    </message>
+    <message>
+        <location filename="../ui/trash.ui" line="51"/>
+        <source>Empty Trash</source>
+        <translation>Papierkorb leeren</translation>
+    </message>
+    <message>
+        <location filename="../ui/trash.ui" line="58"/>
+        <source>Cancel and Close</source>
+        <translation>Abbrechen und Schließen</translation>
+    </message>
+    <message>
+        <location filename="../ui/trash.ui" line="61"/>
+        <source>Close</source>
+        <translation>Schließen</translation>
+    </message>
+</context>
+<context>
+    <name>TrashManager</name>
+    <message>
+        <location filename="../../frontend/trashmanager.py" line="37"/>
+        <source>Serial Number</source>
+        <translation>Seriennummer</translation>
+    </message>
+    <message>
+        <location filename="../../frontend/trashmanager.py" line="57"/>
+        <source>Permanently delete</source>
+        <translation>Dauerhaft löschen</translation>
+    </message>
+    <message>
+        <location filename="../../frontend/trashmanager.py" line="66"/>
+        <source>Restore</source>
+        <translation>Wiederherstellen</translation>
+    </message>
+    <message>
+        <location filename="../../frontend/trashmanager.py" line="81"/>
+        <location filename="../../frontend/trashmanager.py" line="103"/>
+        <source>Confirm Deletion</source>
+        <translation>Löschen bestätigen</translation>
+    </message>
+    <message>
+        <location filename="../../frontend/trashmanager.py" line="82"/>
+        <source>Are you sure you want to permanently delete all keyfiles in trash?</source>
+        <translation>Möchten Sie wirklich alle Schlüsseldateien im Papierkorb dauerhaft löschen?</translation>
+    </message>
+    <message>
+        <location filename="../../frontend/trashmanager.py" line="93"/>
+        <source>Success</source>
+        <translation>Erfolg</translation>
+    </message>
+    <message>
+        <location filename="../../frontend/trashmanager.py" line="93"/>
+        <source>Trash has been cleared.</source>
+        <translation>Papierkorb wurde geleert.</translation>
+    </message>
+    <message>
+        <location filename="../../frontend/trashmanager.py" line="104"/>
+        <source>Are you sure you want to permanently delete keyfile &apos;{key}&apos;?</source>
+        <translation>Möchten Sie die Schlüsseldatei &apos;{key}&apos; wirklich dauerhaft löschen?</translation>
     </message>
 </context>
 </TS>

@@ -15,7 +15,7 @@ import json
 class FolderContent:
 	r"""
 	Handle reading JSON files (userProperties.json and gageSegment.json) from keyfile folders located
-	in activated or deactivated directories.
+	in activated or deactivated directories. Also reads and updates the metadata.json file.
 	"""
 	def __init__(self, activated_path, deactivated_path):
 		r"""

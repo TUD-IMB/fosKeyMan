@@ -181,17 +181,16 @@ class MainWindow(QMainWindow):
 		self.ui.actionInformation.triggered.connect(self.open_info_widget)
 		self.ui.filterDockWidget.visibilityChanged.connect(self.ui.actionFilter.setChecked)
 		self.ui.infoDockWidget.visibilityChanged.connect(self.ui.actionInformation.setChecked)
+		self.ui.actionSearch.triggered.connect(self.open_search_widget)
+		self.ui.searchDockWidget.visibilityChanged.connect(self.ui.actionSearch.setChecked)
+		# actions in filter tool widget
 		self.ui.filterButton.clicked.connect(
 			lambda: self.table_operator.filter_table(self.dynamic_filter_inputs)
 		)
 		self.ui.cancelButton.clicked.connect(
 			lambda: self.table_operator.reset_filter(self.dynamic_filter_inputs)
 		)
-		self.ui.actionSearch.triggered.connect(self.open_search_widget)
-		self.ui.searchDockWidget.visibilityChanged.connect(self.ui.actionSearch.setChecked)
 		self.ui.actionRefresh.triggered.connect(self.setup_table)
-		# self.ui.actionNew.triggered.connect(self.table_operator.add_new_row)
-		# self.ui.actionDelete.triggered.connect(self.table_operator.delete_row)
 		self.ui.actionDelete.triggered.connect(self.delete_keyfile)
 		self.ui.actionDeletedKeyfiles.triggered.connect(self.open_trash_manage_dialog)
 		self.ui.actionRenameSensor.triggered.connect(self.rename_sensor_name)
