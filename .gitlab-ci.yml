@@ -36,6 +36,8 @@ ubuntu_20_04:
       - pyinstaller src/fosKeyMan.spec
       - cp src/resources/foskeyman_logo_short.svg dist/foskeyman_logo_short.svg
       - cp src/resources/createlinuxlauncher.py dist/createlinuxlauncher.py
+      - cp README.md dist/README.md
+      - cp doc/README_de.md dist/README_de.md
   artifacts:
       paths:
           - dist/
@@ -61,6 +63,8 @@ windows_10:
       - wine "$PYTHON_PATH" -m pip install pyside6 pyinstaller
   script:
       - wine "$PYTHON_PATH" -m PyInstaller src/fosKeyMan.spec
+      - cp README.md dist/README.md
+      - cp doc/README_de.md dist/README_de.md
   artifacts:
       paths:
           - dist/
