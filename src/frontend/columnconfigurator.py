@@ -100,8 +100,21 @@ class ColumnConfigurator(QDialog):
 		delete_button.setIconSize(QSize(20, 20))
 		delete_button.setFixedSize(24, 24)
 		delete_button.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
-		delete_button.clicked.connect(lambda: self.ui.tableWidget.removeRow(row_pos))
+		delete_button.clicked.connect(self.delete_current_row)
 		self.ui.tableWidget.setCellWidget(row_pos, 1, delete_button)
+
+	def delete_current_row(self):
+		r"""
+		Find the row where the clicked button is located and delete it
+		"""
+		button = self.sender()
+		if not button:
+			return
+
+		for row in range(self.ui.tableWidget.rowCount()):
+			if self.ui.tableWidget.cellWidget(row, 1) == button:
+				self.ui.tableWidget.removeRow(row)
+				break
 
 	def confirm_and_close(self):
 		r"""

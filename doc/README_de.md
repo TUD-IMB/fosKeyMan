@@ -15,7 +15,7 @@ Daher ist es wünschenswert, nur die Keys der tatsächlich verbundenen DFOS akti
 Man kann Keys in der Benutzeroberfläche "Manage Sensor Keys" der ODiSI-Software aktivieren und deaktivieren,
 aber die angezeigte Liste ist schwer zu durchsuchen und enthält keine Metadaten.
 Außerdem gibt es keine Suchfunktion, wodurch das Auffinden bestimmter Keys schwierig ist und die Verwaltung mühsam wird.
-Die Arbeit mit vielen DFOS (und entsprechend vielen Keys) wird somit schnell unübersichtlich.  
+Die Arbeit mit vielen DFOS (und entsprechend vielen Keys) wird somit schnell unübersichtlich.
 fosKeyMan zielt darauf ab, eine benutzerfreundlichere Oberfläche für die Verwaltung von DFOS-Sensor-Keys bereitzustellen.
 
 ## Schnellstart
