@@ -24,6 +24,7 @@ class KeyHandler:
 		Initialize the KeyHandler with the paths for activated and deactivated directories.
 		\param activated_path (str): The file path where activated keyfiles are stored.
 		\param deactivated_path (str): The file path where deactivated keyfiles are stored.
+		\param trash_path (str): The file path where deleted keyfiles are stored.
 		"""
 		self.activated_path = activated_path
 		self.deactivated_path = deactivated_path

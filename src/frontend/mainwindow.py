@@ -303,17 +303,8 @@ class MainWindow(QMainWindow):
 		r"""
 		Open a dialog displaying information about the software.
 		"""
-		default_info = {
-			"version": "Unknown",
-			"release_date": "Unknown"
-		}
-		try:
-			with open(resource_path('resources/about.json'), 'r', encoding='utf-8') as file:
-				info = json.load(file)
-		except (FileNotFoundError, json.JSONDecodeError):
-			info = default_info
-		version = info.get("version", default_info["version"])
-		release_date = info.get("release_date", default_info["release_date"])
+		version = "Unknown"
+		release_date = "Unknown"
 
 		try:
 			git_version = subprocess.check_output(["git", "describe", "--tags"],
