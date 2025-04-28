@@ -13,9 +13,13 @@ build_pyfile:
       - pip install pyside6
   script:
       - python src/convertpyfile.py
+      - VERSION=$(git describe --tags)
+      - DATE=$(date '+%Y-%m-%d')
+      - echo "{\"version\":\"${VERSION}\", \"release_date\":\"${DATE}\"}" > src/resources/about.json
   artifacts:
       paths:
           - src/frontend/ui/.
+          - src/resources/about.json
   only:
       - master
 

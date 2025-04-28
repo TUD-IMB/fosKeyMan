@@ -8,6 +8,7 @@ Defines the main Graphical User Interface.
 
 import logging
 import shutil
+import subprocess
 import sys
 import os
 import json
@@ -313,6 +314,15 @@ class MainWindow(QMainWindow):
 			info = default_info
 		version = info.get("version", default_info["version"])
 		release_date = info.get("release_date", default_info["release_date"])
+
+		try:
+			git_version = subprocess.check_output(["git", "describe", "--tags"],
+												  stderr=subprocess.STDOUT).decode().strip()
+			version = git_version
+			release_date = "running from source, not an official release"
+		except Exception:
+			pass
+
 		dialog = QDialog(self)
 		dialog.setWindowTitle("About")
 		dialog.setWindowFlags(self.windowFlags() & ~Qt.WindowType.WindowContextHelpButtonHint)
