@@ -483,8 +483,8 @@
         <translation>Inhaltsfilter</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="123"/>
-        <location filename="../../frontend/mainwindow.py" line="645"/>
+        <location filename="../../frontend/mainwindow.py" line="125"/>
+        <location filename="../../frontend/mainwindow.py" line="672"/>
         <source>Serial Number</source>
         <translation>Seriennummer</translation>
     </message>
@@ -493,8 +493,8 @@
         <translation type="vanished">Seriennummer zum Filtern eingeben</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="128"/>
-        <location filename="../../frontend/mainwindow.py" line="649"/>
+        <location filename="../../frontend/mainwindow.py" line="130"/>
+        <location filename="../../frontend/mainwindow.py" line="676"/>
         <source>Sensor Name</source>
         <translation>Sensorname</translation>
     </message>
@@ -552,6 +552,8 @@
         <translation>Filter löschen und zurücksetzen</translation>
     </message>
     <message>
+        <location filename="../../frontend/mainwindow.py" line="356"/>
+        <location filename="../../frontend/mainwindow.py" line="432"/>
         <location filename="../ui/main.ui" line="146"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
@@ -706,8 +708,8 @@
         <translation>Aktualisieren</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="117"/>
-        <location filename="../../frontend/mainwindow.py" line="801"/>
+        <location filename="../../frontend/mainwindow.py" line="119"/>
+        <location filename="../../frontend/mainwindow.py" line="828"/>
         <location filename="../ui/main.ui" line="354"/>
         <source>Activated</source>
         <translation>Aktiviert</translation>
@@ -782,8 +784,8 @@
         <translation type="obsolete"> </translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="113"/>
-        <location filename="../../frontend/mainwindow.py" line="644"/>
+        <location filename="../../frontend/mainwindow.py" line="115"/>
+        <location filename="../../frontend/mainwindow.py" line="671"/>
         <source>Status</source>
         <translation>Status</translation>
     </message>
@@ -796,32 +798,49 @@
         <translation type="vanished">Notiz</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="144"/>
+        <location filename="../../frontend/mainwindow.py" line="146"/>
         <source>Start</source>
         <translation>Start</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="150"/>
+        <location filename="../../frontend/mainwindow.py" line="152"/>
         <source>End</source>
         <translation>Ende</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="213"/>
+        <location filename="../../frontend/mainwindow.py" line="214"/>
         <source>No keyfile selected for edit.</source>
         <translation>Keine Schlüsseldatei zum Bearbeiten ausgewählt.</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="411"/>
+        <location filename="../../frontend/mainwindow.py" line="356"/>
+        <source>Importing keyfiles...</source>
+        <translation>Schlüsseldateien werden importiert...</translation>
+    </message>
+    <message>
+        <location filename="../../frontend/mainwindow.py" line="359"/>
+        <location filename="../../frontend/mainwindow.py" line="435"/>
+        <source>Progress</source>
+        <translation>Fortschritt</translation>
+    </message>
+    <message>
+        <location filename="../../frontend/mainwindow.py" line="386"/>
+        <source>The folder &apos;{base_name}&apos; already exists. Overwrite?</source>
+        <translation>Der Ordner „{base_name}“ existiert bereits. Überschreiben?</translation>
+    </message>
+    <message>
+        <location filename="../../frontend/mainwindow.py" line="425"/>
         <source>No keyfile selected for export.</source>
         <translation>Keine Schlüsseldatei zum Exportieren ausgewählt.</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="414"/>
+        <location filename="../../frontend/mainwindow.py" line="428"/>
         <source>Select Export Directory</source>
         <translation>Exportverzeichnis auswählen</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="435"/>
+        <location filename="../../frontend/mainwindow.py" line="385"/>
+        <location filename="../../frontend/mainwindow.py" line="460"/>
         <source>Conflict Detected</source>
         <translation>Konflikt erkannt</translation>
     </message>
@@ -830,98 +849,101 @@
         <translation type="vanished">Der Ordner &apos;{serial_number}&apos; existiert am Zielort bereits. Überschreiben?</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="454"/>
+        <location filename="../../frontend/mainwindow.py" line="480"/>
         <source>Failed to export keyfile {serial_number}: {e}</source>
         <translation>Export der Schlüsseldatei {serial_number} fehlgeschlagen: {e}</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="427"/>
+        <location filename="../../frontend/mainwindow.py" line="450"/>
         <source>Source folder for keyfile {serial_number} does not exist.</source>
         <translation>Quellordner für Schlüsseldatei {serial_number} existiert nicht.</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="347"/>
+        <location filename="../../frontend/mainwindow.py" line="348"/>
         <source>Select .od6pkg Files to Import</source>
         <translation>.od6pkg-Dateien zum Importieren auswählen</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="350"/>
+        <location filename="../../frontend/mainwindow.py" line="351"/>
         <source>OD6 Package Files (*.od6pkg)</source>
         <translation>OD6-Paketdateien (*.od6pkg)</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="389"/>
+        <location filename="../../frontend/mainwindow.py" line="401"/>
         <source>Invalid File</source>
         <translation>Ungültige Datei</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="391"/>
+        <location filename="../../frontend/mainwindow.py" line="403"/>
         <source>File &apos;{item_name}&apos; is not a valid .od6pkg archive and will be skipped.</source>
         <translation>Datei &apos;{item_name}&apos; ist kein gültiges .od6pkg-Archiv und wird übersprungen.</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="398"/>
         <source>Selected keyfiles have been imported to the deactivated directory.</source>
-        <translation>Ausgewählte Schlüsseldateien wurden in das Verzeichnis für deaktivierte Dateien importiert.</translation>
+        <translation type="vanished">Ausgewählte Schlüsseldateien wurden in das Verzeichnis für deaktivierte Dateien importiert.</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="400"/>
+        <location filename="../../frontend/mainwindow.py" line="414"/>
         <source>An error occurred: {e}</source>
         <translation>Ein Fehler ist aufgetreten: {e}</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="436"/>
+        <location filename="../../frontend/mainwindow.py" line="432"/>
+        <source>Exporting keyfiles...</source>
+        <translation>Schlüsseldateien werden exportiert...</translation>
+    </message>
+    <message>
+        <location filename="../../frontend/mainwindow.py" line="461"/>
         <source>The file &apos;{serial_number}.od6pkg&apos; already exists. Overwrite?</source>
         <translation>Die Datei &apos;{serial_number}.od6pkg&apos; existiert bereits. Überschreiben?</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="456"/>
         <source>Selected keyfiles exported successfully.</source>
-        <translation>Ausgewählte Schlüsseldateien wurden erfolgreich exportiert.</translation>
+        <translation type="vanished">Ausgewählte Schlüsseldateien wurden erfolgreich exportiert.</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="465"/>
+        <location filename="../../frontend/mainwindow.py" line="492"/>
         <source>Warning</source>
         <translation>Warnung</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="465"/>
+        <location filename="../../frontend/mainwindow.py" line="492"/>
         <source>No keyfile selected for deletion.</source>
         <translation>Keine Schlüsseldatei zum Löschen ausgewählt.</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="470"/>
+        <location filename="../../frontend/mainwindow.py" line="497"/>
         <source>Confirm Deletion</source>
         <translation>Löschen bestätigen</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="471"/>
+        <location filename="../../frontend/mainwindow.py" line="498"/>
         <source>Are you sure you want to delete the selected keyfiles?</source>
         <translation>Möchten Sie die ausgewählten Schlüsseldateien wirklich löschen?</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="504"/>
+        <location filename="../../frontend/mainwindow.py" line="531"/>
         <source>Directory Settings</source>
         <translation>Verzeichniseinstellungen</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="656"/>
+        <location filename="../../frontend/mainwindow.py" line="683"/>
         <source>Sensor Length (m)</source>
         <translation>Sensorlänge (m)</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="931"/>
-        <location filename="../../frontend/mainwindow.py" line="946"/>
+        <location filename="../../frontend/mainwindow.py" line="958"/>
+        <location filename="../../frontend/mainwindow.py" line="973"/>
         <source>Search Selected</source>
         <translation>Suche ausgewählt</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="949"/>
+        <location filename="../../frontend/mainwindow.py" line="976"/>
         <source>Search term cannot be empty. Please enter a search term.</source>
         <translation>Der Suchbegriff kann nicht leer sein. Bitte geben Sie einen Suchbegriff ein.</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="962"/>
+        <location filename="../../frontend/mainwindow.py" line="989"/>
         <source>No results found.</source>
         <translation>Keine Ergebnisse gefunden.</translation>
     </message>
@@ -952,7 +974,7 @@
         <translation type="vanished">Datenbank- und Verzeichniseinstellungen</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="529"/>
+        <location filename="../../frontend/mainwindow.py" line="556"/>
         <source>Directory validation failure</source>
         <translation>Verzeichnisvalidierungsfehler</translation>
     </message>
@@ -965,10 +987,8 @@
         <translation type="obsolete">Sind Sie sicher, dass Sie die Schlüsseldatei &apos;{keyfile}&apos; in die Datenbank importieren möchten?</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="396"/>
-        <location filename="../../frontend/mainwindow.py" line="456"/>
         <source>Success</source>
-        <translation>Erfolg</translation>
+        <translation type="vanished">Erfolg</translation>
     </message>
     <message>
         <source>Keyfile &apos;{keyfile}&apos; has been successfully imported into the database.</source>
@@ -995,11 +1015,11 @@
         <translation type="vanished">Verbindung zur Datenbank fehlgeschlagen: {error}</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="213"/>
-        <location filename="../../frontend/mainwindow.py" line="400"/>
-        <location filename="../../frontend/mainwindow.py" line="411"/>
-        <location filename="../../frontend/mainwindow.py" line="426"/>
-        <location filename="../../frontend/mainwindow.py" line="453"/>
+        <location filename="../../frontend/mainwindow.py" line="214"/>
+        <location filename="../../frontend/mainwindow.py" line="414"/>
+        <location filename="../../frontend/mainwindow.py" line="425"/>
+        <location filename="../../frontend/mainwindow.py" line="449"/>
+        <location filename="../../frontend/mainwindow.py" line="479"/>
         <source>Error</source>
         <translation>Fehler</translation>
     </message>
@@ -1036,8 +1056,8 @@
         <translation type="vanished">Fehler beim Erstellen einer neuen Datenbank: {error}</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="119"/>
-        <location filename="../../frontend/mainwindow.py" line="802"/>
+        <location filename="../../frontend/mainwindow.py" line="121"/>
+        <location filename="../../frontend/mainwindow.py" line="829"/>
         <source>Deactivated</source>
         <translation>Deaktiviert</translation>
     </message>
@@ -1054,7 +1074,7 @@
         <translation type="vanished">Keine neuen Schlüsseldateien zum Importieren gefunden.</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="652"/>
+        <location filename="../../frontend/mainwindow.py" line="679"/>
         <source>Last Edit Date</source>
         <translation>Letztes Bearbeitungsdatum</translation>
     </message>
@@ -1106,7 +1126,7 @@
         <translation type="vanished">Von USB laden</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.py" line="116"/>
+        <location filename="../../frontend/mainwindow.py" line="118"/>
         <source>All</source>
         <translation>Alle</translation>
     </message>
@@ -1396,12 +1416,12 @@
 <context>
     <name>MetadataEditor</name>
     <message>
-        <location filename="../../frontend/metadataeditor.py" line="117"/>
+        <location filename="../../frontend/metadataeditor.py" line="130"/>
         <source>Input Error</source>
         <translation>Eingabefehler</translation>
     </message>
     <message>
-        <location filename="../../frontend/metadataeditor.py" line="117"/>
+        <location filename="../../frontend/metadataeditor.py" line="130"/>
         <source>Both Property and Value must be filled.</source>
         <translation>Sowohl Eigenschaft als auch Wert müssen ausgefüllt werden.</translation>
     </message>

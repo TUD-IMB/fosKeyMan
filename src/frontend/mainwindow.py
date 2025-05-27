@@ -18,7 +18,8 @@ import zipfile
 from PySide6.QtGui import QIcon, QColor, QBrush
 from PySide6.QtSvgWidgets import QSvgWidget
 from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidgetItem, QHeaderView, QDialog, \
-	QFileDialog, QPushButton, QWidget, QHBoxLayout, QLabel, QVBoxLayout, QLineEdit, QComboBox, QDateEdit
+	QFileDialog, QPushButton, QWidget, QHBoxLayout, QLabel, QVBoxLayout, QLineEdit, QComboBox, QDateEdit, \
+	QProgressDialog
 from PySide6.QtCore import QTranslator, Qt, QCoreApplication, QSize, QDate
 
 from frontend.columnconfigurator import ColumnConfigurator
@@ -353,10 +354,18 @@ class MainWindow(QMainWindow):
 		if not file_paths:
 			return
 
-		try:
-			for source_path in file_paths:
-				item_name = os.path.basename(source_path)
+		progress = QProgressDialog(self.tr("Importing keyfiles..."), self.tr("Cancel"), 0, len(file_paths), self)
+		progress.setWindowModality(Qt.WindowModality.WindowModal)
+		progress.setMinimumDuration(0)
+		progress.setWindowTitle(self.tr("Progress"))
 
+		try:
+			for i, source_path in enumerate(file_paths):
+				progress.setValue(i)
+				if progress.wasCanceled():
+					break
+
+				item_name = os.path.basename(source_path)
 				base_name = os.path.splitext(item_name)[0]
 				final_target_path = os.path.join(self.directory2, base_name)
 
@@ -370,12 +379,15 @@ class MainWindow(QMainWindow):
 					conflict_path = check_path_dir1
 
 				if conflict_path:
+					progress.hide()
+					QApplication.processEvents()
 					user_choice = QMessageBox.question(
 						self,
-						"Conflict Detected",
-						f"The folder '{base_name}' already exists. Overwrite?",
+						self.tr("Conflict Detected"),
+						self.tr(f"The folder '{base_name}' already exists. Overwrite?"),
 						QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
 					)
+					progress.show()
 					if user_choice == QMessageBox.StandardButton.Yes:
 						shutil.rmtree(conflict_path)
 					else:
@@ -392,11 +404,13 @@ class MainWindow(QMainWindow):
 					)
 					continue
 
-			QMessageBox.information(
-				self,
-				self.tr("Success"),
-				self.tr("Selected keyfiles have been imported to the deactivated directory.")
-			)
+			progress.setValue(len(file_paths))
+
+			# QMessageBox.information(
+			# 	self,
+			# 	self.tr("Success"),
+			# 	self.tr("Selected keyfiles have been imported to the deactivated directory.")
+			# )
 		except Exception as e:
 			QMessageBox.critical(self, self.tr("Error"), self.tr(f"An error occurred: {e}"))
 
@@ -416,7 +430,16 @@ class MainWindow(QMainWindow):
 		if not export_path:
 			return
 
-		for serial_number in checked_serial_numbers:
+		progress = QProgressDialog(self.tr("Exporting keyfiles..."), self.tr("Cancel"), 0, len(checked_serial_numbers), self)
+		progress.setWindowModality(Qt.WindowModality.WindowModal)
+		progress.setMinimumDuration(0)
+		progress.setWindowTitle(self.tr("Progress"))
+
+		for i, serial_number in enumerate(checked_serial_numbers):
+			progress.setValue(i)
+			if progress.wasCanceled():
+				break
+
 			source_folder = None
 			if self.check_activation_status(serial_number) == ActivationStatus.ACTIVATED:
 				source_folder = os.path.join(self.directory1, serial_number)
@@ -431,12 +454,15 @@ class MainWindow(QMainWindow):
 			od6pkg_path = os.path.join(export_path, f"{serial_number}.od6pkg")
 
 			if os.path.exists(od6pkg_path):
+				progress.hide()
+				QApplication.processEvents()
 				user_choice = QMessageBox.question(
 					self,
 					self.tr("Conflict Detected"),
 					self.tr(f"The file '{serial_number}.od6pkg' already exists. Overwrite?"),
 					QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
 				)
+				progress.show()
 				if user_choice != QMessageBox.StandardButton.Yes:
 					continue
 				os.remove(od6pkg_path)
@@ -454,7 +480,8 @@ class MainWindow(QMainWindow):
 				QMessageBox.warning(self, self.tr("Error"),
 									self.tr(f"Failed to export keyfile {serial_number}: {e}"))
 
-		QMessageBox.information(self, self.tr("Success"), self.tr("Selected keyfiles exported successfully."))
+		progress.setValue(len(checked_serial_numbers))
+		# QMessageBox.information(self, self.tr("Success"), self.tr("Selected keyfiles exported successfully."))
 		self.reset_all_checkboxes()
 
 	def delete_keyfile(self):
