@@ -21,11 +21,70 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Configure metadata keys to display as table columns.</string>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="bottomMargin">
+      <number>0</number>
      </property>
-    </widget>
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Configure metadata keys to display as table columns.</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="autoLoadButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>Load from json file.</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+    border: none; 
+    background: transparent;
+}
+QPushButton:hover {
+    background-color: lightgray;
+}
+QPushButton:pressed {
+    background-color: lightblue;
+}
+</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../toolicons.qrc">
+         <normaloff>:/icons/icons/scan.svg</normaloff>:/icons/icons/scan.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Orientation::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </item>
    <item>
     <layout class="QVBoxLayout" name="tableLayout">
@@ -69,6 +128,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../toolicons.qrc"/>
+ </resources>
  <connections/>
 </ui>

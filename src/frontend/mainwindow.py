@@ -34,7 +34,6 @@ from frontend.hoverinfo import HoverInfo
 from frontend.tableoperator import TableOperator
 from frontend.keystatus import ActivationStatus
 from frontend.ui.uiopen import Ui_Open
-from frontend.ui.uitrash import Ui_Trash
 from utils.utils import format_json_to_html
 
 logging.basicConfig(
@@ -232,7 +231,13 @@ class MainWindow(QMainWindow):
 		Open a dialog to configure table columns.
 		Save the selected columns to config.json and refresh the table and filter in the UI.
 		"""
-		dialog = ColumnConfigurator(self.custom_columns, parent=self)
+
+		serial_numbers = []
+		for row in range(self.ui.tableWidget.rowCount()):
+			serial_number = self.ui.tableWidget.item(row, 2).data(Qt.ItemDataRole.UserRole + 2)
+			serial_numbers.append(serial_number)
+
+		dialog = ColumnConfigurator(self.custom_columns, serial_numbers, self.folder_content, parent=self)
 		if dialog.exec_() == QDialog.DialogCode.Accepted:
 			self.custom_columns = dialog.selected_columns
 

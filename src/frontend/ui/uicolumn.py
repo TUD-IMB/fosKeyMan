@@ -16,8 +16,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QHBoxLayout, QHeaderView, QLabel,
-    QPushButton, QSizePolicy, QTableWidget, QTableWidgetItem,
-    QVBoxLayout, QWidget)
+    QPushButton, QSizePolicy, QSpacerItem, QTableWidget,
+    QTableWidgetItem, QVBoxLayout, QWidget)
+from frontend.ui import toolicons_rc
 
 class Ui_Column(object):
     def setupUi(self, Column):
@@ -27,10 +28,45 @@ class Ui_Column(object):
         Column.setMinimumSize(QSize(0, 0))
         self.verticalLayout_2 = QVBoxLayout(Column)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.horizontalLayout.setContentsMargins(-1, -1, -1, 0)
         self.label = QLabel(Column)
         self.label.setObjectName(u"label")
 
-        self.verticalLayout_2.addWidget(self.label)
+        self.horizontalLayout.addWidget(self.label)
+
+        self.autoLoadButton = QPushButton(Column)
+        self.autoLoadButton.setObjectName(u"autoLoadButton")
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.autoLoadButton.sizePolicy().hasHeightForWidth())
+        self.autoLoadButton.setSizePolicy(sizePolicy)
+        self.autoLoadButton.setStyleSheet(u"QPushButton {\n"
+"    border: none; \n"
+"    background: transparent;\n"
+"}\n"
+"QPushButton:hover {\n"
+"    background-color: lightgray;\n"
+"}\n"
+"QPushButton:pressed {\n"
+"    background-color: lightblue;\n"
+"}\n"
+"")
+        icon = QIcon()
+        icon.addFile(u":/icons/icons/scan.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.autoLoadButton.setIcon(icon)
+        self.autoLoadButton.setIconSize(QSize(20, 20))
+
+        self.horizontalLayout.addWidget(self.autoLoadButton)
+
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout.addItem(self.horizontalSpacer)
+
+
+        self.verticalLayout_2.addLayout(self.horizontalLayout)
 
         self.tableLayout = QVBoxLayout()
         self.tableLayout.setObjectName(u"tableLayout")
@@ -72,6 +108,10 @@ class Ui_Column(object):
     def retranslateUi(self, Column):
         Column.setWindowTitle(QCoreApplication.translate("Column", u"Table Column", None))
         self.label.setText(QCoreApplication.translate("Column", u"Configure metadata keys to display as table columns.", None))
+#if QT_CONFIG(tooltip)
+        self.autoLoadButton.setToolTip(QCoreApplication.translate("Column", u"Load from json file.", None))
+#endif // QT_CONFIG(tooltip)
+        self.autoLoadButton.setText("")
 #if QT_CONFIG(tooltip)
         self.cancelButton.setToolTip(QCoreApplication.translate("Column", u"Cancel and Close", None))
 #endif // QT_CONFIG(tooltip)

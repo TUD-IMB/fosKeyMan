@@ -276,4 +276,27 @@ class FolderContent:
 			except Exception as e:
 				print(f"Failed to save metadata for '{key}': {e}")
 
+	def scan_metadata_fields(self, key):
+		r"""
+		Scan the metadata.json of a key and return all field names.
+
+		\param key: The name of the key (sensor folder).
+		\return: A set of metadata field names, or empty set if none found.
+		"""
+		metadata_keys = set()
+
+		keyfile_path_act = os.path.join(self.activated_path, key, "metadata.json")
+		keyfile_path_deact = os.path.join(self.deactivated_path, key, "metadata.json")
+
+		file_path = keyfile_path_act if os.path.exists(keyfile_path_act) else keyfile_path_deact
+
+		try:
+			with open(file_path, "r", encoding="utf-8") as f:
+				metadata = json.load(f)
+				metadata_keys.update(metadata.keys())
+		except (json.JSONDecodeError, IOError) as e:
+			print(f"Warning: Failed to read {file_path}: {e}")
+
+		return metadata_keys
+
 

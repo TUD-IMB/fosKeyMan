@@ -10,7 +10,7 @@ class ColumnConfigurator(QDialog):
 	r"""
 	Class to configure (add, remove) the customized table columns.
 	"""
-	def __init__(self, initial_columns, parent=None):
+	def __init__(self, initial_columns, serial_numbers, folder_content, parent=None):
 		r"""
 		Initialize the column configurator dialog.
 
@@ -25,12 +25,36 @@ class ColumnConfigurator(QDialog):
 
 		self.initial_columns = initial_columns
 		self.selected_columns = initial_columns.copy()
+		self.serial_numbers = serial_numbers
+		self.folder_content = folder_content
 
 		self.setup_main_table()
 		self.setup_add_table()
 
 		self.ui.cancelButton.clicked.connect(self.reject)
 		self.ui.confirmButton.clicked.connect(self.confirm_and_close)
+
+		self.ui.autoLoadButton.clicked.connect(self.scan_and_fill_keys)
+
+	def scan_and_fill_keys(self):
+		r"""
+		Scan all possible metadata fields from the keyfiles and add any new available metadata fields as columns to the table.
+		"""
+		metadata_keys = set()
+
+		for serial_number in self.serial_numbers:
+			metadata_keys.update(self.folder_content.scan_metadata_fields(serial_number))
+
+		existing_columns = set()
+
+		for row in range(self.ui.tableWidget.rowCount()):
+			item = self.ui.tableWidget.item(row, 0)
+			existing_columns.add(item.text().strip())
+
+		new_keys = metadata_keys - existing_columns
+
+		for key in sorted(new_keys):
+			self.insert_column_row(key)
 
 	def setup_main_table(self):
 		r"""
