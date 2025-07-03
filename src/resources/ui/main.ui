@@ -175,6 +175,7 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionExport"/>
     <addaction name="actionSaveChange"/>
     <addaction name="actionRefresh"/>
     <addaction name="actionExit"/>
@@ -481,6 +482,11 @@
   <action name="actionDeletedKeyfiles">
    <property name="text">
     <string>Deleted Keyfiles</string>
+   </property>
+  </action>
+  <action name="actionExport">
+   <property name="text">
+    <string>Export</string>
    </property>
   </action>
  </widget>

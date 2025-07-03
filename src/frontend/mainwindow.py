@@ -5,7 +5,7 @@ Defines the main Graphical User Interface.
 \author Xiali Song, Bertram Richter
 \date 2025
 """
-
+import brplotviz.table as table
 import logging
 import shutil
 import subprocess
@@ -19,7 +19,7 @@ from PySide6.QtGui import QIcon, QColor, QBrush
 from PySide6.QtSvgWidgets import QSvgWidget
 from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidgetItem, QHeaderView, QDialog, \
 	QFileDialog, QPushButton, QWidget, QHBoxLayout, QLabel, QVBoxLayout, QLineEdit, QComboBox, QDateEdit, \
-	QProgressDialog
+	QProgressDialog, QInputDialog
 from PySide6.QtCore import QTranslator, Qt, QCoreApplication, QSize, QDate
 
 from frontend.columnconfigurator import ColumnConfigurator
@@ -205,6 +205,8 @@ class MainWindow(QMainWindow):
 		self.ui.actionEdit.triggered.connect(self.open_json_edit_dialog)
 		self.ui.actionTableColumn.triggered.connect(self.open_column_configurator)
 
+		self.ui.actionExport.triggered.connect(self.export_table_as_csv)
+
 	def open_json_edit_dialog(self):
 		r"""
 		Open a dialog to edit metadata of the selected keyfile.
@@ -299,6 +301,75 @@ class MainWindow(QMainWindow):
 			# elif os.path.exists(meta_json_path):
 			# 	os.remove(meta_json_path)
 		self.reset_all_checkboxes()
+
+	def export_table_as_csv(self):
+		r"""Export the table as a CSV file, following the current visual column order."""
+
+		csv_path, _ = QFileDialog.getSaveFileName(
+			self,
+			"Export table as CSV File",
+			"",
+			"CSV Files (*.csv);;All Files (*)"
+		)
+
+		if not csv_path:
+			return
+
+		separator, ok = QInputDialog.getText(
+			self,
+			"Separator Selection",
+			"Please enter the separating character (default is ','):",
+			text=","
+		)
+		if not ok:
+			return
+
+		if separator == "":
+			separator = ","
+
+		try:
+			header_view = self.ui.tableWidget.horizontalHeader()
+			column_count = self.ui.tableWidget.columnCount()
+
+			visual_order = [header_view.logicalIndex(i) for i in range(column_count)]
+
+			headers = []
+			columns_to_export = []
+
+			for visual_col in visual_order:
+				if self.ui.tableWidget.isColumnHidden(visual_col):
+					continue
+				header_item = self.ui.tableWidget.horizontalHeaderItem(visual_col)
+				header_text = header_item.text() if header_item else ""
+
+				if header_text == " " or header_text.lower() == "status":
+					continue
+
+				headers.append(header_text)
+				columns_to_export.append(visual_col)
+
+			table_data = []
+
+			for row in range(self.ui.tableWidget.rowCount()):
+				if self.ui.tableWidget.isRowHidden(row):
+					continue
+
+				row_data = []
+				for col in columns_to_export:
+					item = self.ui.tableWidget.item(row, col)
+					row_data.append(item.text() if item else "")
+				table_data.append(row_data)
+
+			table.print_table(
+				table=table_data,
+				style="csv",
+				style_kwargs={"itemsep": separator},
+				head_row=headers,
+				file=csv_path
+			)
+
+		except Exception as e:
+			QMessageBox.warning(self, "Export Failed", f"An error occurred: {str(e)}")
 
 	def show_about_dialog(self):
 		r"""
