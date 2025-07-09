@@ -486,7 +486,7 @@
   </action>
   <action name="actionExport">
    <property name="text">
-    <string>Export</string>
+    <string>Export Metadata Table</string>
    </property>
   </action>
  </widget>

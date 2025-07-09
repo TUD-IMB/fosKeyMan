@@ -323,14 +323,14 @@ class MainWindow(QMainWindow):
 		separator, ok = QInputDialog.getText(
 			self,
 			"Separator Selection",
-			"Please enter the separating character (default is ','):",
-			text=","
+			"Please enter the separating character:",
+			text=""
 		)
 		if not ok:
 			return
 
 		if separator == "":
-			separator = ","
+			separator = "	"
 
 		try:
 			header_view = self.ui.tableWidget.horizontalHeader()

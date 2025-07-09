@@ -71,7 +71,7 @@ class MetadataEditor(QDialog):
 		self.ui.addTableWidget.setItem(0, 1, QTableWidgetItem())
 
 		add_button = QPushButton()
-		add_button.setIcon(QIcon(":/icons/icons/editadd.svg"))
+		add_button.setIcon(QIcon(":/icons/icons/propertyadd.svg"))
 		apply_icon_button_style(add_button)
 		add_button.setIconSize(QSize(20, 20))
 		add_button.setFixedSize(24, 24)

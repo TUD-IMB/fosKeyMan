@@ -334,7 +334,7 @@ class Ui_MainWindow(object):
         self.actionEdit.setText(QCoreApplication.translate("MainWindow", u"Edit", None))
         self.actionTableColumn.setText(QCoreApplication.translate("MainWindow", u"Table Columns", None))
         self.actionDeletedKeyfiles.setText(QCoreApplication.translate("MainWindow", u"Deleted Keyfiles", None))
-        self.actionExport.setText(QCoreApplication.translate("MainWindow", u"Export", None))
+        self.actionExport.setText(QCoreApplication.translate("MainWindow", u"Export Metadata Table", None))
 #if QT_CONFIG(tooltip)
         self.tableWidget.setToolTip("")
 #endif // QT_CONFIG(tooltip)
