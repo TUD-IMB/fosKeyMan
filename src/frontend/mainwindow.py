@@ -208,7 +208,7 @@ class MainWindow(QMainWindow):
 
 	def open_json_edit_dialog(self):
 		r"""
-		Open a dialog to edit metadata of the selected keyfile.
+		Open a dialog to edit metadata of the selected keyfiles.
 		Update the table row and the metadata.json file after editing is completed .
 		"""
 		checked_serial_numbers = self.get_checked_serial_numbers()
@@ -216,14 +216,16 @@ class MainWindow(QMainWindow):
 			QMessageBox.warning(self, self.tr("Error"), self.tr("No keyfile selected for edit."))
 			return
 
-		serial_number = checked_serial_numbers[0]
-		metadata = self.folder_content.read_metadata(serial_number)
+		metadata_list = [
+			self.folder_content.read_metadata(sn)
+			for sn in checked_serial_numbers
+		]
 
-		dialog = MetadataEditor(serial_number, metadata, parent=self)
+		dialog = MetadataEditor(checked_serial_numbers, metadata_list, parent=self)
 		if dialog.exec_() == QDialog.DialogCode.Accepted:
-			updated_metadata = dialog.result_metadata
-			self.folder_content.update_metadata(serial_number, updated_metadata)
-			self.update_table_row([serial_number])
+			for sn, updated_metadata in dialog.result_metadata.items():
+				self.folder_content.update_metadata(sn, updated_metadata)
+				self.update_table_row([sn])
 		self.reset_all_checkboxes()
 
 	def open_column_configurator(self):

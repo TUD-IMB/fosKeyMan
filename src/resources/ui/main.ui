@@ -176,8 +176,8 @@
      <string>File</string>
     </property>
     <addaction name="actionExport"/>
-    <addaction name="actionSaveChange"/>
     <addaction name="actionRefresh"/>
+    <addaction name="actionSaveChange"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuHelp">

@@ -15,9 +15,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QHBoxLayout, QHeaderView, QPushButton,
-    QSizePolicy, QTableWidget, QTableWidgetItem, QVBoxLayout,
-    QWidget)
+from PySide6.QtWidgets import (QApplication, QHBoxLayout, QHeaderView, QLabel,
+    QPushButton, QSizePolicy, QTableWidget, QTableWidgetItem,
+    QVBoxLayout, QWidget)
 
 class Ui_Edit(object):
     def setupUi(self, Edit):
@@ -27,6 +27,17 @@ class Ui_Edit(object):
         Edit.setMinimumSize(QSize(0, 0))
         self.verticalLayout_2 = QVBoxLayout(Edit)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.verticalLayout = QVBoxLayout()
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.verticalLayout.setContentsMargins(-1, -1, -1, 0)
+        self.keyLabel = QLabel(Edit)
+        self.keyLabel.setObjectName(u"keyLabel")
+
+        self.verticalLayout.addWidget(self.keyLabel)
+
+
+        self.verticalLayout_2.addLayout(self.verticalLayout)
+
         self.tableLayout = QVBoxLayout()
         self.tableLayout.setObjectName(u"tableLayout")
         self.tableWidget = QTableWidget(Edit)
@@ -66,6 +77,7 @@ class Ui_Edit(object):
 
     def retranslateUi(self, Edit):
         Edit.setWindowTitle(QCoreApplication.translate("Edit", u"Metadata Edit", None))
+        self.keyLabel.setText("")
 #if QT_CONFIG(tooltip)
         self.cancelButton.setToolTip(QCoreApplication.translate("Edit", u"Cancel and Close", None))
 #endif // QT_CONFIG(tooltip)

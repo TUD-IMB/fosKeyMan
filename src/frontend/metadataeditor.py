@@ -8,31 +8,61 @@ from utils.utils import apply_icon_button_style
 
 class MetadataEditor(QDialog):
 	r"""
-	Class to edit the metadata.json contents for a keyfile.
+	Class to edit the metadata.json contents for selected keyfiles.
 	"""
-	def __init__(self, serial_number, metadata, parent):
+
+	def __init__(self, serial_numbers, metadata_list, parent=None):
 		r"""
 		Initialize the MetadataEditor dialog.
 
-		\param serial_number (str): Serial number of the keyfile.
-		\param metadata (dict): Existing metadata dictionary.
+		\param serial_numbers (list): List of serial numbers for the keyfiles.
+		\param metadata_list (list): List of metadata dictionaries corresponding to each serial number.
 		\param parent (QWidget, optional): Parent widget for this dialog.
 		"""
 		super(MetadataEditor, self).__init__(parent)
 
-		self.serial_number = serial_number
-		self.original_metadata = metadata
+		self.serial_numbers = serial_numbers
+		self.metadata_list = metadata_list
+		self.current_index = 0
+		self.result_metadata = {}
+		self.serial_number = self.serial_numbers[self.current_index]
+		self.original_metadata = self.metadata_list[self.current_index]
 
 		self.ui = Ui_Edit()
 		self.ui.setupUi(self)
 
+		self.ui.cancelButton.clicked.connect(self.reject)
+		self.ui.confirmButton.clicked.connect(self.confirm_or_next)
+
+		self.load_metadata(self.current_index)
+
+	def load_metadata(self, index):
+		r"""
+		Load metadata for the given index into the editor UI.
+
+		\param index (int): Index of the serial number and metadata to load.
+		"""
+		self.clear_table()
+
+		self.serial_number = self.serial_numbers[index]
+		self.original_metadata = self.metadata_list[index]
+
+		self.ui.keyLabel.setText(self.tr("Serial Number: ") + self.serial_number)
+
 		self.setup_main_table()
 		self.setup_add_table()
 
-		self.ui.cancelButton.clicked.connect(self.reject)
-		self.ui.confirmButton.clicked.connect(self.confirm_and_close)
+		if index == len(self.serial_numbers) - 1:
+			self.ui.confirmButton.setText(self.tr("Confirm"))
+		else:
+			self.ui.confirmButton.setText(self.tr("Next"))
 
-		self.result_metadata = None
+	def clear_table(self):
+		r"""
+		Clear all rows and content from the metadata table before loading next one.
+		"""
+		self.ui.tableWidget.clearContents()
+		self.ui.tableWidget.setRowCount(0)
 
 	def setup_main_table(self):
 		r"""
@@ -129,9 +159,9 @@ class MetadataEditor(QDialog):
 		else:
 			QMessageBox.warning(self, self.tr("Input Error"), self.tr("Both Property and Value must be filled."))
 
-	def confirm_and_close(self):
+	def confirm_or_next(self):
 		r"""
-		Confirm the changes and close the editor dialog.
+		Switch to next one or if it's the last one it will confirm the changes and close the editor dialog.
 		"""
 		updated_metadata = {}
 		for row in range(self.ui.tableWidget.rowCount()):
@@ -140,5 +170,11 @@ class MetadataEditor(QDialog):
 			if key_item and value_item:
 				updated_metadata[key_item.text()] = value_item.text()
 
-		self.result_metadata = updated_metadata
-		self.accept()
+		current_serial = self.serial_numbers[self.current_index]
+		self.result_metadata[current_serial] = updated_metadata
+
+		if self.current_index == len(self.serial_numbers) - 1:
+			self.accept()
+		else:
+			self.current_index += 1
+			self.load_metadata(self.current_index)
