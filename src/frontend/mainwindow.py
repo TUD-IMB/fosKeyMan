@@ -120,22 +120,22 @@ class MainWindow(QMainWindow):
 			self.tr("Deactivated")
 		])
 		layout.addRow(status_label, status_combo)
-		self.dynamic_filter_inputs["status"] = status_combo
+		self.dynamic_filter_inputs["Status"] = status_combo
 
 		serial_label = QLabel(self.tr("Serial Number"), self)
 		serial_input = QLineEdit(self)
 		layout.addRow(serial_label, serial_input)
-		self.dynamic_filter_inputs["serial_number"] = serial_input
+		self.dynamic_filter_inputs["Serial Number"] = serial_input
 
 		name_label = QLabel(self.tr("Sensor Name"), self)
 		name_input = QLineEdit(self)
 		layout.addRow(name_label, name_input)
-		self.dynamic_filter_inputs["sensor_name"] = name_input
+		self.dynamic_filter_inputs["Sensor Name"] = name_input
 
 		for col in self.custom_columns:
 			label = QLabel(col, self)
 			line_edit = QLineEdit(self)
-			line_edit.setObjectName(f"{col.lower().replace(' ', '')}LineEdit")
+			line_edit.setObjectName(f"{col}LineEdit")
 			layout.addRow(label, line_edit)
 			self.dynamic_filter_inputs[col] = line_edit
 
@@ -256,7 +256,7 @@ class MainWindow(QMainWindow):
 		"""
 
 		table = self.ui.tableWidget
-		read_only_columns = [0, 1, 2, 3, 10, 11]
+		read_only_columns = {"Status", "Serial Number", "Sensor Name", "Last Edit Date", "Sensor Length (m)"}
 
 		for row in range(table.rowCount()):
 			serial_number = table.item(row, 2).data(Qt.ItemDataRole.UserRole + 2)
@@ -284,14 +284,12 @@ class MainWindow(QMainWindow):
 				existing_data = {}
 
 			for col in range(table.columnCount()):
-				if col in read_only_columns:
+				header_item = table.horizontalHeaderItem(col)
+				field_name = header_item.data(Qt.ItemDataRole.UserRole)
+				if field_name in read_only_columns:
 					continue
 
 				item = table.item(row, col)
-				column_name = table.horizontalHeaderItem(col).text()
-
-				field_name = column_name
-
 				if item and item.text().strip():
 					meta_data[field_name] = item.text().strip()
 				elif field_name in existing_data:
@@ -301,13 +299,6 @@ class MainWindow(QMainWindow):
 
 			with open(meta_json_path, "w", encoding="utf-8") as f:
 				json.dump(existing_data, f, indent=4, ensure_ascii=False)
-
-			# if existing_data:
-			# 	with open(meta_json_path, "w", encoding="utf-8") as f:
-			# 		json.dump(existing_data, f, indent=4, ensure_ascii=False)
-			# elif os.path.exists(meta_json_path):
-			# 	os.remove(meta_json_path)
-		self.reset_all_checkboxes()
 
 	def export_table_as_csv(self):
 		r"""Export the table as a CSV file, following the current visual column order."""
@@ -747,40 +738,27 @@ class MainWindow(QMainWindow):
 		"""
 		fixed_columns = [
 			' ',
-			self.tr('Status'),
-			self.tr('Serial Number'),
-			self.tr('Sensor Name')
+			'Status',
+			'Serial Number',
+			'Sensor Name'
 		]
 
 		custom_columns = self.custom_columns
 
 		fixed_tail_columns = [
-			self.tr('Last Edit Date'),
-			self.tr('Sensor Length (m)')
+			'Last Edit Date',
+			'Sensor Length (m)'
 		]
 
-		all_columns = fixed_columns + [self.tr(col) for col in custom_columns] + fixed_tail_columns
+		all_columns = fixed_columns + custom_columns + fixed_tail_columns
 
 		self.ui.tableWidget.setColumnCount(len(all_columns))
 		self.ui.tableWidget.setHorizontalHeaderLabels(all_columns)
 
-		fixed_keys = ['checkbox', 'status', 'serial_number', 'sensor_name']
-		fixed_tail_keys = ['last_edit_date', 'sensor_length']
-
-		for i, key in enumerate(fixed_keys):
+		for i, name in enumerate(all_columns):
 			header_item = self.ui.tableWidget.horizontalHeaderItem(i)
-			header_item.setData(Qt.ItemDataRole.UserRole, key)
-
-		for i, key in enumerate(self.custom_columns):
-			col_idx = len(fixed_keys) + i
-			header_item = self.ui.tableWidget.horizontalHeaderItem(col_idx)
 			if header_item:
-				header_item.setData(Qt.ItemDataRole.UserRole, key)
-
-		for i, key in enumerate(fixed_tail_keys):
-			idx = len(all_columns) - len(fixed_tail_keys) + i
-			header_item = self.ui.tableWidget.horizontalHeaderItem(idx)
-			header_item.setData(Qt.ItemDataRole.UserRole, key)
+				header_item.setData(Qt.ItemDataRole.UserRole, name)
 
 		self.ui.tableWidget.setStyleSheet("""
 			QHeaderView::section {
@@ -808,34 +786,46 @@ class MainWindow(QMainWindow):
 		self.ui.tableWidget.setRowCount(0)
 		self.populate_table()
 
-		read_only_indices = [1, 2, 3] + [len(all_columns) - 2, len(all_columns) - 1]
-		self.set_columns_read_only(read_only_indices)
-		self.set_columns_background_color([2, 3, len(all_columns) - 2, len(all_columns) - 1])
+		read_only_columns = ['Status', 'Serial Number', 'Sensor Name', 'Last Edit Date', 'Sensor Length (m)']
+		self.set_columns_read_only(read_only_columns)
+		self.set_columns_background_color(read_only_columns)
 
 		self.populate_search_combobox()
 
-	def set_columns_read_only(self, columns):
+	def set_columns_read_only(self, read_only_columns):
 		r"""
 		Set the specified columns to read-only.
 		These columns will still allow user interaction like selection and clicking, but their content will not be editable
-		\param columns (List[int]): A list of column indices that should be set to read-only.
+		\param columns (List[str]): A list of column header names that should be set to read-only.
 		"""
 		row_count = self.ui.tableWidget.rowCount()
-		for row in range(row_count):
-			for column in columns:
-				item = self.ui.tableWidget.item(row, column)
+		column_count = self.ui.tableWidget.columnCount()
+
+		for col in range(column_count):
+			header_item = self.ui.tableWidget.horizontalHeaderItem(col)
+			name = header_item.data(Qt.ItemDataRole.UserRole)
+			if name not in read_only_columns:
+				continue
+			for row in range(row_count):
+				item = self.ui.tableWidget.item(row, col)
 				if item:
 					item.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
 	
-	def set_columns_background_color(self, columns):
+	def set_columns_background_color(self, read_only_columns):
 		r"""
 		Apply a light gray background color to the specified columns.
-		\param columns (List[int]): A list of column indices (integers) to apply the background color.
+		\param columns (List[str]): A list of column header names to apply the background color.
 		"""
 		row_count = self.ui.tableWidget.rowCount()
-		for row in range(row_count):
-			for column in columns:
-				item = self.ui.tableWidget.item(row, column)
+		column_count = self.ui.tableWidget.columnCount()
+
+		for col in range(column_count):
+			header_item = self.ui.tableWidget.horizontalHeaderItem(col)
+			name = header_item.data(Qt.ItemDataRole.UserRole)
+			if name not in read_only_columns:
+				continue
+			for row in range(row_count):
+				item = self.ui.tableWidget.item(row, col)
 				if item:
 					item.setBackground(QBrush(QColor(245, 245, 245)))
 

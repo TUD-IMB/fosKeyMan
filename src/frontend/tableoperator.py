@@ -74,9 +74,9 @@ class TableOperator:
 		for i in range(self.table_widget.columnCount()):
 			header_item = self.table_widget.horizontalHeaderItem(i)
 			if header_item:
-				internal_key = header_item.data(Qt.ItemDataRole.UserRole)
-				if internal_key:
-					label_to_index[internal_key] = i
+				name = header_item.data(Qt.ItemDataRole.UserRole)
+				if name:
+					label_to_index[name] = i
 				else:
 					label_to_index[header_item.text()] = i
 
@@ -129,7 +129,7 @@ class TableOperator:
 
 			start_date = start_widget.date() if start_widget else None
 			end_date = end_widget.date() if end_widget else None
-			col_index = label_to_index["last_edit_date"]
+			col_index = label_to_index["Last Edit Date"]
 			item = self.table_widget.item(row, col_index)
 			if item and item.text():
 				cell_date = datetime.strptime(item.text(), "%Y-%m-%d").date()
@@ -155,9 +155,9 @@ class TableOperator:
 			elif isinstance(widget, QComboBox):
 				widget.setCurrentIndex(0)
 			elif isinstance(widget, QDateEdit):
-				if label_text == "Start":
+				if label_text == "start":
 					widget.setDate(QDate(2000, 1, 1))
-				elif label_text == "End":
+				elif label_text == "end":
 					widget.setDate(QDate.currentDate())
 		for row in range(self.table_widget.rowCount()):
 			self.table_widget.setRowHidden(row, False)
