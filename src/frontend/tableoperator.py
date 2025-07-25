@@ -80,6 +80,9 @@ class TableOperator:
 				else:
 					label_to_index[header_item.text()] = i
 
+		# print("label_to_index:", label_to_index)
+		# print("filter_inputs keys:", list(filter_inputs.keys()))
+
 		for row in range(self.table_widget.rowCount()):
 			match = True
 

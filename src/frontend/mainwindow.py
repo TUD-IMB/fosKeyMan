@@ -771,6 +771,12 @@ class MainWindow(QMainWindow):
 			header_item = self.ui.tableWidget.horizontalHeaderItem(i)
 			header_item.setData(Qt.ItemDataRole.UserRole, key)
 
+		for i, key in enumerate(self.custom_columns):
+			col_idx = len(fixed_keys) + i
+			header_item = self.ui.tableWidget.horizontalHeaderItem(col_idx)
+			if header_item:
+				header_item.setData(Qt.ItemDataRole.UserRole, key)
+
 		for i, key in enumerate(fixed_tail_keys):
 			idx = len(all_columns) - len(fixed_tail_keys) + i
 			header_item = self.ui.tableWidget.horizontalHeaderItem(idx)
