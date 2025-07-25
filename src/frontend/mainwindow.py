@@ -325,7 +325,7 @@ class MainWindow(QMainWindow):
 		separator, ok = QInputDialog.getText(
 			self,
 			"Separator Selection",
-			"Please enter the separating character:",
+			"Please enter the separating character (leave empty for using tab as separator):",
 			text=""
 		)
 		if not ok:
