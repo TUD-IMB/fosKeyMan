@@ -5,7 +5,8 @@ Defines the main Graphical User Interface.
 \author Xiali Song, Bertram Richter
 \date 2025
 """
-import brplotviz.table as table
+
+import codecs
 import logging
 import shutil
 import subprocess
@@ -301,18 +302,19 @@ class MainWindow(QMainWindow):
 				json.dump(existing_data, f, indent=4, ensure_ascii=False)
 
 	def export_table_as_csv(self):
-		r"""Export the table as a CSV file, following the current visual column order."""
-
+		r"""
+		Export the table as a CSV file, following the current visual column order.
+		"""
 		csv_path, _ = QFileDialog.getSaveFileName(
 			self,
 			"Export table as CSV File",
 			"",
 			"CSV Files (*.csv);;All Files (*)"
 		)
-
+		
 		if not csv_path:
 			return
-
+		
 		separator, ok = QInputDialog.getText(
 			self,
 			"Separator Selection",
@@ -321,51 +323,37 @@ class MainWindow(QMainWindow):
 		)
 		if not ok:
 			return
-
 		if separator == "":
 			separator = "	"
-
 		try:
 			header_view = self.ui.tableWidget.horizontalHeader()
 			column_count = self.ui.tableWidget.columnCount()
-
 			visual_order = [header_view.logicalIndex(i) for i in range(column_count)]
-
 			headers = []
 			columns_to_export = []
-
 			for visual_col in visual_order:
 				if self.ui.tableWidget.isColumnHidden(visual_col):
 					continue
 				header_item = self.ui.tableWidget.horizontalHeaderItem(visual_col)
 				header_text = header_item.text() if header_item else ""
-
 				if header_text == " " or header_text.lower() == "status":
 					continue
-
 				headers.append(header_text)
 				columns_to_export.append(visual_col)
-
-			table_data = []
-
-			for row in range(self.ui.tableWidget.rowCount()):
-				if self.ui.tableWidget.isRowHidden(row):
-					continue
-
-				row_data = []
-				for col in columns_to_export:
-					item = self.ui.tableWidget.item(row, col)
-					row_data.append(item.text() if item else "")
-				table_data.append(row_data)
-
-			table.print_table(
-				table=table_data,
-				style="csv",
-				style_kwargs={"itemsep": separator},
-				head_row=headers,
-				file=csv_path
-			)
-
+			
+			if not os.path.exists(os.path.dirname(csv_path)):
+				os.makedirs(os.path.dirname(csv_path))
+			with codecs.open(csv_path, "w", "utf-8") as csv_file:
+				csv_file.write(separator.join(headers) + "\n")
+				for row in range(self.ui.tableWidget.rowCount()):
+					if self.ui.tableWidget.isRowHidden(row):
+						continue
+					row_data = []
+					for col in columns_to_export:
+						item = self.ui.tableWidget.item(row, col)
+						row_data.append(item.text() if item else "")
+					csv_file.write(separator.join(row_data) + "\n")
+		
 		except Exception as e:
 			QMessageBox.warning(self, "Export Failed", f"An error occurred: {str(e)}")
 
