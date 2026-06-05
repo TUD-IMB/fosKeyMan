@@ -1,5 +1,6 @@
 import fnmatch
 from datetime import datetime
+import dateparser
 
 from PySide6.QtCore import QDate
 from PySide6.QtGui import Qt
@@ -132,7 +133,7 @@ class TableOperator:
 			col_index = label_to_index["Last Edit Date"]
 			item = self.table_widget.item(row, col_index)
 			if item and item.text():
-				cell_date = datetime.strptime(item.text(), "%Y-%m-%d").date()
+				cell_date = dateparser.parse(item.text()).date()
 
 				if start_date and cell_date < start_date:
 					match = False

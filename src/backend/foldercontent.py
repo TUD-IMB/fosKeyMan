@@ -8,6 +8,7 @@ Implements the backend to manage the content sensor keys on disk.
 
 
 from datetime import datetime
+import dateparser
 import os
 import json
 
@@ -182,7 +183,7 @@ class FolderContent:
 			last_edit_date_str = user_properties.get('lastEditDate')
 			if last_edit_date_str:
 				try:
-					return datetime.strptime(last_edit_date_str, "%a %b %d %Y")
+					return dateparser.parse(last_edit_date_str)
 				except ValueError as e:
 					print(f"Error parsing date: {e}")
 					return None
